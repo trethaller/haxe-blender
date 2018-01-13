@@ -112,6 +112,7 @@ class EReg:
     _hx_class_name = "EReg"
     __slots__ = ("pattern", "matchObj", "_hx_global")
     _hx_fields = ["pattern", "matchObj", "global"]
+    _hx_methods = ["map"]
 
     def __init__(self,r,opt):
         self.matchObj = None
@@ -135,6 +136,36 @@ class EReg:
                 self._hx_global = True
         self.pattern = python_lib_Re.compile(r,options)
 
+    def map(self,s,f):
+        buf_b = python_lib_io_StringIO()
+        pos = 0
+        right = s
+        cur = self
+        while (pos < len(s)):
+            if (self.matchObj is None):
+                self.matchObj = python_lib_Re.search(self.pattern,s)
+            else:
+                self.matchObj = self.matchObj.re.search(s,pos)
+            if (self.matchObj is None):
+                break
+            pos1 = self.matchObj.end()
+            curPos_pos = cur.matchObj.start()
+            curPos_len = (cur.matchObj.end() - cur.matchObj.start())
+            buf_b.write(Std.string(HxString.substr(HxString.substr(cur.matchObj.string,0,cur.matchObj.start()),pos,None)))
+            buf_b.write(Std.string(f(cur)))
+            right = HxString.substr(cur.matchObj.string,cur.matchObj.end(),None)
+            if (not self._hx_global):
+                buf_b.write(Std.string(right))
+                return buf_b.getvalue()
+            if (curPos_len == 0):
+                buf_b.write(Std.string(("" if (((pos1 < 0) or ((pos1 >= len(s))))) else s[pos1])))
+                right = HxString.substr(right,1,None)
+                pos = (pos1 + 1)
+            else:
+                pos = pos1
+        buf_b.write(Std.string(right))
+        return buf_b.getvalue()
+
 EReg._hx_class = EReg
 
 
@@ -152,12 +183,17 @@ class Generator:
         self.typeReg = EReg(":type (\\w+): (.+)","")
         self.argReg = EReg(":arg (\\w+):(.*)","")
         self.classReg = EReg("\\.\\. class:: ([\\w\\.]+)(\\((\\w+)\\))?","")
-        self.funcReg = EReg("\\.\\. (function|method|staticmethod):: ([\\w\\.]+)","")
+        self.funcReg = EReg("\\.\\. (function|method|staticmethod):: ([\\w\\.]+)\\((.*)\\)$","g")
         self.attrReg = EReg("\\.\\. (attribute|data):: ([\\w\\.]+)","")
         self.moduleReg = EReg("\\.\\. module:: ([\\w\\.]+)","")
         self.indentReg = EReg("^[ ]+","")
         docDir = "C:/Users/Tom/Downloads/blender-2.79.tar/blender-2.79/doc/python_api/sphinx-in/"
-        self.processFile((("null" if docDir is None else docDir) + "bpy.types.Object.rst"))
+        files = ["bpy.types.Object.rst", "bpy.types.BlendDataParticles.rst", "bpy.types.IMAGE_UV_sculpt.rst", "mathutils.rst", "blf.rst", "bpy.ops.nla.rst", "bmesh.types.rst"]
+        _g = 0
+        while (_g < len(files)):
+            fname = (files[_g] if _g >= 0 and _g < len(files) else None)
+            _g = (_g + 1)
+            self.processFile((("null" if docDir is None else docDir) + ("null" if fname is None else fname)))
         output = haxe_format_JsonPrinter.print(self.allModules,None,"  ")
         sys_io_File.saveContent("output.json",output)
 
@@ -192,58 +228,73 @@ class Generator:
         return index
 
     def makeFunc(self,node):
+        _gthis = self
         _this = self.funcReg
         _this.matchObj = python_lib_Re.search(_this.pattern,node.line)
         if (_this.matchObj is None):
             return None
         funcname = self.funcReg.matchObj.group(2)
         doc = ""
-        arg = None
         args = []
         rtype = "Void"
         method = (self.funcReg.matchObj.group(1) == "method")
-        _g = 0
-        _g1 = node.children
-        while (_g < len(_g1)):
-            l = (_g1[_g] if _g >= 0 and _g < len(_g1) else None)
-            _g = (_g + 1)
-            _this1 = self.argReg
-            _this1.matchObj = python_lib_Re.search(_this1.pattern,l.line)
-            if (_this1.matchObj is not None):
-                if (arg is not None):
-                    args.append(arg)
-                arg = _hx_AnonObject({'id': self.argReg.matchObj.group(1), 'type': "", 'doc': self.argReg.matchObj.group(2)})
-                _g2 = 0
-                _g3 = l.children
-                while (_g2 < len(_g3)):
-                    sl = (_g3[_g2] if _g2 >= 0 and _g2 < len(_g3) else None)
-                    _g2 = (_g2 + 1)
+        argstr = self.funcReg.matchObj.group(3)
+        argValsReg = EReg("\\(([^)]+)\\)","g")
+        def _hx_local_0(e):
+            return "null"
+        clean = argValsReg.map(argstr,_hx_local_0)
+        _g = []
+        _g1 = 0
+        _g2 = clean.split(", ")
+        while (_g1 < len(_g2)):
+            a = (_g2[_g1] if _g1 >= 0 and _g1 < len(_g2) else None)
+            _g1 = (_g1 + 1)
+            if (len(a) > 0):
+                _g.append(a)
+        strArgs = _g
+        _g21 = 0
+        _g11 = len(strArgs)
+        while (_g21 < _g11):
+            i = _g21
+            _g21 = (_g21 + 1)
+            _this1 = (strArgs[i] if i >= 0 and i < len(strArgs) else None)
+            t = _this1.split("=")
+            args.append(_hx_AnonObject({'id': (t[0] if 0 < len(t) else None), 'type': "Dynamic", 'doc': "", 'val': (t[1] if 1 < len(t) else None)}))
+        _g12 = 0
+        _g22 = node.children
+        while (_g12 < len(_g22)):
+            l = (_g22[_g12] if _g12 >= 0 and _g12 < len(_g22) else None)
+            _g12 = (_g12 + 1)
+            _this2 = self.argReg
+            _this2.matchObj = python_lib_Re.search(_this2.pattern,l.line)
+            if (_this2.matchObj is not None):
+                def _hx_local_3(a1):
+                    return (a1.id == _gthis.argReg.matchObj.group(1))
+                arg = Lambda.find(args,_hx_local_3)
+                arg.doc = self.argReg.matchObj.group(2)
+                _g3 = 0
+                _g4 = l.children
+                while (_g3 < len(_g4)):
+                    sl = (_g4[_g3] if _g3 >= 0 and _g3 < len(_g4) else None)
+                    _g3 = (_g3 + 1)
                     arg.doc = (HxOverrides.stringOrNull(arg.doc) + HxOverrides.stringOrNull(((" " + HxOverrides.stringOrNull(sl.line)))))
                 arg.doc = StringTools.trim(arg.doc)
             else:
-                _this2 = self.typeReg
-                _this2.matchObj = python_lib_Re.search(_this2.pattern,l.line)
-                if (_this2.matchObj is not None):
-                    if ((arg is None) or ((arg.id != self.typeReg.matchObj.group(1)))):
-                        if (arg is not None):
-                            args.append(arg)
-                        arg = _hx_AnonObject({'id': self.typeReg.matchObj.group(1), 'type': self.typeReg.matchObj.group(2), 'doc': ""})
-                    else:
-                        arg.type = self.typeReg.matchObj.group(2)
-                else:
-                    if (arg is not None):
-                        args.append(arg)
-                        arg = None
-                    _this3 = self.rtypeReg
-                    _this3.matchObj = python_lib_Re.search(_this3.pattern,l.line)
-                    if (_this3.matchObj is not None):
-                        rtype = self.rtypeReg.matchObj.group(1)
-                    else:
-                        _this4 = l.line
-                        if ((("" if ((0 >= len(_this4))) else _this4[0])) != ":"):
-                            doc = (("null" if doc is None else doc) + HxOverrides.stringOrNull(((" " + HxOverrides.stringOrNull(l.line)))))
-        if (arg is not None):
-            args.append(arg)
+                _this3 = self.typeReg
+                _this3.matchObj = python_lib_Re.search(_this3.pattern,l.line)
+                if (_this3.matchObj is not None):
+                    def _hx_local_6(a2):
+                        return (a2.id == _gthis.typeReg.matchObj.group(1))
+                    arg1 = Lambda.find(args,_hx_local_6)
+                    arg1.type = self.typeReg.matchObj.group(2)
+            _this4 = self.rtypeReg
+            _this4.matchObj = python_lib_Re.search(_this4.pattern,l.line)
+            if (_this4.matchObj is not None):
+                rtype = self.rtypeReg.matchObj.group(1)
+            else:
+                _this5 = l.line
+                if ((("" if ((0 >= len(_this5))) else _this5[0])) != ":"):
+                    doc = (("null" if doc is None else doc) + HxOverrides.stringOrNull(((" " + HxOverrides.stringOrNull(l.line)))))
         return _hx_AnonObject({'name': funcname, 'method': method, 'doc': StringTools.trim(doc), 'args': args, 'rtype': rtype})
 
     def makeAttr(self,node):
@@ -356,6 +407,22 @@ class Generator:
         Generator()
 
 Generator._hx_class = Generator
+
+
+class Lambda:
+    _hx_class_name = "Lambda"
+    __slots__ = ()
+    _hx_statics = ["find"]
+
+    @staticmethod
+    def find(it,f):
+        v = HxOverrides.iterator(it)
+        while v.hasNext():
+            v1 = v.next()
+            if f(v1):
+                return v1
+        return None
+Lambda._hx_class = Lambda
 
 
 class Reflect:
@@ -1391,7 +1458,13 @@ _HxException._hx_class = _HxException
 class HxOverrides:
     _hx_class_name = "HxOverrides"
     __slots__ = ()
-    _hx_statics = ["eq", "stringOrNull"]
+    _hx_statics = ["iterator", "eq", "stringOrNull"]
+
+    @staticmethod
+    def iterator(x):
+        if isinstance(x,list):
+            return python_HaxeIterator(x.__iter__())
+        return x.iterator()
 
     @staticmethod
     def eq(a,b):
