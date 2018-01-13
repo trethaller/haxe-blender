@@ -157,8 +157,7 @@ class Generator:
         self.moduleReg = EReg("\\.\\. module:: ([\\w\\.]+)","")
         self.indentReg = EReg("^[ ]+","")
         docDir = "C:/Users/Tom/Downloads/blender-2.79.tar/blender-2.79/doc/python_api/sphinx-in/"
-        self.processFile((("null" if docDir is None else docDir) + "bpy.types.IMAGE_UV_sculpt.rst"))
-        self.processFile((("null" if docDir is None else docDir) + "blf.rst"))
+        self.processFile((("null" if docDir is None else docDir) + "bpy.types.Object.rst"))
         output = haxe_format_JsonPrinter.print(self.allModules,None,"  ")
         sys_io_File.saveContent("output.json",output)
 
@@ -213,23 +212,28 @@ class Generator:
             if (_this1.matchObj is not None):
                 if (arg is not None):
                     args.append(arg)
-                arg = _hx_AnonObject({'id': "", 'type': "", 'doc': ""})
-                arg.id = self.argReg.matchObj.group(1)
-                arg.doc = StringTools.trim(self.argReg.matchObj.group(2))
+                arg = _hx_AnonObject({'id': self.argReg.matchObj.group(1), 'type': "", 'doc': self.argReg.matchObj.group(2)})
                 _g2 = 0
                 _g3 = l.children
                 while (_g2 < len(_g3)):
                     sl = (_g3[_g2] if _g2 >= 0 and _g2 < len(_g3) else None)
                     _g2 = (_g2 + 1)
                     arg.doc = (HxOverrides.stringOrNull(arg.doc) + HxOverrides.stringOrNull(((" " + HxOverrides.stringOrNull(sl.line)))))
+                arg.doc = StringTools.trim(arg.doc)
             else:
                 _this2 = self.typeReg
                 _this2.matchObj = python_lib_Re.search(_this2.pattern,l.line)
                 if (_this2.matchObj is not None):
-                    if (arg.id != self.typeReg.matchObj.group(1)):
-                        raise _HxException(None)
-                    arg.type = self.typeReg.matchObj.group(2)
+                    if ((arg is None) or ((arg.id != self.typeReg.matchObj.group(1)))):
+                        if (arg is not None):
+                            args.append(arg)
+                        arg = _hx_AnonObject({'id': self.typeReg.matchObj.group(1), 'type': self.typeReg.matchObj.group(2), 'doc': ""})
+                    else:
+                        arg.type = self.typeReg.matchObj.group(2)
                 else:
+                    if (arg is not None):
+                        args.append(arg)
+                        arg = None
                     _this3 = self.rtypeReg
                     _this3.matchObj = python_lib_Re.search(_this3.pattern,l.line)
                     if (_this3.matchObj is not None):
@@ -238,6 +242,8 @@ class Generator:
                         _this4 = l.line
                         if ((("" if ((0 >= len(_this4))) else _this4[0])) != ":"):
                             doc = (("null" if doc is None else doc) + HxOverrides.stringOrNull(((" " + HxOverrides.stringOrNull(l.line)))))
+        if (arg is not None):
+            args.append(arg)
         return _hx_AnonObject({'name': funcname, 'method': method, 'doc': StringTools.trim(doc), 'args': args, 'rtype': rtype})
 
     def makeAttr(self,node):
