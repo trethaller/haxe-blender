@@ -140,23 +140,27 @@ EReg._hx_class = EReg
 
 class Generator:
     _hx_class_name = "Generator"
-    __slots__ = ("indentReg", "moduleReg", "attrReg", "funcReg", "classReg", "argReg", "typeReg", "rtypeReg", "attrTypeReg")
-    _hx_fields = ["indentReg", "moduleReg", "attrReg", "funcReg", "classReg", "argReg", "typeReg", "rtypeReg", "attrTypeReg"]
+    __slots__ = ("indentReg", "moduleReg", "attrReg", "funcReg", "classReg", "argReg", "typeReg", "rtypeReg", "attrTypeReg", "allModules")
+    _hx_fields = ["indentReg", "moduleReg", "attrReg", "funcReg", "classReg", "argReg", "typeReg", "rtypeReg", "attrTypeReg", "allModules"]
     _hx_methods = ["getIndent", "makeNodes", "makeFunc", "makeAttr", "makeClass", "processFile"]
     _hx_statics = ["main"]
 
     def __init__(self):
+        self.allModules = haxe_ds_StringMap()
         self.attrTypeReg = EReg(":type: (.+)","")
         self.rtypeReg = EReg(":rtype: (.+)","")
         self.typeReg = EReg(":type (\\w+): (.+)","")
         self.argReg = EReg(":arg (\\w+):(.*)","")
         self.classReg = EReg("\\.\\. class:: ([\\w\\.]+)(\\((\\w+)\\))?","")
-        self.funcReg = EReg("\\.\\. (function|method):: ([\\w\\.]+)","")
+        self.funcReg = EReg("\\.\\. (function|method|staticmethod):: ([\\w\\.]+)","")
         self.attrReg = EReg("\\.\\. (attribute|data):: ([\\w\\.]+)","")
         self.moduleReg = EReg("\\.\\. module:: ([\\w\\.]+)","")
         self.indentReg = EReg("^[ ]+","")
         docDir = "C:/Users/Tom/Downloads/blender-2.79.tar/blender-2.79/doc/python_api/sphinx-in/"
-        self.processFile((("null" if docDir is None else docDir) + "bmesh.types.rst"))
+        self.processFile((("null" if docDir is None else docDir) + "bpy.types.IMAGE_UV_sculpt.rst"))
+        self.processFile((("null" if docDir is None else docDir) + "blf.rst"))
+        output = haxe_format_JsonPrinter.print(self.allModules,None,"  ")
+        sys_io_File.saveContent("output.json",output)
 
     def getIndent(self,line):
         _this = self.indentReg
@@ -198,6 +202,7 @@ class Generator:
         arg = None
         args = []
         rtype = "Void"
+        method = (self.funcReg.matchObj.group(1) == "method")
         _g = 0
         _g1 = node.children
         while (_g < len(_g1)):
@@ -233,7 +238,7 @@ class Generator:
                         _this4 = l.line
                         if ((("" if ((0 >= len(_this4))) else _this4[0])) != ":"):
                             doc = (("null" if doc is None else doc) + HxOverrides.stringOrNull(((" " + HxOverrides.stringOrNull(l.line)))))
-        return _hx_AnonObject({'name': funcname, 'doc': StringTools.trim(doc), 'args': args, 'rtype': rtype})
+        return _hx_AnonObject({'name': funcname, 'method': method, 'doc': StringTools.trim(doc), 'args': args, 'rtype': rtype})
 
     def makeAttr(self,node):
         _this = self.attrReg
@@ -296,30 +301,49 @@ class Generator:
     def processFile(self,path):
         file = python_lib_Builtins.open(path,"r")
         lines = file.readlines()
-        module = ""
-        funcname = ""
+        moduleName = ""
         root = _hx_AnonObject({'line': "", 'children': []})
         self.makeNodes(root,lines,0,0)
         functions = []
+        globals = []
         classes = []
         _g = 0
         _g1 = root.children
         while (_g < len(_g1)):
-            top = (_g1[_g] if _g >= 0 and _g < len(_g1) else None)
+            n = (_g1[_g] if _g >= 0 and _g < len(_g1) else None)
             _g = (_g + 1)
             _this = self.moduleReg
-            _this.matchObj = python_lib_Re.search(_this.pattern,top.line)
+            _this.matchObj = python_lib_Re.search(_this.pattern,n.line)
             if (_this.matchObj is not None):
-                module = self.moduleReg.matchObj.group(1)
-            func = self.makeFunc(top)
+                moduleName = self.moduleReg.matchObj.group(1)
+            func = self.makeFunc(n)
             if (func is not None):
                 functions.append(func)
-            cls = self.makeClass(top)
+            cls = self.makeClass(n)
             if (cls is not None):
                 classes.append(cls)
-        out = _hx_AnonObject({'module': module, 'functions': functions, 'classes': classes})
-        output = haxe_format_JsonPrinter.print(out,None,"  ")
-        sys_io_File.saveContent("output.json",output)
+            _hx_global = self.makeAttr(n)
+            if (_hx_global is not None):
+                globals.append(_hx_global)
+        if (not (moduleName in self.allModules.h)):
+            self.allModules.h[moduleName] = _hx_AnonObject({'globals': globals, 'functions': functions, 'classes': classes})
+        else:
+            m = self.allModules.h.get(moduleName,None)
+            _g2 = 0
+            while (_g2 < len(globals)):
+                g = (globals[_g2] if _g2 >= 0 and _g2 < len(globals) else None)
+                _g2 = (_g2 + 1)
+                Reflect.field(Reflect.field(m,"globals"),"append")(g)
+            _g3 = 0
+            while (_g3 < len(functions)):
+                f = (functions[_g3] if _g3 >= 0 and _g3 < len(functions) else None)
+                _g3 = (_g3 + 1)
+                Reflect.field(Reflect.field(m,"functions"),"append")(f)
+            _g4 = 0
+            while (_g4 < len(classes)):
+                c = (classes[_g4] if _g4 >= 0 and _g4 < len(classes) else None)
+                _g4 = (_g4 + 1)
+                Reflect.field(Reflect.field(m,"classes"),"append")(c)
 
     @staticmethod
     def main():
