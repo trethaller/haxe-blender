@@ -5,9 +5,11 @@ from datetime import datetime as python_lib_datetime_Datetime
 from datetime import timezone as python_lib_datetime_Timezone
 import math as python_lib_Math
 import math as Math
+from os import path as python_lib_os_Path
+import inspect as python_lib_Inspect
+import os as python_lib_Os
 import builtins as python_lib_Builtins
 import functools as python_lib_Functools
-import inspect as python_lib_Inspect
 import random as python_lib_Random
 import re as python_lib_Re
 from io import StringIO as python_lib_io_StringIO
@@ -171,13 +173,14 @@ EReg._hx_class = EReg
 
 class Generator:
     _hx_class_name = "Generator"
-    __slots__ = ("indentReg", "moduleReg", "attrReg", "funcReg", "classReg", "argReg", "typeReg", "rtypeReg", "attrTypeReg", "classTypeReg", "fixedArrayTypeReg", "allModules")
-    _hx_fields = ["indentReg", "moduleReg", "attrReg", "funcReg", "classReg", "argReg", "typeReg", "rtypeReg", "attrTypeReg", "classTypeReg", "fixedArrayTypeReg", "allModules"]
-    _hx_methods = ["getIndent", "makeNodes", "fixValue", "fixType", "makeFunc", "makeAttr", "makeClass", "processFile"]
-    _hx_statics = ["collectionsMap", "main"]
+    __slots__ = ("specialMathValueClasses", "indentReg", "moduleReg", "attrReg", "funcReg", "classReg", "argReg", "typeReg", "rtypeReg", "attrTypeReg", "classTypeReg", "fixedArrayTypeReg", "quotesReg", "allModules")
+    _hx_fields = ["specialMathValueClasses", "indentReg", "moduleReg", "attrReg", "funcReg", "classReg", "argReg", "typeReg", "rtypeReg", "attrTypeReg", "classTypeReg", "fixedArrayTypeReg", "quotesReg", "allModules"]
+    _hx_methods = ["getIndent", "makeNodes", "makeValue", "makeType", "makeFunc", "makeAttr", "makeClass", "processFile", "createType", "writeTypes"]
+    _hx_statics = ["collectionsMap", "isHxKeyword", "lowerCaseFirstLetter", "upperCaseFirstLetter", "main"]
 
     def __init__(self):
         self.allModules = haxe_ds_StringMap()
+        self.quotesReg = EReg("^[\"'](.*)[\"']$","")
         self.fixedArrayTypeReg = EReg("(string|boolean|float|int) array of ([0-9]+) items","")
         self.classTypeReg = EReg("class:`(.+)`","")
         self.attrTypeReg = EReg(":type: (.+)","")
@@ -189,6 +192,7 @@ class Generator:
         self.attrReg = EReg("\\.\\. (attribute|data):: ([\\w\\.]+)","")
         self.moduleReg = EReg("\\.\\. module:: ([\\w\\.]+)","")
         self.indentReg = EReg("^[ ]+","")
+        self.specialMathValueClasses = ["Color", "Euler", "Matrix", "Quaternion", "Vector"]
         docDir = "C:/Users/Tom/Downloads/blender-2.79.tar/blender-2.79/doc/python_api/sphinx-in/"
         files = ["bmesh.types.rst", "bpy.types.Object.rst", "bpy.types.BlendDataParticles.rst", "bpy.types.IMAGE_UV_sculpt.rst", "bpy.ops.armature.rst", "mathutils.rst", "blf.rst", "bpy.ops.nla.rst", "bmesh.types.rst"]
         _g = 0
@@ -196,6 +200,10 @@ class Generator:
             fname = (files[_g] if _g >= 0 and _g < len(files) else None)
             _g = (_g + 1)
             self.processFile((("null" if docDir is None else docDir) + ("null" if fname is None else fname)))
+        outDir = "out"
+        if sys_FileSystem.exists(outDir):
+            sys_FileSystem.deleteDirectory(outDir)
+        self.writeTypes(outDir)
         output = haxe_format_JsonPrinter.print(self.allModules,None,"  ")
         sys_io_File.saveContent("output.json",output)
 
@@ -229,89 +237,112 @@ class Generator:
                 break
         return index
 
-    def fixValue(self,val):
+    def makeValue(self,val):
         if (val is None):
             return None
         val1 = val
         _hx_local_0 = len(val1)
         if (_hx_local_0 == 5):
             if (val1 == "False"):
-                return False
+                return _hx_AnonObject({'expr': haxe_macro_ExprDef.EConst(haxe_macro_Constant.CIdent("false")), 'pos': _hx_AnonObject({'file': "src/Generator.hx", 'min': 3396, 'max': 3401})})
             else:
                 v = val
                 if (Std.parseInt(v) is not None):
-                    return Std.parseInt(v)
+                    return _hx_AnonObject({'expr': haxe_macro_ExprDef.EConst(haxe_macro_Constant.CInt(val)), 'pos': None})
                 else:
                     v1 = val
                     if (not python_lib_Math.isnan(Std.parseFloat(v1))):
-                        return Std.parseFloat(v1)
+                        return _hx_AnonObject({'expr': haxe_macro_ExprDef.EConst(haxe_macro_Constant.CFloat(val)), 'pos': None})
                     else:
-                        return val
+                        v2 = val
+                        _this = self.quotesReg
+                        _this.matchObj = python_lib_Re.search(_this.pattern,v2)
+                        if (_this.matchObj is not None):
+                            return _hx_AnonObject({'expr': haxe_macro_ExprDef.EConst(haxe_macro_Constant.CString(self.quotesReg.matchObj.group(1))), 'pos': None})
+                        else:
+                            return None
         elif (_hx_local_0 == 4):
             if (val1 == "None"):
-                return "None"
+                return _hx_AnonObject({'expr': haxe_macro_ExprDef.EConst(haxe_macro_Constant.CIdent("null")), 'pos': _hx_AnonObject({'file': "src/Generator.hx", 'min': 3426, 'max': 3430})})
             elif (val1 == "True"):
-                return True
+                return _hx_AnonObject({'expr': haxe_macro_ExprDef.EConst(haxe_macro_Constant.CIdent("true")), 'pos': _hx_AnonObject({'file': "src/Generator.hx", 'min': 3366, 'max': 3370})})
             elif (val1 == "null"):
-                return "None"
+                return _hx_AnonObject({'expr': haxe_macro_ExprDef.EConst(haxe_macro_Constant.CIdent("null")), 'pos': _hx_AnonObject({'file': "src/Generator.hx", 'min': 3455, 'max': 3459})})
             else:
                 v = val
                 if (Std.parseInt(v) is not None):
-                    return Std.parseInt(v)
+                    return _hx_AnonObject({'expr': haxe_macro_ExprDef.EConst(haxe_macro_Constant.CInt(val)), 'pos': None})
                 else:
                     v1 = val
                     if (not python_lib_Math.isnan(Std.parseFloat(v1))):
-                        return Std.parseFloat(v1)
+                        return _hx_AnonObject({'expr': haxe_macro_ExprDef.EConst(haxe_macro_Constant.CFloat(val)), 'pos': None})
                     else:
-                        return val
+                        v2 = val
+                        _this = self.quotesReg
+                        _this.matchObj = python_lib_Re.search(_this.pattern,v2)
+                        if (_this.matchObj is not None):
+                            return _hx_AnonObject({'expr': haxe_macro_ExprDef.EConst(haxe_macro_Constant.CString(self.quotesReg.matchObj.group(1))), 'pos': None})
+                        else:
+                            return None
         else:
             v = val
             if (Std.parseInt(v) is not None):
-                return Std.parseInt(v)
+                return _hx_AnonObject({'expr': haxe_macro_ExprDef.EConst(haxe_macro_Constant.CInt(val)), 'pos': None})
             else:
                 v1 = val
                 if (not python_lib_Math.isnan(Std.parseFloat(v1))):
-                    return Std.parseFloat(v1)
+                    return _hx_AnonObject({'expr': haxe_macro_ExprDef.EConst(haxe_macro_Constant.CFloat(val)), 'pos': None})
                 else:
-                    return val
+                    v2 = val
+                    _this = self.quotesReg
+                    _this.matchObj = python_lib_Re.search(_this.pattern,v2)
+                    if (_this.matchObj is not None):
+                        return _hx_AnonObject({'expr': haxe_macro_ExprDef.EConst(haxe_macro_Constant.CString(self.quotesReg.matchObj.group(1))), 'pos': None})
+                    else:
+                        return None
 
-    def fixType(self,name,intype):
+    def makeType(self,name,intype):
         _this = self.fixedArrayTypeReg
         _this.matchObj = python_lib_Re.search(_this.pattern,intype)
         if (_this.matchObj is not None):
             t = self.fixedArrayTypeReg.matchObj.group(1)
             num = Std.parseInt(self.fixedArrayTypeReg.matchObj.group(2))
             if (t == "float"):
-                if (num == 3):
-                    return "mathutils.Vector"
-                elif (num == 4):
-                    return "mathutils.Quaternion"
-                elif (num == 16):
-                    return "mathutils.Matrix"
+                if (num is None):
+                    return haxe_macro_ComplexType.TPath(_hx_AnonObject({'pack': [], 'name': "Array", 'params': [haxe_macro_TypeParam.TPType(haxe_macro_ComplexType.TPath(_hx_AnonObject({'pack': [], 'name': "Float", 'params': []})))]}))
                 else:
-                    return "Array<Float>"
+                    num1 = num
+                    if (num1 == 3):
+                        return haxe_macro_ComplexType.TPath(_hx_AnonObject({'pack': ["mathutils"], 'name': "Vector", 'params': []}))
+                    elif (num1 == 4):
+                        return haxe_macro_ComplexType.TPath(_hx_AnonObject({'pack': ["mathutils"], 'name': "Quaternion", 'params': []}))
+                    elif (num1 == 16):
+                        return haxe_macro_ComplexType.TPath(_hx_AnonObject({'pack': ["mathutils"], 'name': "Matrix", 'params': []}))
+                    else:
+                        return haxe_macro_ComplexType.TPath(_hx_AnonObject({'pack': [], 'name': "Array", 'params': [haxe_macro_TypeParam.TPType(haxe_macro_ComplexType.TPath(_hx_AnonObject({'pack': [], 'name': "Float", 'params': []})))]}))
             elif (t == "int"):
-                return "Array<Int>"
+                return haxe_macro_ComplexType.TPath(_hx_AnonObject({'pack': [], 'name': "Array", 'params': [haxe_macro_TypeParam.TPType(haxe_macro_ComplexType.TPath(_hx_AnonObject({'pack': [], 'name': "Int", 'params': []})))]}))
             elif (t == "boolean"):
-                return "Array<Bool>"
+                return haxe_macro_ComplexType.TPath(_hx_AnonObject({'pack': [], 'name': "Array", 'params': [haxe_macro_TypeParam.TPType(haxe_macro_ComplexType.TPath(_hx_AnonObject({'pack': [], 'name': "Bool", 'params': []})))]}))
             elif (t == "string"):
-                return "Array<String>"
+                return haxe_macro_ComplexType.TPath(_hx_AnonObject({'pack': [], 'name': "Array", 'params': [haxe_macro_TypeParam.TPType(haxe_macro_ComplexType.TPath(_hx_AnonObject({'pack': [], 'name': "String", 'params': []})))]}))
         elif intype.startswith("enum"):
-            return "String"
+            return haxe_macro_ComplexType.TPath(_hx_AnonObject({'pack': [], 'name': "String", 'params': []}))
         elif intype.startswith("string"):
-            return "String"
+            return haxe_macro_ComplexType.TPath(_hx_AnonObject({'pack': [], 'name': "String", 'params': []}))
         elif intype.startswith("int"):
-            return "Int"
+            return haxe_macro_ComplexType.TPath(_hx_AnonObject({'pack': [], 'name': "Int", 'params': []}))
         elif intype.startswith("float"):
-            return "Float"
+            return haxe_macro_ComplexType.TPath(_hx_AnonObject({'pack': [], 'name': "Float", 'params': []}))
         elif intype.startswith("boolean"):
-            return "Bool"
+            return haxe_macro_ComplexType.TPath(_hx_AnonObject({'pack': [], 'name': "Bool", 'params': []}))
         else:
             _this1 = self.classTypeReg
             _this1.matchObj = python_lib_Re.search(_this1.pattern,intype)
             if (_this1.matchObj is not None):
-                return self.classTypeReg.matchObj.group(1)
-        return "Dynamic"
+                className = self.classTypeReg.matchObj.group(1)
+                return haxe_macro_ComplexType.TPath(_hx_AnonObject({'pack': [], 'name': className}))
+        return haxe_macro_ComplexType.TPath(_hx_AnonObject({'pack': [], 'name': "Dynamic", 'params': []}))
 
     def makeFunc(self,node):
         _gthis = self
@@ -322,7 +353,7 @@ class Generator:
         funcname = self.funcReg.matchObj.group(2)
         doc = ""
         args = []
-        rtype = "Void"
+        rtype = haxe_macro_ComplexType.TPath(_hx_AnonObject({'pack': [], 'name': "Void", 'params': []}))
         isstatic = (self.funcReg.matchObj.group(1) == "staticmethod")
         argstr = self.funcReg.matchObj.group(3)
         argValsReg = EReg("\\(([^)]+)\\)","g")
@@ -345,8 +376,10 @@ class Generator:
             _g21 = (_g21 + 1)
             _this1 = (strArgs[i] if i >= 0 and i < len(strArgs) else None)
             t = _this1.split("=")
-            x = _hx_AnonObject({'id': (t[0] if 0 < len(t) else None), 'type': "Dynamic", 'doc': "", 'val': self.fixValue((t[1] if 1 < len(t) else None))})
-            args.append(x)
+            t1 = (t[0] if 0 < len(t) else None)
+            x = (len(t) > 1)
+            x1 = (self.makeValue((t[1] if 1 < len(t) else None)) if ((len(t) > 0)) else None)
+            args.append(_hx_AnonObject({'name': t1, 'type': haxe_macro_ComplexType.TPath(_hx_AnonObject({'pack': [], 'name': "Dynamic", 'params': []})), 'opt': x, 'value': x1}))
         _g12 = 0
         _g22 = node.children
         while (_g12 < len(_g22)):
@@ -354,40 +387,26 @@ class Generator:
             _g12 = (_g12 + 1)
             _this2 = self.argReg
             _this2.matchObj = python_lib_Re.search(_this2.pattern,l.line)
-            if (_this2.matchObj is not None):
-                def _hx_local_3(a1):
-                    return (a1.id == _gthis.argReg.matchObj.group(1))
-                arg = Lambda.find(args,_hx_local_3)
-                arg.doc = self.argReg.matchObj.group(2)
-                _g3 = 0
-                _g4 = l.children
-                while (_g3 < len(_g4)):
-                    sl = (_g4[_g3] if _g3 >= 0 and _g3 < len(_g4) else None)
-                    _g3 = (_g3 + 1)
-                    arg.doc = (HxOverrides.stringOrNull(arg.doc) + HxOverrides.stringOrNull(((" " + HxOverrides.stringOrNull(sl.line)))))
-                arg.doc = StringTools.trim(arg.doc)
-            else:
+            if (_this2.matchObj is None):
                 _this3 = self.typeReg
                 _this3.matchObj = python_lib_Re.search(_this3.pattern,l.line)
                 if (_this3.matchObj is not None):
-                    def _hx_local_6(a2):
-                        return (a2.id == _gthis.typeReg.matchObj.group(1))
-                    arg1 = Lambda.find(args,_hx_local_6)
-                    arg1.type = self.typeReg.matchObj.group(2)
+                    def _hx_local_3(a1):
+                        return (a1.name == _gthis.typeReg.matchObj.group(1))
+                    arg = Lambda.find(args,_hx_local_3)
+                    arg.type = self.makeType(arg.name,self.typeReg.matchObj.group(2))
             _this4 = self.rtypeReg
             _this4.matchObj = python_lib_Re.search(_this4.pattern,l.line)
             if (_this4.matchObj is not None):
-                rtype = self.rtypeReg.matchObj.group(1)
+                rtype = self.makeType(None,self.rtypeReg.matchObj.group(1))
             else:
                 _this5 = l.line
                 if ((("" if ((0 >= len(_this5))) else _this5[0])) != ":"):
                     doc = (("null" if doc is None else doc) + HxOverrides.stringOrNull(((" " + HxOverrides.stringOrNull(l.line)))))
-        _g13 = 0
-        while (_g13 < len(args)):
-            arg2 = (args[_g13] if _g13 >= 0 and _g13 < len(args) else None)
-            _g13 = (_g13 + 1)
-            arg2.type = self.fixType(arg2.id,arg2.type)
-        return _hx_AnonObject({'name': funcname, 'stat': isstatic, 'doc': StringTools.trim(doc), 'args': args, 'rtype': self.fixType(None,rtype)})
+        access = [haxe_macro_Access.APublic]
+        if isstatic:
+            access.append(haxe_macro_Access.AStatic)
+        return _hx_AnonObject({'name': funcname, 'access': access, 'pos': None, 'doc': doc, 'kind': haxe_macro_FieldType.FFun(_hx_AnonObject({'args': args, 'expr': None, 'params': [], 'ret': rtype}))})
 
     def makeAttr(self,node):
         _this = self.attrReg
@@ -395,7 +414,9 @@ class Generator:
         if (_this.matchObj is None):
             return None
         attrname = self.attrReg.matchObj.group(2)
-        ret = _hx_AnonObject({'name': attrname, 'doc': "", 'type': "Dynamic", 'readonly': False})
+        doc = ""
+        _hx_type = None
+        readonly = False
         _g = 0
         _g1 = node.children
         while (_g < len(_g1)):
@@ -406,19 +427,17 @@ class Generator:
             _this2 = self.attrTypeReg
             _this2.matchObj = python_lib_Re.search(_this2.pattern,l.line)
             if (_this2.matchObj is not None):
-                ret.type = self.attrTypeReg.matchObj.group(1)
+                typeStr = self.attrTypeReg.matchObj.group(1)
+                _hx_type = self.makeType(None,self.attrTypeReg.matchObj.group(1))
+                if (typeStr.find("(readonly)") > 0):
+                    readonly = True
             elif (c != "*"):
-                ret.doc = (HxOverrides.stringOrNull(ret.doc) + HxOverrides.stringOrNull(((" " + HxOverrides.stringOrNull(l.line)))))
-        tmp = None
-        if (self.attrReg.matchObj.group(1) != "data"):
-            _this3 = ret.type
-            tmp = (_this3.find("(readonly)") > 0)
-        else:
-            tmp = True
-        ret.readonly = tmp
-        ret.doc = StringTools.trim(ret.doc)
-        ret.type = self.fixType(ret.name,ret.type)
-        return ret
+                doc = (("null" if doc is None else doc) + HxOverrides.stringOrNull(((" " + HxOverrides.stringOrNull(l.line)))))
+        if (self.attrReg.matchObj.group(1) == "data"):
+            readonly = True
+        doc = StringTools.trim(doc)
+        access = [haxe_macro_Access.APublic]
+        return _hx_AnonObject({'name': attrname, 'access': access, 'doc': doc, 'pos': None, 'kind': haxe_macro_FieldType.FVar(_hx_type)})
 
     def makeClass(self,node):
         _this = self.classReg
@@ -427,6 +446,9 @@ class Generator:
             return None
         classname = self.classReg.matchObj.group(1)
         baseclass = self.classReg.matchObj.group(3)
+        if (python_internal_ArrayImpl.indexOf(self.specialMathValueClasses,classname,None) > 0):
+            baseclass = None
+            classname = (("null" if classname is None else classname) + "Base")
         if (classname in Generator.collectionsMap.h):
             baseclass = (("Collection<" + HxOverrides.stringOrNull(Generator.collectionsMap.h.get(classname,None))) + ">")
         ret = _hx_AnonObject({'name': classname, 'base': baseclass, 'doc': "", 'methods': [], 'attrs': []})
@@ -470,13 +492,17 @@ class Generator:
                 moduleName = self.moduleReg.matchObj.group(1)
             func = self.makeFunc(n)
             if (func is not None):
+                _this1 = Reflect.field(func,"access")
+                _this1.append(haxe_macro_Access.AStatic)
                 functions.append(func)
+            _hx_global = self.makeAttr(n)
+            if (_hx_global is not None):
+                _this2 = Reflect.field(_hx_global,"access")
+                _this2.append(haxe_macro_Access.AStatic)
+                globals.append(_hx_global)
             cls = self.makeClass(n)
             if (cls is not None):
                 classes.append(cls)
-            _hx_global = self.makeAttr(n)
-            if (_hx_global is not None):
-                globals.append(_hx_global)
         if (not (moduleName in self.allModules.h)):
             self.allModules.h[moduleName] = _hx_AnonObject({'globals': globals, 'functions': functions, 'classes': classes})
         else:
@@ -485,17 +511,76 @@ class Generator:
             while (_g2 < len(globals)):
                 g = (globals[_g2] if _g2 >= 0 and _g2 < len(globals) else None)
                 _g2 = (_g2 + 1)
-                Reflect.field(Reflect.field(m,"globals"),"append")(g)
+                _this3 = m.globals
+                _this3.append(g)
             _g3 = 0
             while (_g3 < len(functions)):
                 f = (functions[_g3] if _g3 >= 0 and _g3 < len(functions) else None)
                 _g3 = (_g3 + 1)
-                Reflect.field(Reflect.field(m,"functions"),"append")(f)
+                _this4 = m.functions
+                _this4.append(f)
             _g4 = 0
             while (_g4 < len(classes)):
                 c = (classes[_g4] if _g4 >= 0 and _g4 < len(classes) else None)
                 _g4 = (_g4 + 1)
-                Reflect.field(Reflect.field(m,"classes"),"append")(c)
+                _this5 = m.classes
+                _this5.append(c)
+
+    def createType(self,modname,module):
+        if ((len(module.functions) == 0) and ((len(module.globals) == 0))):
+            return None
+        _g = []
+        _g1 = 0
+        _g2 = modname.split(".")
+        while (_g1 < len(_g2)):
+            p = (_g2[_g1] if _g1 >= 0 and _g1 < len(_g2) else None)
+            _g1 = (_g1 + 1)
+            p = Generator.lowerCaseFirstLetter(p)
+            if Generator.isHxKeyword(p):
+                p = ("_" + ("null" if p is None else p))
+            _g.append(p)
+        pack = _g
+        fields = []
+        _g11 = 0
+        _g21 = module.functions
+        while (_g11 < len(_g21)):
+            func = (_g21[_g11] if _g11 >= 0 and _g11 < len(_g21) else None)
+            _g11 = (_g11 + 1)
+            fields.append(func)
+        modName = Generator.upperCaseFirstLetter((None if ((len(pack) == 0)) else pack.pop()))
+        return _hx_AnonObject({'pack': pack, 'name': modName, 'pos': None, 'meta': [_hx_AnonObject({'name': ":pythonImport", 'params': [_hx_AnonObject({'expr': haxe_macro_ExprDef.EConst(haxe_macro_Constant.CString(modname)), 'pos': None})], 'pos': None})], 'params': [], 'isExtern': True, 'kind': haxe_macro_TypeDefKind.TDClass(), 'fields': fields})
+
+    def writeTypes(self,path):
+        printer = haxe_macro_Printer()
+        out = sys_io_File.write("temp.hx",False)
+        modname = self.allModules.keys()
+        while modname.hasNext():
+            modname1 = modname.next()
+            module = self.allModules.h.get(modname1,None)
+            td = self.createType(modname1,module)
+            if (td is not None):
+                out.writeString(printer.printTypeDefinition(td))
+        out.close()
+
+    @staticmethod
+    def isHxKeyword(name):
+        return (python_internal_ArrayImpl.indexOf(["function", "class", "static", "var", "if", "else", "while", "do", "for", "break", "return", "continue", "extends", "implements", "import", "switch", "case", "default", "public", "private", "try", "untyped", "catch", "new", "this", "throw", "extern", "enum", "in", "interface", "cast", "override", "dynamic", "typedef", "package", "inline", "using", "null", "true", "false", "abstract", "macro", "__init__"],name,None) >= 0)
+
+    @staticmethod
+    def lowerCaseFirstLetter(_hx_str):
+        re_letter = EReg("[A-Za-z]","")
+        re_letter.matchObj = python_lib_Re.search(re_letter.pattern,_hx_str)
+        if (re_letter.matchObj is None):
+            raise _HxException(("no letter in " + ("null" if _hx_str is None else _hx_str)))
+        return ((HxOverrides.stringOrNull(HxString.substr(re_letter.matchObj.string,0,re_letter.matchObj.start())) + HxOverrides.stringOrNull(re_letter.matchObj.group(0).lower())) + HxOverrides.stringOrNull(HxString.substr(re_letter.matchObj.string,re_letter.matchObj.end(),None)))
+
+    @staticmethod
+    def upperCaseFirstLetter(_hx_str):
+        re_letter = EReg("[A-Za-z]","")
+        re_letter.matchObj = python_lib_Re.search(re_letter.pattern,_hx_str)
+        if (re_letter.matchObj is None):
+            raise _HxException(("no letter in " + ("null" if _hx_str is None else _hx_str)))
+        return ((HxOverrides.stringOrNull(HxString.substr(re_letter.matchObj.string,0,re_letter.matchObj.start())) + HxOverrides.stringOrNull(re_letter.matchObj.group(0).upper())) + HxOverrides.stringOrNull(HxString.substr(re_letter.matchObj.string,re_letter.matchObj.end(),None)))
 
     @staticmethod
     def main():
@@ -629,7 +714,7 @@ StringBuf._hx_class = StringBuf
 class StringTools:
     _hx_class_name = "StringTools"
     __slots__ = ()
-    _hx_statics = ["isSpace", "ltrim", "rtrim", "trim", "lpad"]
+    _hx_statics = ["isSpace", "ltrim", "rtrim", "trim", "lpad", "replace"]
 
     @staticmethod
     def isSpace(s,pos):
@@ -674,7 +759,85 @@ class StringTools:
         while (len(s) < l):
             s = (("null" if c is None else c) + ("null" if s is None else s))
         return s
+
+    @staticmethod
+    def replace(s,sub,by):
+        _this = (list(s) if ((sub == "")) else s.split(sub))
+        return by.join([python_Boot.toString1(x1,'') for x1 in _this])
 StringTools._hx_class = StringTools
+
+
+class sys_FileSystem:
+    _hx_class_name = "sys.FileSystem"
+    __slots__ = ()
+    _hx_statics = ["exists", "deleteDirectory"]
+
+    @staticmethod
+    def exists(path):
+        return python_lib_os_Path.exists(path)
+
+    @staticmethod
+    def deleteDirectory(path):
+        python_lib_Os.rmdir(path)
+sys_FileSystem._hx_class = sys_FileSystem
+
+
+class haxe_IMap:
+    _hx_class_name = "haxe.IMap"
+    __slots__ = ()
+haxe_IMap._hx_class = haxe_IMap
+
+
+class haxe_ds_StringMap:
+    _hx_class_name = "haxe.ds.StringMap"
+    __slots__ = ("h",)
+    _hx_fields = ["h"]
+    _hx_methods = ["keys"]
+
+    def __init__(self):
+        self.h = dict()
+
+    def keys(self):
+        return python_HaxeIterator(iter(self.h.keys()))
+
+haxe_ds_StringMap._hx_class = haxe_ds_StringMap
+
+
+class python_HaxeIterator:
+    _hx_class_name = "python.HaxeIterator"
+    __slots__ = ("it", "x", "has", "checked")
+    _hx_fields = ["it", "x", "has", "checked"]
+    _hx_methods = ["next", "hasNext"]
+
+    def __init__(self,it):
+        self.checked = False
+        self.has = False
+        self.x = None
+        self.it = it
+
+    def next(self):
+        if (not self.checked):
+            self.hasNext()
+        self.checked = False
+        return self.x
+
+    def hasNext(self):
+        if (not self.checked):
+            try:
+                self.x = self.it.__next__()
+                self.has = True
+            except Exception as _hx_e:
+                _hx_e1 = _hx_e.val if isinstance(_hx_e, _HxException) else _hx_e
+                if isinstance(_hx_e1, StopIteration):
+                    s = _hx_e1
+                    self.has = False
+                    self.x = None
+                else:
+                    raise _hx_e
+            self.checked = True
+        return self.has
+
+python_HaxeIterator._hx_class = python_HaxeIterator
 
 class ValueType(Enum):
     __slots__ = ()
@@ -727,27 +890,6 @@ class Type:
         else:
             return ValueType.TUnknown
 Type._hx_class = Type
-
-
-class haxe_IMap:
-    _hx_class_name = "haxe.IMap"
-    __slots__ = ()
-haxe_IMap._hx_class = haxe_IMap
-
-
-class haxe_ds_StringMap:
-    _hx_class_name = "haxe.ds.StringMap"
-    __slots__ = ("h",)
-    _hx_fields = ["h"]
-    _hx_methods = ["keys"]
-
-    def __init__(self):
-        self.h = dict()
-
-    def keys(self):
-        return python_HaxeIterator(iter(self.h.keys()))
-
-haxe_ds_StringMap._hx_class = haxe_ds_StringMap
 
 
 class haxe_format_JsonPrinter:
@@ -970,6 +1112,24 @@ class haxe_format_JsonPrinter:
 haxe_format_JsonPrinter._hx_class = haxe_format_JsonPrinter
 
 
+class haxe_io_Bytes:
+    _hx_class_name = "haxe.io.Bytes"
+    __slots__ = ("length", "b")
+    _hx_fields = ["length", "b"]
+    _hx_statics = ["ofString"]
+
+    def __init__(self,length,b):
+        self.length = length
+        self.b = b
+
+    @staticmethod
+    def ofString(s):
+        b = bytearray(s,"UTF-8")
+        return haxe_io_Bytes(len(b),b)
+
+haxe_io_Bytes._hx_class = haxe_io_Bytes
+
+
 class haxe_io_BytesBuffer:
     _hx_class_name = "haxe.io.BytesBuffer"
     __slots__ = ("b",)
@@ -979,6 +1139,18 @@ class haxe_io_BytesBuffer:
         self.b = list()
 
 haxe_io_BytesBuffer._hx_class = haxe_io_BytesBuffer
+
+class haxe_io_Error(Enum):
+    __slots__ = ()
+    _hx_class_name = "haxe.io.Error"
+
+    @staticmethod
+    def Custom(e):
+        return haxe_io_Error("Custom", 3, [e])
+haxe_io_Error.Blocked = haxe_io_Error("Blocked", 0, list())
+haxe_io_Error.Overflow = haxe_io_Error("Overflow", 1, list())
+haxe_io_Error.OutsideBounds = haxe_io_Error("OutsideBounds", 2, list())
+haxe_io_Error._hx_class = haxe_io_Error
 
 
 class haxe_io_Input:
@@ -998,13 +1170,1047 @@ class haxe_io_Output:
     _hx_class_name = "haxe.io.Output"
     __slots__ = ("bigEndian",)
     _hx_fields = ["bigEndian"]
-    _hx_methods = ["set_bigEndian"]
+    _hx_methods = ["writeByte", "writeBytes", "set_bigEndian", "writeFullBytes", "writeString"]
+
+    def writeByte(self,c):
+        raise _HxException("Not implemented")
+
+    def writeBytes(self,s,pos,_hx_len):
+        if (((pos < 0) or ((_hx_len < 0))) or (((pos + _hx_len) > s.length))):
+            raise _HxException(haxe_io_Error.OutsideBounds)
+        b = s.b
+        k = _hx_len
+        while (k > 0):
+            self.writeByte(b[pos])
+            pos = (pos + 1)
+            k = (k - 1)
+        return _hx_len
 
     def set_bigEndian(self,b):
         self.bigEndian = b
         return b
 
+    def writeFullBytes(self,s,pos,_hx_len):
+        while (_hx_len > 0):
+            k = self.writeBytes(s,pos,_hx_len)
+            pos = (pos + k)
+            _hx_len = (_hx_len - k)
+
+    def writeString(self,s):
+        b = haxe_io_Bytes.ofString(s)
+        self.writeFullBytes(b,0,b.length)
+
 haxe_io_Output._hx_class = haxe_io_Output
+
+class haxe_macro_Constant(Enum):
+    __slots__ = ()
+    _hx_class_name = "haxe.macro.Constant"
+
+    @staticmethod
+    def CInt(v):
+        return haxe_macro_Constant("CInt", 0, [v])
+
+    @staticmethod
+    def CFloat(f):
+        return haxe_macro_Constant("CFloat", 1, [f])
+
+    @staticmethod
+    def CString(s):
+        return haxe_macro_Constant("CString", 2, [s])
+
+    @staticmethod
+    def CIdent(s):
+        return haxe_macro_Constant("CIdent", 3, [s])
+
+    @staticmethod
+    def CRegexp(r,opt):
+        return haxe_macro_Constant("CRegexp", 4, [r,opt])
+haxe_macro_Constant._hx_class = haxe_macro_Constant
+
+class haxe_macro_Binop(Enum):
+    __slots__ = ()
+    _hx_class_name = "haxe.macro.Binop"
+
+    @staticmethod
+    def OpAssignOp(op):
+        return haxe_macro_Binop("OpAssignOp", 20, [op])
+haxe_macro_Binop.OpAdd = haxe_macro_Binop("OpAdd", 0, list())
+haxe_macro_Binop.OpMult = haxe_macro_Binop("OpMult", 1, list())
+haxe_macro_Binop.OpDiv = haxe_macro_Binop("OpDiv", 2, list())
+haxe_macro_Binop.OpSub = haxe_macro_Binop("OpSub", 3, list())
+haxe_macro_Binop.OpAssign = haxe_macro_Binop("OpAssign", 4, list())
+haxe_macro_Binop.OpEq = haxe_macro_Binop("OpEq", 5, list())
+haxe_macro_Binop.OpNotEq = haxe_macro_Binop("OpNotEq", 6, list())
+haxe_macro_Binop.OpGt = haxe_macro_Binop("OpGt", 7, list())
+haxe_macro_Binop.OpGte = haxe_macro_Binop("OpGte", 8, list())
+haxe_macro_Binop.OpLt = haxe_macro_Binop("OpLt", 9, list())
+haxe_macro_Binop.OpLte = haxe_macro_Binop("OpLte", 10, list())
+haxe_macro_Binop.OpAnd = haxe_macro_Binop("OpAnd", 11, list())
+haxe_macro_Binop.OpOr = haxe_macro_Binop("OpOr", 12, list())
+haxe_macro_Binop.OpXor = haxe_macro_Binop("OpXor", 13, list())
+haxe_macro_Binop.OpBoolAnd = haxe_macro_Binop("OpBoolAnd", 14, list())
+haxe_macro_Binop.OpBoolOr = haxe_macro_Binop("OpBoolOr", 15, list())
+haxe_macro_Binop.OpShl = haxe_macro_Binop("OpShl", 16, list())
+haxe_macro_Binop.OpShr = haxe_macro_Binop("OpShr", 17, list())
+haxe_macro_Binop.OpUShr = haxe_macro_Binop("OpUShr", 18, list())
+haxe_macro_Binop.OpMod = haxe_macro_Binop("OpMod", 19, list())
+haxe_macro_Binop.OpInterval = haxe_macro_Binop("OpInterval", 21, list())
+haxe_macro_Binop.OpArrow = haxe_macro_Binop("OpArrow", 22, list())
+haxe_macro_Binop.OpIn = haxe_macro_Binop("OpIn", 23, list())
+haxe_macro_Binop._hx_class = haxe_macro_Binop
+
+class haxe_macro_Unop(Enum):
+    __slots__ = ()
+    _hx_class_name = "haxe.macro.Unop"
+haxe_macro_Unop.OpIncrement = haxe_macro_Unop("OpIncrement", 0, list())
+haxe_macro_Unop.OpDecrement = haxe_macro_Unop("OpDecrement", 1, list())
+haxe_macro_Unop.OpNot = haxe_macro_Unop("OpNot", 2, list())
+haxe_macro_Unop.OpNeg = haxe_macro_Unop("OpNeg", 3, list())
+haxe_macro_Unop.OpNegBits = haxe_macro_Unop("OpNegBits", 4, list())
+haxe_macro_Unop._hx_class = haxe_macro_Unop
+
+class haxe_macro_QuoteStatus(Enum):
+    __slots__ = ()
+    _hx_class_name = "haxe.macro.QuoteStatus"
+haxe_macro_QuoteStatus.Unquoted = haxe_macro_QuoteStatus("Unquoted", 0, list())
+haxe_macro_QuoteStatus.Quoted = haxe_macro_QuoteStatus("Quoted", 1, list())
+haxe_macro_QuoteStatus._hx_class = haxe_macro_QuoteStatus
+
+class haxe_macro_ExprDef(Enum):
+    __slots__ = ()
+    _hx_class_name = "haxe.macro.ExprDef"
+
+    @staticmethod
+    def EConst(c):
+        return haxe_macro_ExprDef("EConst", 0, [c])
+
+    @staticmethod
+    def EArray(e1,e2):
+        return haxe_macro_ExprDef("EArray", 1, [e1,e2])
+
+    @staticmethod
+    def EBinop(op,e1,e2):
+        return haxe_macro_ExprDef("EBinop", 2, [op,e1,e2])
+
+    @staticmethod
+    def EField(e,field):
+        return haxe_macro_ExprDef("EField", 3, [e,field])
+
+    @staticmethod
+    def EParenthesis(e):
+        return haxe_macro_ExprDef("EParenthesis", 4, [e])
+
+    @staticmethod
+    def EObjectDecl(fields):
+        return haxe_macro_ExprDef("EObjectDecl", 5, [fields])
+
+    @staticmethod
+    def EArrayDecl(values):
+        return haxe_macro_ExprDef("EArrayDecl", 6, [values])
+
+    @staticmethod
+    def ECall(e,params):
+        return haxe_macro_ExprDef("ECall", 7, [e,params])
+
+    @staticmethod
+    def ENew(t,params):
+        return haxe_macro_ExprDef("ENew", 8, [t,params])
+
+    @staticmethod
+    def EUnop(op,postFix,e):
+        return haxe_macro_ExprDef("EUnop", 9, [op,postFix,e])
+
+    @staticmethod
+    def EVars(vars):
+        return haxe_macro_ExprDef("EVars", 10, [vars])
+
+    @staticmethod
+    def EFunction(name,f):
+        return haxe_macro_ExprDef("EFunction", 11, [name,f])
+
+    @staticmethod
+    def EBlock(exprs):
+        return haxe_macro_ExprDef("EBlock", 12, [exprs])
+
+    @staticmethod
+    def EFor(it,expr):
+        return haxe_macro_ExprDef("EFor", 13, [it,expr])
+
+    @staticmethod
+    def EIf(econd,eif,eelse):
+        return haxe_macro_ExprDef("EIf", 14, [econd,eif,eelse])
+
+    @staticmethod
+    def EWhile(econd,e,normalWhile):
+        return haxe_macro_ExprDef("EWhile", 15, [econd,e,normalWhile])
+
+    @staticmethod
+    def ESwitch(e,cases,edef):
+        return haxe_macro_ExprDef("ESwitch", 16, [e,cases,edef])
+
+    @staticmethod
+    def ETry(e,catches):
+        return haxe_macro_ExprDef("ETry", 17, [e,catches])
+
+    @staticmethod
+    def EReturn(e = None):
+        return haxe_macro_ExprDef("EReturn", 18, [e])
+
+    @staticmethod
+    def EUntyped(e):
+        return haxe_macro_ExprDef("EUntyped", 21, [e])
+
+    @staticmethod
+    def EThrow(e):
+        return haxe_macro_ExprDef("EThrow", 22, [e])
+
+    @staticmethod
+    def ECast(e,t):
+        return haxe_macro_ExprDef("ECast", 23, [e,t])
+
+    @staticmethod
+    def EDisplay(e,isCall):
+        return haxe_macro_ExprDef("EDisplay", 24, [e,isCall])
+
+    @staticmethod
+    def EDisplayNew(t):
+        return haxe_macro_ExprDef("EDisplayNew", 25, [t])
+
+    @staticmethod
+    def ETernary(econd,eif,eelse):
+        return haxe_macro_ExprDef("ETernary", 26, [econd,eif,eelse])
+
+    @staticmethod
+    def ECheckType(e,t):
+        return haxe_macro_ExprDef("ECheckType", 27, [e,t])
+
+    @staticmethod
+    def EMeta(s,e):
+        return haxe_macro_ExprDef("EMeta", 28, [s,e])
+haxe_macro_ExprDef.EBreak = haxe_macro_ExprDef("EBreak", 19, list())
+haxe_macro_ExprDef.EContinue = haxe_macro_ExprDef("EContinue", 20, list())
+haxe_macro_ExprDef._hx_class = haxe_macro_ExprDef
+
+class haxe_macro_ComplexType(Enum):
+    __slots__ = ()
+    _hx_class_name = "haxe.macro.ComplexType"
+
+    @staticmethod
+    def TPath(p):
+        return haxe_macro_ComplexType("TPath", 0, [p])
+
+    @staticmethod
+    def TFunction(args,ret):
+        return haxe_macro_ComplexType("TFunction", 1, [args,ret])
+
+    @staticmethod
+    def TAnonymous(fields):
+        return haxe_macro_ComplexType("TAnonymous", 2, [fields])
+
+    @staticmethod
+    def TParent(t):
+        return haxe_macro_ComplexType("TParent", 3, [t])
+
+    @staticmethod
+    def TExtend(p,fields):
+        return haxe_macro_ComplexType("TExtend", 4, [p,fields])
+
+    @staticmethod
+    def TOptional(t):
+        return haxe_macro_ComplexType("TOptional", 5, [t])
+
+    @staticmethod
+    def TNamed(n,t):
+        return haxe_macro_ComplexType("TNamed", 6, [n,t])
+haxe_macro_ComplexType._hx_class = haxe_macro_ComplexType
+
+class haxe_macro_TypeParam(Enum):
+    __slots__ = ()
+    _hx_class_name = "haxe.macro.TypeParam"
+
+    @staticmethod
+    def TPType(t):
+        return haxe_macro_TypeParam("TPType", 0, [t])
+
+    @staticmethod
+    def TPExpr(e):
+        return haxe_macro_TypeParam("TPExpr", 1, [e])
+haxe_macro_TypeParam._hx_class = haxe_macro_TypeParam
+
+class haxe_macro_Access(Enum):
+    __slots__ = ()
+    _hx_class_name = "haxe.macro.Access"
+haxe_macro_Access.APublic = haxe_macro_Access("APublic", 0, list())
+haxe_macro_Access.APrivate = haxe_macro_Access("APrivate", 1, list())
+haxe_macro_Access.AStatic = haxe_macro_Access("AStatic", 2, list())
+haxe_macro_Access.AOverride = haxe_macro_Access("AOverride", 3, list())
+haxe_macro_Access.ADynamic = haxe_macro_Access("ADynamic", 4, list())
+haxe_macro_Access.AInline = haxe_macro_Access("AInline", 5, list())
+haxe_macro_Access.AMacro = haxe_macro_Access("AMacro", 6, list())
+haxe_macro_Access.AFinal = haxe_macro_Access("AFinal", 7, list())
+haxe_macro_Access._hx_class = haxe_macro_Access
+
+class haxe_macro_FieldType(Enum):
+    __slots__ = ()
+    _hx_class_name = "haxe.macro.FieldType"
+
+    @staticmethod
+    def FVar(t,e = None):
+        return haxe_macro_FieldType("FVar", 0, [t,e])
+
+    @staticmethod
+    def FFun(f):
+        return haxe_macro_FieldType("FFun", 1, [f])
+
+    @staticmethod
+    def FProp(get,set,t = None,e= None):
+        return haxe_macro_FieldType("FProp", 2, [get,set,t,e])
+haxe_macro_FieldType._hx_class = haxe_macro_FieldType
+
+class haxe_macro_TypeDefKind(Enum):
+    __slots__ = ()
+    _hx_class_name = "haxe.macro.TypeDefKind"
+
+    @staticmethod
+    def TDClass(superClass = None,interfaces= None,isInterface= None):
+        return haxe_macro_TypeDefKind("TDClass", 2, [superClass,interfaces,isInterface])
+
+    @staticmethod
+    def TDAlias(t):
+        return haxe_macro_TypeDefKind("TDAlias", 3, [t])
+
+    @staticmethod
+    def TDAbstract(tthis,_hx_from = None,to= None):
+        return haxe_macro_TypeDefKind("TDAbstract", 4, [tthis,_hx_from,to])
+haxe_macro_TypeDefKind.TDEnum = haxe_macro_TypeDefKind("TDEnum", 0, list())
+haxe_macro_TypeDefKind.TDStructure = haxe_macro_TypeDefKind("TDStructure", 1, list())
+haxe_macro_TypeDefKind._hx_class = haxe_macro_TypeDefKind
+
+
+class haxe_macro_Printer:
+    _hx_class_name = "haxe.macro.Printer"
+    __slots__ = ("tabs", "tabString")
+    _hx_fields = ["tabs", "tabString"]
+    _hx_methods = ["printUnop", "printBinop", "escapeString", "printString", "printConstant", "printTypeParam", "printTypePath", "printComplexType", "printMetadata", "printAccess", "printField", "printTypeParamDecl", "printFunctionArg", "printFunction", "printVar", "printObjectFieldKey", "printObjectField", "printExpr", "printExprs", "printExtension", "printStructure", "printTypeDefinition", "printFieldWithDelimiter", "opt"]
+
+    def __init__(self,tabString = "\t"):
+        if (tabString is None):
+            tabString = "\t"
+        self.tabs = ""
+        self.tabString = tabString
+
+    def printUnop(self,op):
+        tmp = op.index
+        if (tmp == 0):
+            return "++"
+        elif (tmp == 1):
+            return "--"
+        elif (tmp == 2):
+            return "!"
+        elif (tmp == 3):
+            return "-"
+        elif (tmp == 4):
+            return "~"
+        else:
+            pass
+
+    def printBinop(self,op):
+        tmp = op.index
+        if (tmp == 0):
+            return "+"
+        elif (tmp == 1):
+            return "*"
+        elif (tmp == 2):
+            return "/"
+        elif (tmp == 3):
+            return "-"
+        elif (tmp == 4):
+            return "="
+        elif (tmp == 5):
+            return "=="
+        elif (tmp == 6):
+            return "!="
+        elif (tmp == 7):
+            return ">"
+        elif (tmp == 8):
+            return ">="
+        elif (tmp == 9):
+            return "<"
+        elif (tmp == 10):
+            return "<="
+        elif (tmp == 11):
+            return "&"
+        elif (tmp == 12):
+            return "|"
+        elif (tmp == 13):
+            return "^"
+        elif (tmp == 14):
+            return "&&"
+        elif (tmp == 15):
+            return "||"
+        elif (tmp == 16):
+            return "<<"
+        elif (tmp == 17):
+            return ">>"
+        elif (tmp == 18):
+            return ">>>"
+        elif (tmp == 19):
+            return "%"
+        elif (tmp == 20):
+            op1 = op.params[0]
+            return (HxOverrides.stringOrNull(self.printBinop(op1)) + "=")
+        elif (tmp == 21):
+            return "..."
+        elif (tmp == 22):
+            return "=>"
+        elif (tmp == 23):
+            return "in"
+        else:
+            pass
+
+    def escapeString(self,s,delim):
+        return ((("null" if delim is None else delim) + HxOverrides.stringOrNull(StringTools.replace(StringTools.replace(StringTools.replace(StringTools.replace(StringTools.replace(StringTools.replace(s,"\n","\\n"),"\t","\\t"),"\r","\\r"),"'","\\'"),"\"","\\\""),"\x00","\\x00"))) + ("null" if delim is None else delim))
+
+    def printString(self,s):
+        return self.escapeString(s,"\"")
+
+    def printConstant(self,c):
+        tmp = c.index
+        if (tmp == 0):
+            s = c.params[0]
+            return s
+        elif (tmp == 1):
+            s1 = c.params[0]
+            return s1
+        elif (tmp == 2):
+            s2 = c.params[0]
+            return self.printString(s2)
+        elif (tmp == 3):
+            s3 = c.params[0]
+            return s3
+        elif (tmp == 4):
+            opt = c.params[1]
+            s4 = c.params[0]
+            return ((("~/" + ("null" if s4 is None else s4)) + "/") + ("null" if opt is None else opt))
+        else:
+            pass
+
+    def printTypeParam(self,param):
+        tmp = param.index
+        if (tmp == 0):
+            ct = param.params[0]
+            return self.printComplexType(ct)
+        elif (tmp == 1):
+            e = param.params[0]
+            return self.printExpr(e)
+        else:
+            pass
+
+    def printTypePath(self,tp):
+        tmp = None
+        if (len(tp.pack) > 0):
+            _this = tp.pack
+            tmp = (HxOverrides.stringOrNull(".".join([python_Boot.toString1(x1,'') for x1 in _this])) + ".")
+        else:
+            tmp = ""
+        tmp1 = ((("null" if tmp is None else tmp) + HxOverrides.stringOrNull(tp.name)) + HxOverrides.stringOrNull(((("." + HxOverrides.stringOrNull(Reflect.field(tp,"sub"))) if ((Reflect.field(tp,"sub") is not None)) else ""))))
+        tmp2 = None
+        if (Reflect.field(tp,"params") is None):
+            tmp2 = ""
+        elif (len(Reflect.field(tp,"params")) > 0):
+            _this1 = list(map(self.printTypeParam,Reflect.field(tp,"params")))
+            tmp2 = (("<" + HxOverrides.stringOrNull(", ".join([python_Boot.toString1(x1,'') for x1 in _this1]))) + ">")
+        else:
+            tmp2 = ""
+        return (("null" if tmp1 is None else tmp1) + ("null" if tmp2 is None else tmp2))
+
+    def printComplexType(self,ct):
+        _gthis = self
+        tmp = ct.index
+        if (tmp == 0):
+            tp = ct.params[0]
+            return self.printTypePath(tp)
+        elif (tmp == 1):
+            ret = ct.params[1]
+            args = ct.params[0]
+            def _hx_local_0(ct1):
+                if (ct1.index == 1):
+                    return (("(" + HxOverrides.stringOrNull(_gthis.printComplexType(ct1))) + ")")
+                else:
+                    return _gthis.printComplexType(ct1)
+            printArg = _hx_local_0
+            tmp1 = None
+            if (len(args) > 0):
+                _this = list(map(printArg,args))
+                tmp1 = " -> ".join([python_Boot.toString1(x1,'') for x1 in _this])
+            else:
+                tmp1 = "Void"
+            return ((("null" if tmp1 is None else tmp1) + " -> ") + HxOverrides.stringOrNull(self.printComplexType(ret)))
+        elif (tmp == 2):
+            fields = ct.params[0]
+            _g = []
+            _g1 = 0
+            while (_g1 < len(fields)):
+                f = (fields[_g1] if _g1 >= 0 and _g1 < len(fields) else None)
+                _g1 = (_g1 + 1)
+                x = (HxOverrides.stringOrNull(self.printField(f)) + "; ")
+                _g.append(x)
+            return (("{ " + HxOverrides.stringOrNull("".join([python_Boot.toString1(x1,'') for x1 in _g]))) + "}")
+        elif (tmp == 3):
+            ct2 = ct.params[0]
+            return (("(" + HxOverrides.stringOrNull(self.printComplexType(ct2))) + ")")
+        elif (tmp == 4):
+            fields1 = ct.params[1]
+            tpl = ct.params[0]
+            _this1 = list(map(self.printTypePath,tpl))
+            tmp2 = (("{> " + HxOverrides.stringOrNull(" >, ".join([python_Boot.toString1(x1,'') for x1 in _this1]))) + ", ")
+            _this2 = list(map(self.printField,fields1))
+            return ((("null" if tmp2 is None else tmp2) + HxOverrides.stringOrNull(", ".join([python_Boot.toString1(x1,'') for x1 in _this2]))) + " }")
+        elif (tmp == 5):
+            ct3 = ct.params[0]
+            return ("?" + HxOverrides.stringOrNull(self.printComplexType(ct3)))
+        elif (tmp == 6):
+            ct4 = ct.params[1]
+            n = ct.params[0]
+            return ((("null" if n is None else n) + ":") + HxOverrides.stringOrNull(self.printComplexType(ct4)))
+        else:
+            pass
+
+    def printMetadata(self,meta):
+        return (("@" + HxOverrides.stringOrNull(meta.name)) + HxOverrides.stringOrNull((((("(" + HxOverrides.stringOrNull(self.printExprs(Reflect.field(meta,"params"),", "))) + ")") if (((Reflect.field(meta,"params") is not None) and ((len(Reflect.field(meta,"params")) > 0)))) else ""))))
+
+    def printAccess(self,access):
+        tmp = access.index
+        if (tmp == 0):
+            return "public"
+        elif (tmp == 1):
+            return "private"
+        elif (tmp == 2):
+            return "static"
+        elif (tmp == 3):
+            return "override"
+        elif (tmp == 4):
+            return "dynamic"
+        elif (tmp == 5):
+            return "inline"
+        elif (tmp == 6):
+            return "macro"
+        elif (tmp == 7):
+            return "final"
+        else:
+            pass
+
+    def printField(self,field):
+        tmp = (((((((("/**\n" + HxOverrides.stringOrNull(self.tabs)) + HxOverrides.stringOrNull(self.tabString)) + HxOverrides.stringOrNull(StringTools.replace(Reflect.field(field,"doc"),"\n",(("\n" + HxOverrides.stringOrNull(self.tabs)) + HxOverrides.stringOrNull(self.tabString))))) + "\n") + HxOverrides.stringOrNull(self.tabs)) + "**/\n") + HxOverrides.stringOrNull(self.tabs)) if (((Reflect.field(field,"doc") is not None) and ((Reflect.field(field,"doc") != "")))) else "")
+        tmp1 = None
+        if ((Reflect.field(field,"meta") is not None) and ((len(Reflect.field(field,"meta")) > 0))):
+            _this = list(map(self.printMetadata,Reflect.field(field,"meta")))
+            tmp1 = (HxOverrides.stringOrNull(("\n" + HxOverrides.stringOrNull(self.tabs)).join([python_Boot.toString1(x1,'') for x1 in _this])) + HxOverrides.stringOrNull((("\n" + HxOverrides.stringOrNull(self.tabs)))))
+        else:
+            tmp1 = ""
+        tmp2 = None
+        if ((Reflect.field(field,"access") is not None) and ((len(Reflect.field(field,"access")) > 0))):
+            _this1 = list(map(self.printAccess,Reflect.field(field,"access")))
+            tmp2 = (HxOverrides.stringOrNull(" ".join([python_Boot.toString1(x1,'') for x1 in _this1])) + " ")
+        else:
+            tmp2 = ""
+        tmp3 = ((("null" if tmp is None else tmp) + ("null" if tmp1 is None else tmp1)) + ("null" if tmp2 is None else tmp2))
+        _g = field.kind
+        tmp4 = None
+        tmp5 = _g.index
+        if (tmp5 == 0):
+            eo = _g.params[1]
+            t = _g.params[0]
+            tmp4 = ((("var " + HxOverrides.stringOrNull(field.name)) + HxOverrides.stringOrNull(self.opt(t,self.printComplexType," : "))) + HxOverrides.stringOrNull(self.opt(eo,self.printExpr," = ")))
+        elif (tmp5 == 1):
+            func = _g.params[0]
+            tmp4 = (("function " + HxOverrides.stringOrNull(field.name)) + HxOverrides.stringOrNull(self.printFunction(func)))
+        elif (tmp5 == 2):
+            eo1 = _g.params[3]
+            t1 = _g.params[2]
+            _hx_set = _g.params[1]
+            get = _g.params[0]
+            tmp4 = (((((((("var " + HxOverrides.stringOrNull(field.name)) + "(") + ("null" if get is None else get)) + ", ") + ("null" if _hx_set is None else _hx_set)) + ")") + HxOverrides.stringOrNull(self.opt(t1,self.printComplexType," : "))) + HxOverrides.stringOrNull(self.opt(eo1,self.printExpr," = ")))
+        else:
+            pass
+        return (("null" if tmp3 is None else tmp3) + HxOverrides.stringOrNull(tmp4))
+
+    def printTypeParamDecl(self,tpd):
+        tpd1 = tpd.name
+        tmp = None
+        if ((Reflect.field(tpd,"params") is not None) and ((len(Reflect.field(tpd,"params")) > 0))):
+            _this = list(map(self.printTypeParamDecl,Reflect.field(tpd,"params")))
+            tmp = (("<" + HxOverrides.stringOrNull(", ".join([python_Boot.toString1(x1,'') for x1 in _this]))) + ">")
+        else:
+            tmp = ""
+        tmp1 = None
+        if ((Reflect.field(tpd,"constraints") is not None) and ((len(Reflect.field(tpd,"constraints")) > 0))):
+            _this1 = list(map(self.printComplexType,Reflect.field(tpd,"constraints")))
+            tmp1 = ((":(" + HxOverrides.stringOrNull(", ".join([python_Boot.toString1(x1,'') for x1 in _this1]))) + ")")
+        else:
+            tmp1 = ""
+        return ((("null" if tpd1 is None else tpd1) + ("null" if tmp is None else tmp)) + ("null" if tmp1 is None else tmp1))
+
+    def printFunctionArg(self,arg):
+        return (((HxOverrides.stringOrNull((("?" if (Reflect.field(arg,"opt")) else ""))) + HxOverrides.stringOrNull(arg.name)) + HxOverrides.stringOrNull(self.opt(arg.type,self.printComplexType,":"))) + HxOverrides.stringOrNull(self.opt(Reflect.field(arg,"value"),self.printExpr," = ")))
+
+    def printFunction(self,func):
+        tmp = None
+        if (Reflect.field(func,"params") is None):
+            tmp = ""
+        elif (len(Reflect.field(func,"params")) > 0):
+            _this = list(map(self.printTypeParamDecl,Reflect.field(func,"params")))
+            tmp = (("<" + HxOverrides.stringOrNull(", ".join([python_Boot.toString1(x1,'') for x1 in _this]))) + ">")
+        else:
+            tmp = ""
+        _this1 = list(map(self.printFunctionArg,func.args))
+        return (((((("null" if tmp is None else tmp) + "(") + HxOverrides.stringOrNull(", ".join([python_Boot.toString1(x1,'') for x1 in _this1]))) + ")") + HxOverrides.stringOrNull(self.opt(func.ret,self.printComplexType,":"))) + HxOverrides.stringOrNull(self.opt(func.expr,self.printExpr," ")))
+
+    def printVar(self,v):
+        return ((HxOverrides.stringOrNull(v.name) + HxOverrides.stringOrNull(self.opt(v.type,self.printComplexType,":"))) + HxOverrides.stringOrNull(self.opt(v.expr,self.printExpr," = ")))
+
+    def printObjectFieldKey(self,of):
+        _g = Reflect.field(of,"quotes")
+        if (_g is None):
+            return of.field
+        else:
+            tmp = _g.index
+            if (tmp == 0):
+                return of.field
+            elif (tmp == 1):
+                return (("\"" + HxOverrides.stringOrNull(of.field)) + "\"")
+            else:
+                pass
+
+    def printObjectField(self,of):
+        return ((("" + HxOverrides.stringOrNull(self.printObjectFieldKey(of))) + " : ") + HxOverrides.stringOrNull(self.printExpr(of.expr)))
+
+    def printExpr(self,e):
+        _gthis = self
+        if (e is None):
+            return "#NULL"
+        else:
+            _g = e.expr
+            tmp = _g.index
+            if (tmp == 0):
+                c = _g.params[0]
+                return self.printConstant(c)
+            elif (tmp == 1):
+                e2 = _g.params[1]
+                e1 = _g.params[0]
+                return (((("" + HxOverrides.stringOrNull(self.printExpr(e1))) + "[") + HxOverrides.stringOrNull(self.printExpr(e2))) + "]")
+            elif (tmp == 2):
+                e21 = _g.params[2]
+                e11 = _g.params[1]
+                op = _g.params[0]
+                return ((((("" + HxOverrides.stringOrNull(self.printExpr(e11))) + " ") + HxOverrides.stringOrNull(self.printBinop(op))) + " ") + HxOverrides.stringOrNull(self.printExpr(e21)))
+            elif (tmp == 3):
+                n = _g.params[1]
+                e12 = _g.params[0]
+                return ((("" + HxOverrides.stringOrNull(self.printExpr(e12))) + ".") + ("null" if n is None else n))
+            elif (tmp == 4):
+                e13 = _g.params[0]
+                return (("(" + HxOverrides.stringOrNull(self.printExpr(e13))) + ")")
+            elif (tmp == 5):
+                fl = _g.params[0]
+                def _hx_local_0(fld):
+                    return _gthis.printObjectField(fld)
+                _this = list(map(_hx_local_0,fl))
+                return (("{ " + HxOverrides.stringOrNull(", ".join([python_Boot.toString1(x1,'') for x1 in _this]))) + " }")
+            elif (tmp == 6):
+                el = _g.params[0]
+                return (("[" + HxOverrides.stringOrNull(self.printExprs(el,", "))) + "]")
+            elif (tmp == 7):
+                el1 = _g.params[1]
+                e14 = _g.params[0]
+                return (((("" + HxOverrides.stringOrNull(self.printExpr(e14))) + "(") + HxOverrides.stringOrNull(self.printExprs(el1,", "))) + ")")
+            elif (tmp == 8):
+                el2 = _g.params[1]
+                tp = _g.params[0]
+                return (((("new " + HxOverrides.stringOrNull(self.printTypePath(tp))) + "(") + HxOverrides.stringOrNull(self.printExprs(el2,", "))) + ")")
+            elif (tmp == 9):
+                tmp1 = _g.params[1]
+                if (tmp1 == False):
+                    e15 = _g.params[2]
+                    op1 = _g.params[0]
+                    return (HxOverrides.stringOrNull(self.printUnop(op1)) + HxOverrides.stringOrNull(self.printExpr(e15)))
+                elif (tmp1 == True):
+                    e16 = _g.params[2]
+                    op2 = _g.params[0]
+                    return (HxOverrides.stringOrNull(self.printExpr(e16)) + HxOverrides.stringOrNull(self.printUnop(op2)))
+                else:
+                    pass
+            elif (tmp == 10):
+                vl = _g.params[0]
+                _this1 = list(map(self.printVar,vl))
+                return ("var " + HxOverrides.stringOrNull(", ".join([python_Boot.toString1(x1,'') for x1 in _this1])))
+            elif (tmp == 11):
+                func = _g.params[1]
+                no = _g.params[0]
+                if (no is not None):
+                    return (("function " + ("null" if no is None else no)) + HxOverrides.stringOrNull(self.printFunction(func)))
+                else:
+                    func1 = _g.params[1]
+                    return ("function" + HxOverrides.stringOrNull(self.printFunction(func1)))
+            elif (tmp == 12):
+                if (len(_g.params[0]) == 0):
+                    return "{ }"
+                else:
+                    el3 = _g.params[0]
+                    old = self.tabs
+                    _hx_local_1 = self
+                    _hx_local_2 = _hx_local_1.tabs
+                    _hx_local_1.tabs = (("null" if _hx_local_2 is None else _hx_local_2) + HxOverrides.stringOrNull(self.tabString))
+                    _hx_local_1.tabs
+                    s = (("{\n" + HxOverrides.stringOrNull(self.tabs)) + HxOverrides.stringOrNull(self.printExprs(el3,(";\n" + HxOverrides.stringOrNull(self.tabs)))))
+                    self.tabs = old
+                    return (("null" if s is None else s) + HxOverrides.stringOrNull((((";\n" + HxOverrides.stringOrNull(self.tabs)) + "}"))))
+            elif (tmp == 13):
+                e22 = _g.params[1]
+                e17 = _g.params[0]
+                return ((("for (" + HxOverrides.stringOrNull(self.printExpr(e17))) + ") ") + HxOverrides.stringOrNull(self.printExpr(e22)))
+            elif (tmp == 14):
+                if (_g.params[2] is None):
+                    econd = _g.params[0]
+                    eif = _g.params[1]
+                    return ((("if (" + HxOverrides.stringOrNull(self.printExpr(econd))) + ") ") + HxOverrides.stringOrNull(self.printExpr(eif)))
+                else:
+                    econd1 = _g.params[0]
+                    eif1 = _g.params[1]
+                    eelse = _g.params[2]
+                    return ((((("if (" + HxOverrides.stringOrNull(self.printExpr(econd1))) + ") ") + HxOverrides.stringOrNull(self.printExpr(eif1))) + " else ") + HxOverrides.stringOrNull(self.printExpr(eelse)))
+            elif (tmp == 15):
+                tmp2 = _g.params[2]
+                if (tmp2 == False):
+                    econd2 = _g.params[0]
+                    e18 = _g.params[1]
+                    return (((("do " + HxOverrides.stringOrNull(self.printExpr(e18))) + " while (") + HxOverrides.stringOrNull(self.printExpr(econd2))) + ")")
+                elif (tmp2 == True):
+                    econd3 = _g.params[0]
+                    e19 = _g.params[1]
+                    return ((("while (" + HxOverrides.stringOrNull(self.printExpr(econd3))) + ") ") + HxOverrides.stringOrNull(self.printExpr(e19)))
+                else:
+                    pass
+            elif (tmp == 16):
+                edef = _g.params[2]
+                cl = _g.params[1]
+                e110 = _g.params[0]
+                old1 = self.tabs
+                _hx_local_3 = self
+                _hx_local_4 = _hx_local_3.tabs
+                _hx_local_3.tabs = (("null" if _hx_local_4 is None else _hx_local_4) + HxOverrides.stringOrNull(self.tabString))
+                _hx_local_3.tabs
+                s1 = ((("switch " + HxOverrides.stringOrNull(self.printExpr(e110))) + " {\n") + HxOverrides.stringOrNull(self.tabs))
+                def _hx_local_5(c1):
+                    return ((("case " + HxOverrides.stringOrNull(_gthis.printExprs(c1.values,", "))) + HxOverrides.stringOrNull(((((" if (" + HxOverrides.stringOrNull(_gthis.printExpr(Reflect.field(c1,"guard")))) + "):") if ((Reflect.field(c1,"guard") is not None)) else ":")))) + HxOverrides.stringOrNull((((HxOverrides.stringOrNull(_gthis.opt(c1.expr,_gthis.printExpr)) + ";") if ((c1.expr is not None)) else ""))))
+                _this2 = list(map(_hx_local_5,cl))
+                s2 = (("null" if s1 is None else s1) + HxOverrides.stringOrNull(("\n" + HxOverrides.stringOrNull(self.tabs)).join([python_Boot.toString1(x1,'') for x1 in _this2])))
+                if (edef is not None):
+                    s2 = (("null" if s2 is None else s2) + HxOverrides.stringOrNull((((("\n" + HxOverrides.stringOrNull(self.tabs)) + "default:") + HxOverrides.stringOrNull((("" if ((edef.expr is None)) else (HxOverrides.stringOrNull(self.printExpr(edef)) + ";"))))))))
+                self.tabs = old1
+                return (("null" if s2 is None else s2) + HxOverrides.stringOrNull(((("\n" + HxOverrides.stringOrNull(self.tabs)) + "}"))))
+            elif (tmp == 17):
+                cl1 = _g.params[1]
+                e111 = _g.params[0]
+                tmp3 = ("try " + HxOverrides.stringOrNull(self.printExpr(e111)))
+                def _hx_local_7(c2):
+                    return (((((" catch(" + HxOverrides.stringOrNull(c2.name)) + ":") + HxOverrides.stringOrNull(_gthis.printComplexType(c2.type))) + ") ") + HxOverrides.stringOrNull(_gthis.printExpr(c2.expr)))
+                _this3 = list(map(_hx_local_7,cl1))
+                return (("null" if tmp3 is None else tmp3) + HxOverrides.stringOrNull("".join([python_Boot.toString1(x1,'') for x1 in _this3])))
+            elif (tmp == 18):
+                eo = _g.params[0]
+                return ("return" + HxOverrides.stringOrNull(self.opt(eo,self.printExpr," ")))
+            elif (tmp == 19):
+                return "break"
+            elif (tmp == 20):
+                return "continue"
+            elif (tmp == 21):
+                e112 = _g.params[0]
+                return ("untyped " + HxOverrides.stringOrNull(self.printExpr(e112)))
+            elif (tmp == 22):
+                e113 = _g.params[0]
+                return ("throw " + HxOverrides.stringOrNull(self.printExpr(e113)))
+            elif (tmp == 23):
+                cto = _g.params[1]
+                e114 = _g.params[0]
+                if (cto is not None):
+                    return (((("cast(" + HxOverrides.stringOrNull(self.printExpr(e114))) + ", ") + HxOverrides.stringOrNull(self.printComplexType(cto))) + ")")
+                else:
+                    e115 = _g.params[0]
+                    return ("cast " + HxOverrides.stringOrNull(self.printExpr(e115)))
+            elif (tmp == 24):
+                e116 = _g.params[0]
+                return (("#DISPLAY(" + HxOverrides.stringOrNull(self.printExpr(e116))) + ")")
+            elif (tmp == 25):
+                tp1 = _g.params[0]
+                return (("#DISPLAY(" + HxOverrides.stringOrNull(self.printTypePath(tp1))) + ")")
+            elif (tmp == 26):
+                eelse1 = _g.params[2]
+                eif2 = _g.params[1]
+                econd4 = _g.params[0]
+                return ((((("" + HxOverrides.stringOrNull(self.printExpr(econd4))) + " ? ") + HxOverrides.stringOrNull(self.printExpr(eif2))) + " : ") + HxOverrides.stringOrNull(self.printExpr(eelse1)))
+            elif (tmp == 27):
+                ct = _g.params[1]
+                e117 = _g.params[0]
+                return (((("(" + HxOverrides.stringOrNull(self.printExpr(e117))) + " : ") + HxOverrides.stringOrNull(self.printComplexType(ct))) + ")")
+            elif (tmp == 28):
+                e118 = _g.params[1]
+                meta = _g.params[0]
+                return ((HxOverrides.stringOrNull(self.printMetadata(meta)) + " ") + HxOverrides.stringOrNull(self.printExpr(e118)))
+            else:
+                pass
+
+    def printExprs(self,el,sep):
+        _this = list(map(self.printExpr,el))
+        return sep.join([python_Boot.toString1(x1,'') for x1 in _this])
+
+    def printExtension(self,tpl,fields):
+        tmp = (("{\n" + HxOverrides.stringOrNull(self.tabs)) + ">")
+        _this = list(map(self.printTypePath,tpl))
+        tmp1 = ((("null" if tmp is None else tmp) + HxOverrides.stringOrNull(((",\n" + HxOverrides.stringOrNull(self.tabs)) + ">").join([python_Boot.toString1(x1,'') for x1 in _this]))) + ",")
+        tmp2 = None
+        if (len(fields) > 0):
+            tmp3 = ("\n" + HxOverrides.stringOrNull(self.tabs))
+            _this1 = list(map(self.printField,fields))
+            tmp2 = ((("null" if tmp3 is None else tmp3) + HxOverrides.stringOrNull((";\n" + HxOverrides.stringOrNull(self.tabs)).join([python_Boot.toString1(x1,'') for x1 in _this1]))) + ";\n}")
+        else:
+            tmp2 = "\n}"
+        return (("null" if tmp1 is None else tmp1) + ("null" if tmp2 is None else tmp2))
+
+    def printStructure(self,fields):
+        if (len(fields) == 0):
+            return "{ }"
+        else:
+            tmp = ("{\n" + HxOverrides.stringOrNull(self.tabs))
+            _this = list(map(self.printField,fields))
+            return ((("null" if tmp is None else tmp) + HxOverrides.stringOrNull((";\n" + HxOverrides.stringOrNull(self.tabs)).join([python_Boot.toString1(x1,'') for x1 in _this]))) + ";\n}")
+
+    def printTypeDefinition(self,t,printPackage = True):
+        if (printPackage is None):
+            printPackage = True
+        old = self.tabs
+        self.tabs = self.tabString
+        _hx_str = None
+        if (t is None):
+            _hx_str = "#NULL"
+        else:
+            str1 = None
+            if ((printPackage and ((len(t.pack) > 0))) and (((t.pack[0] if 0 < len(t.pack) else None) != ""))):
+                _this = t.pack
+                str1 = (("package " + HxOverrides.stringOrNull(".".join([python_Boot.toString1(x1,'') for x1 in _this]))) + ";\n")
+            else:
+                str1 = ""
+            str2 = (((("/**\n" + HxOverrides.stringOrNull(self.tabString)) + HxOverrides.stringOrNull(StringTools.replace(Reflect.field(t,"doc"),"\n",("\n" + HxOverrides.stringOrNull(self.tabString))))) + "\n**/\n") if (((Reflect.field(t,"doc") is not None) and ((Reflect.field(t,"doc") != "")))) else "")
+            str3 = None
+            if ((Reflect.field(t,"meta") is not None) and ((len(Reflect.field(t,"meta")) > 0))):
+                _this1 = list(map(self.printMetadata,Reflect.field(t,"meta")))
+                str3 = (HxOverrides.stringOrNull(" ".join([python_Boot.toString1(x1,'') for x1 in _this1])) + " ")
+            else:
+                str3 = ""
+            str4 = (((("null" if str1 is None else str1) + ("null" if str2 is None else str2)) + ("null" if str3 is None else str3)) + HxOverrides.stringOrNull((("extern " if (Reflect.field(t,"isExtern")) else ""))))
+            _g = t.kind
+            str5 = None
+            str6 = _g.index
+            if (str6 == 0):
+                str7 = ("enum " + HxOverrides.stringOrNull(t.name))
+                str8 = None
+                if ((Reflect.field(t,"params") is not None) and ((len(Reflect.field(t,"params")) > 0))):
+                    _this2 = list(map(self.printTypeParamDecl,Reflect.field(t,"params")))
+                    str8 = (("<" + HxOverrides.stringOrNull(", ".join([python_Boot.toString1(x1,'') for x1 in _this2]))) + ">")
+                else:
+                    str8 = ""
+                str9 = ((("null" if str7 is None else str7) + ("null" if str8 is None else str8)) + " {\n")
+                _g1 = []
+                _g11 = 0
+                _g2 = t.fields
+                while (_g11 < len(_g2)):
+                    field = (_g2[_g11] if _g11 >= 0 and _g11 < len(_g2) else None)
+                    _g11 = (_g11 + 1)
+                    x = self.tabs
+                    x1 = (((((((("/**\n" + HxOverrides.stringOrNull(self.tabs)) + HxOverrides.stringOrNull(self.tabString)) + HxOverrides.stringOrNull(StringTools.replace(Reflect.field(field,"doc"),"\n",(("\n" + HxOverrides.stringOrNull(self.tabs)) + HxOverrides.stringOrNull(self.tabString))))) + "\n") + HxOverrides.stringOrNull(self.tabs)) + "**/\n") + HxOverrides.stringOrNull(self.tabs)) if (((Reflect.field(field,"doc") is not None) and ((Reflect.field(field,"doc") != "")))) else "")
+                    x2 = None
+                    if ((Reflect.field(field,"meta") is not None) and ((len(Reflect.field(field,"meta")) > 0))):
+                        _this3 = list(map(self.printMetadata,Reflect.field(field,"meta")))
+                        x2 = (HxOverrides.stringOrNull(" ".join([python_Boot.toString1(x1,'') for x1 in _this3])) + " ")
+                    else:
+                        x2 = ""
+                    x3 = ((("null" if x is None else x) + ("null" if x1 is None else x1)) + ("null" if x2 is None else x2))
+                    _g3 = field.kind
+                    x4 = None
+                    x5 = _g3.index
+                    if (x5 == 0):
+                        t1 = _g3.params[0]
+                        x4 = (HxOverrides.stringOrNull(field.name) + HxOverrides.stringOrNull(self.opt(t1,self.printComplexType,":")))
+                    elif (x5 == 1):
+                        func = _g3.params[0]
+                        x4 = (HxOverrides.stringOrNull(field.name) + HxOverrides.stringOrNull(self.printFunction(func)))
+                    elif (x5 == 2):
+                        raise _HxException("FProp is invalid for TDEnum.")
+                    else:
+                        pass
+                    _g1.append(((("null" if x3 is None else x3) + HxOverrides.stringOrNull(x4)) + ";"))
+                str5 = ((("null" if str9 is None else str9) + HxOverrides.stringOrNull("\n".join([python_Boot.toString1(x1,'') for x1 in _g1]))) + "\n}")
+            elif (str6 == 1):
+                str10 = ("typedef " + HxOverrides.stringOrNull(t.name))
+                str11 = None
+                if ((Reflect.field(t,"params") is not None) and ((len(Reflect.field(t,"params")) > 0))):
+                    _this4 = list(map(self.printTypeParamDecl,Reflect.field(t,"params")))
+                    str11 = (("<" + HxOverrides.stringOrNull(", ".join([python_Boot.toString1(x1,'') for x1 in _this4]))) + ">")
+                else:
+                    str11 = ""
+                str12 = ((("null" if str10 is None else str10) + ("null" if str11 is None else str11)) + " = {\n")
+                _g4 = []
+                _g12 = 0
+                _g21 = t.fields
+                while (_g12 < len(_g21)):
+                    f = (_g21[_g12] if _g12 >= 0 and _g12 < len(_g21) else None)
+                    _g12 = (_g12 + 1)
+                    x6 = ((HxOverrides.stringOrNull(self.tabs) + HxOverrides.stringOrNull(self.printField(f))) + ";")
+                    _g4.append(x6)
+                str5 = ((("null" if str12 is None else str12) + HxOverrides.stringOrNull("\n".join([python_Boot.toString1(x1,'') for x1 in _g4]))) + "\n}")
+            elif (str6 == 2):
+                isInterface = _g.params[2]
+                interfaces = _g.params[1]
+                superClass = _g.params[0]
+                str13 = (HxOverrides.stringOrNull((("interface " if isInterface else "class "))) + HxOverrides.stringOrNull(t.name))
+                str14 = None
+                if ((Reflect.field(t,"params") is not None) and ((len(Reflect.field(t,"params")) > 0))):
+                    _this5 = list(map(self.printTypeParamDecl,Reflect.field(t,"params")))
+                    str14 = (("<" + HxOverrides.stringOrNull(", ".join([python_Boot.toString1(x1,'') for x1 in _this5]))) + ">")
+                else:
+                    str14 = ""
+                str15 = ((("null" if str13 is None else str13) + ("null" if str14 is None else str14)) + HxOverrides.stringOrNull((((" extends " + HxOverrides.stringOrNull(self.printTypePath(superClass))) if ((superClass is not None)) else ""))))
+                str16 = None
+                if (interfaces is not None):
+                    _this6 = None
+                    if isInterface:
+                        _g5 = []
+                        _g13 = 0
+                        while (_g13 < len(interfaces)):
+                            tp = (interfaces[_g13] if _g13 >= 0 and _g13 < len(interfaces) else None)
+                            _g13 = (_g13 + 1)
+                            x7 = (" extends " + HxOverrides.stringOrNull(self.printTypePath(tp)))
+                            _g5.append(x7)
+                        _this6 = _g5
+                    else:
+                        _g6 = []
+                        _g14 = 0
+                        while (_g14 < len(interfaces)):
+                            tp1 = (interfaces[_g14] if _g14 >= 0 and _g14 < len(interfaces) else None)
+                            _g14 = (_g14 + 1)
+                            x8 = (" implements " + HxOverrides.stringOrNull(self.printTypePath(tp1)))
+                            _g6.append(x8)
+                        _this6 = _g6
+                    str16 = "".join([python_Boot.toString1(x1,'') for x1 in _this6])
+                else:
+                    str16 = ""
+                str17 = ((("null" if str15 is None else str15) + ("null" if str16 is None else str16)) + " {\n")
+                _g7 = []
+                _g15 = 0
+                _g22 = t.fields
+                while (_g15 < len(_g22)):
+                    f1 = (_g22[_g15] if _g15 >= 0 and _g15 < len(_g22) else None)
+                    _g15 = (_g15 + 1)
+                    x9 = (HxOverrides.stringOrNull(self.tabs) + HxOverrides.stringOrNull(self.printFieldWithDelimiter(f1)))
+                    _g7.append(x9)
+                str5 = ((("null" if str17 is None else str17) + HxOverrides.stringOrNull("\n".join([python_Boot.toString1(x1,'') for x1 in _g7]))) + "\n}")
+            elif (str6 == 3):
+                ct = _g.params[0]
+                str18 = ("typedef " + HxOverrides.stringOrNull(t.name))
+                str19 = None
+                if ((Reflect.field(t,"params") is not None) and ((len(Reflect.field(t,"params")) > 0))):
+                    _this7 = list(map(self.printTypeParamDecl,Reflect.field(t,"params")))
+                    str19 = (("<" + HxOverrides.stringOrNull(", ".join([python_Boot.toString1(x1,'') for x1 in _this7]))) + ">")
+                else:
+                    str19 = ""
+                str20 = ((("null" if str18 is None else str18) + ("null" if str19 is None else str19)) + " = ")
+                str21 = None
+                str22 = ct.index
+                if (str22 == 2):
+                    fields = ct.params[0]
+                    str21 = self.printStructure(fields)
+                elif (str22 == 4):
+                    fields1 = ct.params[1]
+                    tpl = ct.params[0]
+                    str21 = self.printExtension(tpl,fields1)
+                else:
+                    str21 = self.printComplexType(ct)
+                str5 = ((("null" if str20 is None else str20) + HxOverrides.stringOrNull(str21)) + ";")
+            elif (str6 == 4):
+                to = _g.params[2]
+                _hx_from = _g.params[1]
+                tthis = _g.params[0]
+                str23 = ("abstract " + HxOverrides.stringOrNull(t.name))
+                str24 = None
+                if ((Reflect.field(t,"params") is not None) and ((len(Reflect.field(t,"params")) > 0))):
+                    _this8 = list(map(self.printTypeParamDecl,Reflect.field(t,"params")))
+                    str24 = (("<" + HxOverrides.stringOrNull(", ".join([python_Boot.toString1(x1,'') for x1 in _this8]))) + ">")
+                else:
+                    str24 = ""
+                str25 = ((("null" if str23 is None else str23) + ("null" if str24 is None else str24)) + HxOverrides.stringOrNull((("" if ((tthis is None)) else (("(" + HxOverrides.stringOrNull(self.printComplexType(tthis))) + ")")))))
+                str26 = None
+                if (_hx_from is None):
+                    str26 = ""
+                else:
+                    _g8 = []
+                    _g16 = 0
+                    while (_g16 < len(_hx_from)):
+                        f2 = (_hx_from[_g16] if _g16 >= 0 and _g16 < len(_hx_from) else None)
+                        _g16 = (_g16 + 1)
+                        x10 = (" from " + HxOverrides.stringOrNull(self.printComplexType(f2)))
+                        _g8.append(x10)
+                    str26 = "".join([python_Boot.toString1(x1,'') for x1 in _g8])
+                str27 = (("null" if str25 is None else str25) + ("null" if str26 is None else str26))
+                str28 = None
+                if (to is None):
+                    str28 = ""
+                else:
+                    _g9 = []
+                    _g17 = 0
+                    while (_g17 < len(to)):
+                        t2 = (to[_g17] if _g17 >= 0 and _g17 < len(to) else None)
+                        _g17 = (_g17 + 1)
+                        x11 = (" to " + HxOverrides.stringOrNull(self.printComplexType(t2)))
+                        _g9.append(x11)
+                    str28 = "".join([python_Boot.toString1(x1,'') for x1 in _g9])
+                str29 = ((("null" if str27 is None else str27) + ("null" if str28 is None else str28)) + " {\n")
+                _g10 = []
+                _g18 = 0
+                _g23 = t.fields
+                while (_g18 < len(_g23)):
+                    f3 = (_g23[_g18] if _g18 >= 0 and _g18 < len(_g23) else None)
+                    _g18 = (_g18 + 1)
+                    x12 = (HxOverrides.stringOrNull(self.tabs) + HxOverrides.stringOrNull(self.printFieldWithDelimiter(f3)))
+                    _g10.append(x12)
+                str5 = ((("null" if str29 is None else str29) + HxOverrides.stringOrNull("\n".join([python_Boot.toString1(x1,'') for x1 in _g10]))) + "\n}")
+            else:
+                pass
+            _hx_str = (("null" if str4 is None else str4) + HxOverrides.stringOrNull(str5))
+        self.tabs = old
+        return _hx_str
+
+    def printFieldWithDelimiter(self,f):
+        tmp = self.printField(f)
+        _g = f.kind
+        tmp1 = None
+        tmp2 = _g.index
+        if (tmp2 == 1):
+            tmp1 = (";" if ((_g.params[0].expr is None)) else ("" if ((_g.params[0].expr.expr.index == 12)) else ";"))
+        elif ((tmp2 == 2) or ((tmp2 == 0))):
+            tmp1 = ";"
+        else:
+            pass
+        return (("null" if tmp is None else tmp) + HxOverrides.stringOrNull(tmp1))
+
+    def opt(self,v,f,prefix = ""):
+        if (prefix is None):
+            prefix = ""
+        if (v is None):
+            return ""
+        else:
+            return (("null" if prefix is None else prefix) + HxOverrides.stringOrNull(f(v)))
+
+haxe_macro_Printer._hx_class = haxe_macro_Printer
 
 
 class python_Boot:
@@ -1365,43 +2571,6 @@ class python_Boot:
 python_Boot._hx_class = python_Boot
 
 
-class python_HaxeIterator:
-    _hx_class_name = "python.HaxeIterator"
-    __slots__ = ("it", "x", "has", "checked")
-    _hx_fields = ["it", "x", "has", "checked"]
-    _hx_methods = ["next", "hasNext"]
-
-    def __init__(self,it):
-        self.checked = False
-        self.has = False
-        self.x = None
-        self.it = it
-
-    def next(self):
-        if (not self.checked):
-            self.hasNext()
-        self.checked = False
-        return self.x
-
-    def hasNext(self):
-        if (not self.checked):
-            try:
-                self.x = self.it.__next__()
-                self.has = True
-            except Exception as _hx_e:
-                _hx_e1 = _hx_e.val if isinstance(_hx_e, _HxException) else _hx_e
-                if isinstance(_hx_e1, StopIteration):
-                    s = _hx_e1
-                    self.has = False
-                    self.x = None
-                else:
-                    raise _hx_e
-            self.checked = True
-        return self.has
-
-python_HaxeIterator._hx_class = python_HaxeIterator
-
-
 class python_internal_ArrayImpl:
     _hx_class_name = "python.internal.ArrayImpl"
     __slots__ = ()
@@ -1739,7 +2908,7 @@ class python_io_NativeOutput(haxe_io_Output):
     _hx_class_name = "python.io.NativeOutput"
     __slots__ = ("stream",)
     _hx_fields = ["stream"]
-    _hx_methods = []
+    _hx_methods = ["close"]
     _hx_statics = []
     _hx_super = haxe_io_Output
 
@@ -1751,6 +2920,9 @@ class python_io_NativeOutput(haxe_io_Output):
         if (not stream.writable()):
             raise _HxException("Read only stream")
 
+    def close(self):
+        self.stream.close()
+
 python_io_NativeOutput._hx_class = python_io_NativeOutput
 
 
@@ -1758,19 +2930,24 @@ class python_io_NativeBytesOutput(python_io_NativeOutput):
     _hx_class_name = "python.io.NativeBytesOutput"
     __slots__ = ()
     _hx_fields = []
-    _hx_methods = []
+    _hx_methods = ["writeByte"]
     _hx_statics = []
     _hx_super = python_io_NativeOutput
 
 
     def __init__(self,stream):
         super().__init__(stream)
+
+    def writeByte(self,c):
+        self.stream.write(bytearray([c]))
+
 python_io_NativeBytesOutput._hx_class = python_io_NativeBytesOutput
 
 
 class python_io_IOutput:
     _hx_class_name = "python.io.IOutput"
     __slots__ = ()
+    _hx_methods = ["set_bigEndian", "writeByte", "writeBytes", "close", "writeFullBytes", "writeString"]
 python_io_IOutput._hx_class = python_io_IOutput
 
 
@@ -1826,7 +3003,7 @@ class python_io_NativeTextOutput(python_io_NativeOutput):
     _hx_class_name = "python.io.NativeTextOutput"
     __slots__ = ()
     _hx_fields = []
-    _hx_methods = []
+    _hx_methods = ["writeByte"]
     _hx_statics = []
     _hx_super = python_io_NativeOutput
 
@@ -1835,6 +3012,10 @@ class python_io_NativeTextOutput(python_io_NativeOutput):
         super().__init__(stream)
         if (not stream.writable()):
             raise _HxException("Read only stream")
+
+    def writeByte(self,c):
+        self.stream.write("".join(map(chr,[c])))
+
 python_io_NativeTextOutput._hx_class = python_io_NativeTextOutput
 
 
@@ -1852,17 +3033,76 @@ class python_io_FileTextOutput(python_io_NativeTextOutput):
 python_io_FileTextOutput._hx_class = python_io_FileTextOutput
 
 
+class python_io_IoTools:
+    _hx_class_name = "python.io.IoTools"
+    __slots__ = ()
+    _hx_statics = ["createFileOutputFromText", "createFileOutputFromBytes"]
+
+    @staticmethod
+    def createFileOutputFromText(t):
+        return sys_io_FileOutput(python_io_FileTextOutput(t))
+
+    @staticmethod
+    def createFileOutputFromBytes(t):
+        return sys_io_FileOutput(python_io_FileBytesOutput(t))
+python_io_IoTools._hx_class = python_io_IoTools
+
+
 class sys_io_File:
     _hx_class_name = "sys.io.File"
     __slots__ = ()
-    _hx_statics = ["saveContent"]
+    _hx_statics = ["saveContent", "write"]
 
     @staticmethod
     def saveContent(path,content):
         f = python_lib_Builtins.open(path,"w",-1,"utf-8",None,"")
         f.write(content)
         f.close()
+
+    @staticmethod
+    def write(path,binary = True):
+        if (binary is None):
+            binary = True
+        mode = ("wb" if binary else "w")
+        f = python_lib_Builtins.open(path,mode,-1,None,None,(None if binary else ""))
+        if binary:
+            return python_io_IoTools.createFileOutputFromBytes(f)
+        else:
+            return python_io_IoTools.createFileOutputFromText(f)
 sys_io_File._hx_class = sys_io_File
+
+
+class sys_io_FileOutput(haxe_io_Output):
+    _hx_class_name = "sys.io.FileOutput"
+    __slots__ = ("impl",)
+    _hx_fields = ["impl"]
+    _hx_methods = ["set_bigEndian", "writeByte", "writeBytes", "close", "writeFullBytes", "writeString"]
+    _hx_statics = []
+    _hx_super = haxe_io_Output
+
+
+    def __init__(self,impl):
+        self.impl = impl
+
+    def set_bigEndian(self,b):
+        return self.impl.set_bigEndian(b)
+
+    def writeByte(self,c):
+        self.impl.writeByte(c)
+
+    def writeBytes(self,s,pos,_hx_len):
+        return self.impl.writeBytes(s,pos,_hx_len)
+
+    def close(self):
+        self.impl.close()
+
+    def writeFullBytes(self,s,pos,_hx_len):
+        self.impl.writeFullBytes(s,pos,_hx_len)
+
+    def writeString(self,s):
+        self.impl.writeString(s)
+
+sys_io_FileOutput._hx_class = sys_io_FileOutput
 
 Math.NEGATIVE_INFINITY = float("-inf")
 Math.POSITIVE_INFINITY = float("inf")
