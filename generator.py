@@ -140,19 +140,21 @@ EReg._hx_class = EReg
 
 class Generator:
     _hx_class_name = "Generator"
-    __slots__ = ("indentReg", "moduleReg", "moduleFuncReg", "argReg", "typeReg", "rtypeReg")
-    _hx_fields = ["indentReg", "moduleReg", "moduleFuncReg", "argReg", "typeReg", "rtypeReg"]
-    _hx_methods = ["getIndent", "makeNodes", "makeFunc", "processFile"]
+    __slots__ = ("indentReg", "moduleReg", "funcReg", "classReg", "argReg", "typeReg", "rtypeReg")
+    _hx_fields = ["indentReg", "moduleReg", "funcReg", "classReg", "argReg", "typeReg", "rtypeReg"]
+    _hx_methods = ["getIndent", "makeNodes", "makeFunc", "makeClass", "processFile"]
     _hx_statics = ["main"]
 
     def __init__(self):
         self.rtypeReg = EReg(":rtype: (.+)","")
         self.typeReg = EReg(":type (\\w+): (.+)","")
         self.argReg = EReg(":arg (\\w+):(.*)","")
-        self.moduleFuncReg = EReg("\\.\\. function:: ([\\w\\.]+)","")
+        self.classReg = EReg("\\.\\. class:: ([\\w\\.]+)(\\((\\w+)\\))?","")
+        self.funcReg = EReg("\\.\\. (function|method):: ([\\w\\.]+)","")
         self.moduleReg = EReg("\\.\\. module:: ([\\w\\.]+)","")
         self.indentReg = EReg("^[ ]+","")
-        self.processFile("C:/Users/Tom/Downloads/blender-2.79.tar/blender-2.79/doc/python_api/sphinx-in/bpy.ops.nla.rst")
+        docDir = "C:/Users/Tom/Downloads/blender-2.79.tar/blender-2.79/doc/python_api/sphinx-in/"
+        self.processFile((("null" if docDir is None else docDir) + "bmesh.types.rst"))
 
     def getIndent(self,line):
         _this = self.indentReg
@@ -185,11 +187,11 @@ class Generator:
         return index
 
     def makeFunc(self,node):
-        _this = self.moduleFuncReg
+        _this = self.funcReg
         _this.matchObj = python_lib_Re.search(_this.pattern,node.line)
         if (_this.matchObj is None):
             return None
-        funcname = self.moduleFuncReg.matchObj.group(1)
+        funcname = self.funcReg.matchObj.group(2)
         doc = ""
         arg = None
         args = []
@@ -201,7 +203,7 @@ class Generator:
             _g = (_g + 1)
             _this1 = l.line
             if ((("" if ((0 >= len(_this1))) else _this1[0])) != ":"):
-                doc = (("null" if doc is None else doc) + HxOverrides.stringOrNull(l.line))
+                doc = (("null" if doc is None else doc) + HxOverrides.stringOrNull(((" " + HxOverrides.stringOrNull(l.line)))))
             else:
                 _this2 = self.argReg
                 _this2.matchObj = python_lib_Re.search(_this2.pattern,l.line)
@@ -216,7 +218,7 @@ class Generator:
                     while (_g2 < len(_g3)):
                         sl = (_g3[_g2] if _g2 >= 0 and _g2 < len(_g3) else None)
                         _g2 = (_g2 + 1)
-                        arg.doc = (HxOverrides.stringOrNull(arg.doc) + HxOverrides.stringOrNull(sl.line))
+                        arg.doc = (HxOverrides.stringOrNull(arg.doc) + HxOverrides.stringOrNull(((" " + HxOverrides.stringOrNull(sl.line)))))
                 else:
                     _this3 = self.typeReg
                     _this3.matchObj = python_lib_Re.search(_this3.pattern,l.line)
@@ -228,8 +230,31 @@ class Generator:
                         _this4 = self.rtypeReg
                         _this4.matchObj = python_lib_Re.search(_this4.pattern,l.line)
                         if (_this4.matchObj is not None):
-                            rtype = self.typeReg.matchObj.group(1)
-        return _hx_AnonObject({'name': funcname, 'doc': doc, 'args': args, 'rtype': rtype})
+                            rtype = self.rtypeReg.matchObj.group(1)
+        return _hx_AnonObject({'name': funcname, 'doc': StringTools.trim(doc), 'args': args, 'rtype': rtype})
+
+    def makeClass(self,node):
+        _this = self.classReg
+        _this.matchObj = python_lib_Re.search(_this.pattern,node.line)
+        if (_this.matchObj is None):
+            return None
+        classname = self.classReg.matchObj.group(1)
+        baseclass = self.classReg.matchObj.group(3)
+        doc = ""
+        methods = []
+        _g = 0
+        _g1 = node.children
+        while (_g < len(_g1)):
+            l = (_g1[_g] if _g >= 0 and _g < len(_g1) else None)
+            _g = (_g + 1)
+            _this1 = l.line
+            if ((("" if ((0 >= len(_this1))) else _this1[0])) != "."):
+                doc = (("null" if doc is None else doc) + HxOverrides.stringOrNull(((" " + HxOverrides.stringOrNull(l.line)))))
+            else:
+                method = self.makeFunc(l)
+                if (method is not None):
+                    methods.append(method)
+        return _hx_AnonObject({'name': classname, 'base': baseclass, 'doc': StringTools.trim(doc), 'methods': methods})
 
     def processFile(self,path):
         file = python_lib_Builtins.open(path,"r")
@@ -239,6 +264,7 @@ class Generator:
         root = _hx_AnonObject({'line': "", 'children': []})
         self.makeNodes(root,lines,0,0)
         functions = []
+        classes = []
         _g = 0
         _g1 = root.children
         while (_g < len(_g1)):
@@ -251,7 +277,10 @@ class Generator:
             func = self.makeFunc(top)
             if (func is not None):
                 functions.append(func)
-        out = _hx_AnonObject({'module': module, 'functions': functions})
+            cls = self.makeClass(top)
+            if (cls is not None):
+                classes.append(cls)
+        out = _hx_AnonObject({'module': module, 'functions': functions, 'classes': classes})
         output = haxe_format_JsonPrinter.print(out,None,"  ")
         sys_io_File.saveContent("output.json",output)
 
