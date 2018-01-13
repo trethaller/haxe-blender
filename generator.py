@@ -171,13 +171,15 @@ EReg._hx_class = EReg
 
 class Generator:
     _hx_class_name = "Generator"
-    __slots__ = ("indentReg", "moduleReg", "attrReg", "funcReg", "classReg", "argReg", "typeReg", "rtypeReg", "attrTypeReg", "allModules")
-    _hx_fields = ["indentReg", "moduleReg", "attrReg", "funcReg", "classReg", "argReg", "typeReg", "rtypeReg", "attrTypeReg", "allModules"]
-    _hx_methods = ["getIndent", "makeNodes", "makeFunc", "makeAttr", "makeClass", "processFile"]
-    _hx_statics = ["main"]
+    __slots__ = ("indentReg", "moduleReg", "attrReg", "funcReg", "classReg", "argReg", "typeReg", "rtypeReg", "attrTypeReg", "classTypeReg", "fixedArrayTypeReg", "allModules")
+    _hx_fields = ["indentReg", "moduleReg", "attrReg", "funcReg", "classReg", "argReg", "typeReg", "rtypeReg", "attrTypeReg", "classTypeReg", "fixedArrayTypeReg", "allModules"]
+    _hx_methods = ["getIndent", "makeNodes", "fixValue", "fixType", "makeFunc", "makeAttr", "makeClass", "processFile"]
+    _hx_statics = ["collectionsMap", "main"]
 
     def __init__(self):
         self.allModules = haxe_ds_StringMap()
+        self.fixedArrayTypeReg = EReg("(string|boolean|float|int) array of ([0-9]+) items","")
+        self.classTypeReg = EReg("class:`(.+)`","")
         self.attrTypeReg = EReg(":type: (.+)","")
         self.rtypeReg = EReg(":rtype: (.+)","")
         self.typeReg = EReg(":type (\\w+): (.+)","")
@@ -188,7 +190,7 @@ class Generator:
         self.moduleReg = EReg("\\.\\. module:: ([\\w\\.]+)","")
         self.indentReg = EReg("^[ ]+","")
         docDir = "C:/Users/Tom/Downloads/blender-2.79.tar/blender-2.79/doc/python_api/sphinx-in/"
-        files = ["bpy.types.Object.rst", "bpy.types.BlendDataParticles.rst", "bpy.types.IMAGE_UV_sculpt.rst", "mathutils.rst", "blf.rst", "bpy.ops.nla.rst", "bmesh.types.rst"]
+        files = ["bmesh.types.rst", "bpy.types.Object.rst", "bpy.types.BlendDataParticles.rst", "bpy.types.IMAGE_UV_sculpt.rst", "bpy.ops.armature.rst", "mathutils.rst", "blf.rst", "bpy.ops.nla.rst", "bmesh.types.rst"]
         _g = 0
         while (_g < len(files)):
             fname = (files[_g] if _g >= 0 and _g < len(files) else None)
@@ -227,6 +229,90 @@ class Generator:
                 break
         return index
 
+    def fixValue(self,val):
+        if (val is None):
+            return None
+        val1 = val
+        _hx_local_0 = len(val1)
+        if (_hx_local_0 == 5):
+            if (val1 == "False"):
+                return False
+            else:
+                v = val
+                if (Std.parseInt(v) is not None):
+                    return Std.parseInt(v)
+                else:
+                    v1 = val
+                    if (not python_lib_Math.isnan(Std.parseFloat(v1))):
+                        return Std.parseFloat(v1)
+                    else:
+                        return val
+        elif (_hx_local_0 == 4):
+            if (val1 == "None"):
+                return "None"
+            elif (val1 == "True"):
+                return True
+            elif (val1 == "null"):
+                return "None"
+            else:
+                v = val
+                if (Std.parseInt(v) is not None):
+                    return Std.parseInt(v)
+                else:
+                    v1 = val
+                    if (not python_lib_Math.isnan(Std.parseFloat(v1))):
+                        return Std.parseFloat(v1)
+                    else:
+                        return val
+        else:
+            v = val
+            if (Std.parseInt(v) is not None):
+                return Std.parseInt(v)
+            else:
+                v1 = val
+                if (not python_lib_Math.isnan(Std.parseFloat(v1))):
+                    return Std.parseFloat(v1)
+                else:
+                    return val
+
+    def fixType(self,name,intype):
+        _this = self.fixedArrayTypeReg
+        _this.matchObj = python_lib_Re.search(_this.pattern,intype)
+        if (_this.matchObj is not None):
+            t = self.fixedArrayTypeReg.matchObj.group(1)
+            num = Std.parseInt(self.fixedArrayTypeReg.matchObj.group(2))
+            if (t == "float"):
+                if (num == 3):
+                    return "mathutils.Vector"
+                elif (num == 4):
+                    return "mathutils.Quaternion"
+                elif (num == 16):
+                    return "mathutils.Matrix"
+                else:
+                    return "Array<Float>"
+            elif (t == "int"):
+                return "Array<Int>"
+            elif (t == "boolean"):
+                return "Array<Bool>"
+            elif (t == "string"):
+                return "Array<String>"
+        elif intype.startswith("enum"):
+            return "String"
+        elif intype.startswith("string"):
+            return "String"
+        elif intype.startswith("int"):
+            return "Int"
+        elif intype.startswith("float"):
+            return "Float"
+        elif intype.startswith("boolean"):
+            return "Bool"
+        else:
+            _this1 = self.classTypeReg
+            _this1.matchObj = python_lib_Re.search(_this1.pattern,intype)
+            if (_this1.matchObj is not None):
+                return self.classTypeReg.matchObj.group(1)
+        return "Dynamic"
+
     def makeFunc(self,node):
         _gthis = self
         _this = self.funcReg
@@ -237,7 +323,7 @@ class Generator:
         doc = ""
         args = []
         rtype = "Void"
-        method = (self.funcReg.matchObj.group(1) == "method")
+        isstatic = (self.funcReg.matchObj.group(1) == "staticmethod")
         argstr = self.funcReg.matchObj.group(3)
         argValsReg = EReg("\\(([^)]+)\\)","g")
         def _hx_local_0(e):
@@ -259,7 +345,8 @@ class Generator:
             _g21 = (_g21 + 1)
             _this1 = (strArgs[i] if i >= 0 and i < len(strArgs) else None)
             t = _this1.split("=")
-            args.append(_hx_AnonObject({'id': (t[0] if 0 < len(t) else None), 'type': "Dynamic", 'doc': "", 'val': (t[1] if 1 < len(t) else None)}))
+            x = _hx_AnonObject({'id': (t[0] if 0 < len(t) else None), 'type': "Dynamic", 'doc': "", 'val': self.fixValue((t[1] if 1 < len(t) else None))})
+            args.append(x)
         _g12 = 0
         _g22 = node.children
         while (_g12 < len(_g22)):
@@ -295,7 +382,12 @@ class Generator:
                 _this5 = l.line
                 if ((("" if ((0 >= len(_this5))) else _this5[0])) != ":"):
                     doc = (("null" if doc is None else doc) + HxOverrides.stringOrNull(((" " + HxOverrides.stringOrNull(l.line)))))
-        return _hx_AnonObject({'name': funcname, 'method': method, 'doc': StringTools.trim(doc), 'args': args, 'rtype': rtype})
+        _g13 = 0
+        while (_g13 < len(args)):
+            arg2 = (args[_g13] if _g13 >= 0 and _g13 < len(args) else None)
+            _g13 = (_g13 + 1)
+            arg2.type = self.fixType(arg2.id,arg2.type)
+        return _hx_AnonObject({'name': funcname, 'stat': isstatic, 'doc': StringTools.trim(doc), 'args': args, 'rtype': self.fixType(None,rtype)})
 
     def makeAttr(self,node):
         _this = self.attrReg
@@ -325,6 +417,7 @@ class Generator:
             tmp = True
         ret.readonly = tmp
         ret.doc = StringTools.trim(ret.doc)
+        ret.type = self.fixType(ret.name,ret.type)
         return ret
 
     def makeClass(self,node):
@@ -334,6 +427,8 @@ class Generator:
             return None
         classname = self.classReg.matchObj.group(1)
         baseclass = self.classReg.matchObj.group(3)
+        if (classname in Generator.collectionsMap.h):
+            baseclass = (("Collection<" + HxOverrides.stringOrNull(Generator.collectionsMap.h.get(classname,None))) + ">")
         ret = _hx_AnonObject({'name': classname, 'base': baseclass, 'doc': "", 'methods': [], 'attrs': []})
         _g = 0
         _g1 = node.children
@@ -1775,6 +1870,44 @@ Math.NaN = float("nan")
 Math.PI = python_lib_Math.pi
 
 Date.EPOCH_UTC = python_lib_datetime_Datetime.fromtimestamp(0,python_lib_datetime_Timezone.utc)
+def _hx_init_Generator_collectionsMap():
+    def _hx_local_0():
+        _g = haxe_ds_StringMap()
+        _g.h["BlendDataActions"] = "Action"
+        _g.h["BlendDataArmatures"] = "Armature"
+        _g.h["BlendDataBrushes"] = "Brush"
+        _g.h["BlendDataCacheFiles"] = "CacheFile"
+        _g.h["BlendDataCameras"] = "Camera"
+        _g.h["BlendDataCurves"] = "Curve"
+        _g.h["BlendDataFonts"] = "VectorFont"
+        _g.h["BlendDataGreasePencils"] = "GreasePencil"
+        _g.h["BlendDataGroups"] = "Group"
+        _g.h["BlendDataImages"] = "Image"
+        _g.h["BlendDataLamps"] = "Lamp"
+        _g.h["BlendDataLattices"] = "Lattice"
+        _g.h["BlendDataLibraries"] = "Library"
+        _g.h["BlendDataLineStyles"] = "FreestyleLineStyle"
+        _g.h["BlendDataMasks"] = "Mask"
+        _g.h["BlendDataMaterials"] = "Material"
+        _g.h["BlendDataMeshes"] = "Mesh"
+        _g.h["BlendDataMetaBalls"] = "MetaBall"
+        _g.h["BlendDataMovieClips"] = "MovieClip"
+        _g.h["BlendDataNodeTrees"] = "NodeTree"
+        _g.h["BlendDataObjects"] = "Object"
+        _g.h["BlendDataPaintCurves"] = "PaintCurve"
+        _g.h["BlendDataPalettes"] = "Palette"
+        _g.h["BlendDataParticles"] = "ParticleSettings"
+        _g.h["BlendDataScenes"] = "Scene"
+        _g.h["BlendDataScreens"] = "Screen"
+        _g.h["BlendDataSounds"] = "Sound"
+        _g.h["BlendDataSpeakers"] = "Speaker"
+        _g.h["BlendDataTexts"] = "Text"
+        _g.h["BlendDataTextures"] = "Texture"
+        _g.h["BlendDataWindowManagers"] = "WindowManager"
+        _g.h["BlendDataWorlds"] = "World"
+        return _g
+    return _hx_local_0()
+Generator.collectionsMap = _hx_init_Generator_collectionsMap()
 python_Boot.keywords = set(["and", "del", "from", "not", "with", "as", "elif", "global", "or", "yield", "assert", "else", "if", "pass", "None", "break", "except", "import", "raise", "True", "class", "exec", "in", "return", "False", "continue", "finally", "is", "try", "def", "for", "lambda", "while"])
 python_Boot.prefixLength = len("_hx_")
 
