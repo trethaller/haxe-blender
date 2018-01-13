@@ -140,17 +140,19 @@ EReg._hx_class = EReg
 
 class Generator:
     _hx_class_name = "Generator"
-    __slots__ = ("indentReg", "moduleReg", "funcReg", "classReg", "argReg", "typeReg", "rtypeReg")
-    _hx_fields = ["indentReg", "moduleReg", "funcReg", "classReg", "argReg", "typeReg", "rtypeReg"]
-    _hx_methods = ["getIndent", "makeNodes", "makeFunc", "makeClass", "processFile"]
+    __slots__ = ("indentReg", "moduleReg", "attrReg", "funcReg", "classReg", "argReg", "typeReg", "rtypeReg", "attrTypeReg")
+    _hx_fields = ["indentReg", "moduleReg", "attrReg", "funcReg", "classReg", "argReg", "typeReg", "rtypeReg", "attrTypeReg"]
+    _hx_methods = ["getIndent", "makeNodes", "makeFunc", "makeAttr", "makeClass", "processFile"]
     _hx_statics = ["main"]
 
     def __init__(self):
+        self.attrTypeReg = EReg(":type: (.+)","")
         self.rtypeReg = EReg(":rtype: (.+)","")
         self.typeReg = EReg(":type (\\w+): (.+)","")
         self.argReg = EReg(":arg (\\w+):(.*)","")
         self.classReg = EReg("\\.\\. class:: ([\\w\\.]+)(\\((\\w+)\\))?","")
         self.funcReg = EReg("\\.\\. (function|method):: ([\\w\\.]+)","")
+        self.attrReg = EReg("\\.\\. (attribute|data):: ([\\w\\.]+)","")
         self.moduleReg = EReg("\\.\\. module:: ([\\w\\.]+)","")
         self.indentReg = EReg("^[ ]+","")
         docDir = "C:/Users/Tom/Downloads/blender-2.79.tar/blender-2.79/doc/python_api/sphinx-in/"
@@ -201,37 +203,67 @@ class Generator:
         while (_g < len(_g1)):
             l = (_g1[_g] if _g >= 0 and _g < len(_g1) else None)
             _g = (_g + 1)
-            _this1 = l.line
-            if ((("" if ((0 >= len(_this1))) else _this1[0])) != ":"):
-                doc = (("null" if doc is None else doc) + HxOverrides.stringOrNull(((" " + HxOverrides.stringOrNull(l.line)))))
+            _this1 = self.argReg
+            _this1.matchObj = python_lib_Re.search(_this1.pattern,l.line)
+            if (_this1.matchObj is not None):
+                if (arg is not None):
+                    args.append(arg)
+                arg = _hx_AnonObject({'id': "", 'type': "", 'doc': ""})
+                arg.id = self.argReg.matchObj.group(1)
+                arg.doc = StringTools.trim(self.argReg.matchObj.group(2))
+                _g2 = 0
+                _g3 = l.children
+                while (_g2 < len(_g3)):
+                    sl = (_g3[_g2] if _g2 >= 0 and _g2 < len(_g3) else None)
+                    _g2 = (_g2 + 1)
+                    arg.doc = (HxOverrides.stringOrNull(arg.doc) + HxOverrides.stringOrNull(((" " + HxOverrides.stringOrNull(sl.line)))))
             else:
-                _this2 = self.argReg
+                _this2 = self.typeReg
                 _this2.matchObj = python_lib_Re.search(_this2.pattern,l.line)
                 if (_this2.matchObj is not None):
-                    if (arg is not None):
-                        args.append(arg)
-                    arg = _hx_AnonObject({'id': "", 'type': "", 'doc': ""})
-                    arg.id = self.argReg.matchObj.group(1)
-                    arg.doc = StringTools.trim(self.argReg.matchObj.group(2))
-                    _g2 = 0
-                    _g3 = l.children
-                    while (_g2 < len(_g3)):
-                        sl = (_g3[_g2] if _g2 >= 0 and _g2 < len(_g3) else None)
-                        _g2 = (_g2 + 1)
-                        arg.doc = (HxOverrides.stringOrNull(arg.doc) + HxOverrides.stringOrNull(((" " + HxOverrides.stringOrNull(sl.line)))))
+                    if (arg.id != self.typeReg.matchObj.group(1)):
+                        raise _HxException(None)
+                    arg.type = self.typeReg.matchObj.group(2)
                 else:
-                    _this3 = self.typeReg
+                    _this3 = self.rtypeReg
                     _this3.matchObj = python_lib_Re.search(_this3.pattern,l.line)
                     if (_this3.matchObj is not None):
-                        if (arg.id != self.typeReg.matchObj.group(1)):
-                            raise _HxException(None)
-                        arg.type = self.typeReg.matchObj.group(2)
+                        rtype = self.rtypeReg.matchObj.group(1)
                     else:
-                        _this4 = self.rtypeReg
-                        _this4.matchObj = python_lib_Re.search(_this4.pattern,l.line)
-                        if (_this4.matchObj is not None):
-                            rtype = self.rtypeReg.matchObj.group(1)
+                        _this4 = l.line
+                        if ((("" if ((0 >= len(_this4))) else _this4[0])) != ":"):
+                            doc = (("null" if doc is None else doc) + HxOverrides.stringOrNull(((" " + HxOverrides.stringOrNull(l.line)))))
         return _hx_AnonObject({'name': funcname, 'doc': StringTools.trim(doc), 'args': args, 'rtype': rtype})
+
+    def makeAttr(self,node):
+        _this = self.attrReg
+        _this.matchObj = python_lib_Re.search(_this.pattern,node.line)
+        if (_this.matchObj is None):
+            return None
+        attrname = self.attrReg.matchObj.group(2)
+        ret = _hx_AnonObject({'name': attrname, 'doc': "", 'type': "Dynamic", 'readonly': False})
+        _g = 0
+        _g1 = node.children
+        while (_g < len(_g1)):
+            l = (_g1[_g] if _g >= 0 and _g < len(_g1) else None)
+            _g = (_g + 1)
+            _this1 = l.line
+            c = ("" if ((0 >= len(_this1))) else _this1[0])
+            _this2 = self.attrTypeReg
+            _this2.matchObj = python_lib_Re.search(_this2.pattern,l.line)
+            if (_this2.matchObj is not None):
+                ret.type = self.attrTypeReg.matchObj.group(1)
+            elif (c != "*"):
+                ret.doc = (HxOverrides.stringOrNull(ret.doc) + HxOverrides.stringOrNull(((" " + HxOverrides.stringOrNull(l.line)))))
+        tmp = None
+        if (self.attrReg.matchObj.group(1) != "data"):
+            _this3 = ret.type
+            tmp = (_this3.find("(readonly)") > 0)
+        else:
+            tmp = True
+        ret.readonly = tmp
+        ret.doc = StringTools.trim(ret.doc)
+        return ret
 
     def makeClass(self,node):
         _this = self.classReg
@@ -240,8 +272,7 @@ class Generator:
             return None
         classname = self.classReg.matchObj.group(1)
         baseclass = self.classReg.matchObj.group(3)
-        doc = ""
-        methods = []
+        ret = _hx_AnonObject({'name': classname, 'base': baseclass, 'doc': "", 'methods': [], 'attrs': []})
         _g = 0
         _g1 = node.children
         while (_g < len(_g1)):
@@ -249,12 +280,18 @@ class Generator:
             _g = (_g + 1)
             _this1 = l.line
             if ((("" if ((0 >= len(_this1))) else _this1[0])) != "."):
-                doc = (("null" if doc is None else doc) + HxOverrides.stringOrNull(((" " + HxOverrides.stringOrNull(l.line)))))
+                ret.doc = (HxOverrides.stringOrNull(ret.doc) + HxOverrides.stringOrNull(((" " + HxOverrides.stringOrNull(l.line)))))
             else:
                 method = self.makeFunc(l)
                 if (method is not None):
-                    methods.append(method)
-        return _hx_AnonObject({'name': classname, 'base': baseclass, 'doc': StringTools.trim(doc), 'methods': methods})
+                    _this2 = ret.methods
+                    _this2.append(method)
+                attr = self.makeAttr(l)
+                if (attr is not None):
+                    _this3 = ret.attrs
+                    _this3.append(attr)
+        ret.doc = StringTools.trim(ret.doc)
+        return ret
 
     def processFile(self,path):
         file = python_lib_Builtins.open(path,"r")
