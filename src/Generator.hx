@@ -1,8 +1,3 @@
-
-//import python.lib.Json;
-// import python.Syntax;
-// import pyextern.Processor;
-import python.lib.Builtins;
 import python.lib.Shutil;
 import python.lib.Os;
 import python.lib.Io;
@@ -242,9 +237,6 @@ class Generator {
 			} 			
 		}
 
-		// for(arg in args) {
-		// 	arg.type = fixType(arg.id, arg.type);
-		// }
 		var access = [APublic];
 		if(isstatic) {
 			access.push(AStatic);
@@ -262,14 +254,6 @@ class Generator {
 				ret: rtype
 			})
 		};
-
-		// return {
-		// 	name: funcname,
-		// 	stat: isstatic,
-		// 	doc: StringTools.trim(doc),
-		// 	args: args,
-		// 	rtype: fixType(null, rtype)
-		// };
 	}
 
 	function makeAttr(node: Node): Field {
@@ -443,13 +427,6 @@ class Generator {
 		return re_letter.matchedLeft() + re_letter.matched(0).toUpperCase() + re_letter.matchedRight();
 	}
 	
-
-	// function createFields(module, fields: Array<Field>) {
-	// 	for(func in module.functions) {
-	// 		fields.push(func);
-	// 	}
-	// }
-
 	static function splitTypePath(fulltype: String): TypePath {
 		var pack = makePack(fulltype);
 		var name = upperCaseFirstLetter(pack.pop());
@@ -504,7 +481,6 @@ class Generator {
 	}
 
 	function writeTypes(path: String) {
-		var out = sys.io.File.write('temp.hx', false);
 		for(modname in allModules.keys()) {
 			var module = allModules[modname];
 			var td = makeModule(modname, module);
@@ -515,7 +491,6 @@ class Generator {
 				writeType(path, c);
 			}
 		}
-		out.close();
 	}
 
 
@@ -539,10 +514,6 @@ class Generator {
 			Shutil.rmtree(outDir);
 		}
 		writeTypes(outDir);
-
-		var output = haxe.Json.stringify(allModules, null, '  ');
-		sys.io.File.saveContent('output.json', output);
-
 	}
 
 	public static function main() {
