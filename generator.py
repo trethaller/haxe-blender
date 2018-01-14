@@ -130,7 +130,7 @@ class Generator:
     __slots__ = ("specialMathValueClasses", "indentReg", "moduleReg", "attrReg", "funcReg", "classReg", "argReg", "typeReg", "rtypeReg", "attrTypeReg", "collectTypeReg", "classTypeReg", "fixedArrayTypeReg", "quotesReg", "allModules")
     _hx_fields = ["specialMathValueClasses", "indentReg", "moduleReg", "attrReg", "funcReg", "classReg", "argReg", "typeReg", "rtypeReg", "attrTypeReg", "collectTypeReg", "classTypeReg", "fixedArrayTypeReg", "quotesReg", "allModules"]
     _hx_methods = ["getIndent", "makeNodes", "makeValue", "makeType", "makeFunc", "makeAttr", "makeClass", "processFile", "makeModule", "writeTypes"]
-    _hx_statics = ["collectionsMap", "isHxKeyword", "lowerCaseFirstLetter", "upperCaseFirstLetter", "splitTypePath", "makePack", "writeType", "main"]
+    _hx_statics = ["collectionsMap", "isHxKeyword", "makeLower", "makeUpper", "splitTypePath", "makePack", "writeType", "main"]
 
     def __init__(self):
         self.allModules = haxe_ds_StringMap()
@@ -156,7 +156,7 @@ class Generator:
                 return True
             return False
         filterFile = _hx_local_0
-        files = list(filter(filterFile,python_lib_Os.listdir(docDir)))
+        files = ["bpy.types.BlendData.rst"]
         _g = 0
         while (_g < len(files)):
             fname1 = (files[_g] if _g >= 0 and _g < len(files) else None)
@@ -523,12 +523,11 @@ class Generator:
             func = (_g1[_g] if _g >= 0 and _g < len(_g1) else None)
             _g = (_g + 1)
             fields.append(func)
-        modName = Generator.upperCaseFirstLetter((None if ((len(pack) == 0)) else pack.pop()))
+        modName = Generator.makeUpper((None if ((len(pack) == 0)) else pack.pop()))
         tmp = (module.globals + module.functions)
         return _hx_AnonObject({'pack': pack, 'name': modName, 'pos': None, 'meta': [_hx_AnonObject({'name': ":pythonImport", 'params': [_hx_AnonObject({'expr': haxe_macro_ExprDef.EConst(haxe_macro_Constant.CString(modname)), 'pos': None})], 'pos': None})], 'params': [], 'isExtern': True, 'kind': haxe_macro_TypeDefKind.TDClass(), 'fields': tmp})
 
     def writeTypes(self,path):
-        out = sys_io_File.write("temp.hx",False)
         modname = self.allModules.keys()
         while modname.hasNext():
             modname1 = modname.next()
@@ -542,32 +541,27 @@ class Generator:
                 c = (_g1[_g] if _g >= 0 and _g < len(_g1) else None)
                 _g = (_g + 1)
                 Generator.writeType(path,c)
-        out.close()
 
     @staticmethod
     def isHxKeyword(name):
         return (python_internal_ArrayImpl.indexOf(["function", "class", "static", "var", "if", "else", "while", "do", "for", "break", "return", "continue", "extends", "implements", "import", "switch", "case", "default", "public", "private", "try", "untyped", "catch", "new", "this", "throw", "extern", "enum", "in", "interface", "cast", "override", "dynamic", "typedef", "package", "inline", "using", "null", "true", "false", "abstract", "macro", "__init__"],name,None) >= 0)
 
     @staticmethod
-    def lowerCaseFirstLetter(_hx_str):
+    def makeLower(_hx_str):
         re_letter = EReg("[A-Za-z]","")
         re_letter.matchObj = python_lib_Re.search(re_letter.pattern,_hx_str)
-        if (re_letter.matchObj is None):
-            raise _HxException(("no letter in " + ("null" if _hx_str is None else _hx_str)))
         return ((HxOverrides.stringOrNull(HxString.substr(re_letter.matchObj.string,0,re_letter.matchObj.start())) + HxOverrides.stringOrNull(re_letter.matchObj.group(0).lower())) + HxOverrides.stringOrNull(HxString.substr(re_letter.matchObj.string,re_letter.matchObj.end(),None)))
 
     @staticmethod
-    def upperCaseFirstLetter(_hx_str):
+    def makeUpper(_hx_str):
         re_letter = EReg("[A-Za-z]","")
         re_letter.matchObj = python_lib_Re.search(re_letter.pattern,_hx_str)
-        if (re_letter.matchObj is None):
-            raise _HxException(("no letter in " + ("null" if _hx_str is None else _hx_str)))
         return ((HxOverrides.stringOrNull(HxString.substr(re_letter.matchObj.string,0,re_letter.matchObj.start())) + HxOverrides.stringOrNull(re_letter.matchObj.group(0).upper())) + HxOverrides.stringOrNull(HxString.substr(re_letter.matchObj.string,re_letter.matchObj.end(),None)))
 
     @staticmethod
     def splitTypePath(fulltype):
         pack = Generator.makePack(fulltype)
-        name = Generator.upperCaseFirstLetter((None if ((len(pack) == 0)) else pack.pop()))
+        name = Generator.makeUpper((None if ((len(pack) == 0)) else pack.pop()))
         return _hx_AnonObject({'pack': pack, 'name': name})
 
     @staticmethod
@@ -578,7 +572,7 @@ class Generator:
         while (_g1 < len(_g2)):
             p = (_g2[_g1] if _g1 >= 0 and _g1 < len(_g2) else None)
             _g1 = (_g1 + 1)
-            p = Generator.lowerCaseFirstLetter(p)
+            p = Generator.makeLower(p)
             if Generator.isHxKeyword(p):
                 p = ("_" + ("null" if p is None else p))
             _g.append(p)
@@ -2637,7 +2631,7 @@ class python_io_NativeOutput(haxe_io_Output):
     _hx_class_name = "python.io.NativeOutput"
     __slots__ = ("stream",)
     _hx_fields = ["stream"]
-    _hx_methods = ["close"]
+    _hx_methods = []
     _hx_statics = []
     _hx_super = haxe_io_Output
 
@@ -2648,9 +2642,6 @@ class python_io_NativeOutput(haxe_io_Output):
         self.stream = stream
         if (not stream.writable()):
             raise _HxException("Read only stream")
-
-    def close(self):
-        self.stream.close()
 
 
 
@@ -2670,7 +2661,6 @@ class python_io_NativeBytesOutput(python_io_NativeOutput):
 class python_io_IOutput:
     _hx_class_name = "python.io.IOutput"
     __slots__ = ()
-    _hx_methods = ["set_bigEndian", "close"]
 
 
 class python_io_IFileOutput:
@@ -2745,61 +2735,16 @@ class python_io_FileTextOutput(python_io_NativeTextOutput):
         super().__init__(stream)
 
 
-class python_io_IoTools:
-    _hx_class_name = "python.io.IoTools"
-    __slots__ = ()
-    _hx_statics = ["createFileOutputFromText", "createFileOutputFromBytes"]
-
-    @staticmethod
-    def createFileOutputFromText(t):
-        return sys_io_FileOutput(python_io_FileTextOutput(t))
-
-    @staticmethod
-    def createFileOutputFromBytes(t):
-        return sys_io_FileOutput(python_io_FileBytesOutput(t))
-
-
 class sys_io_File:
     _hx_class_name = "sys.io.File"
     __slots__ = ()
-    _hx_statics = ["saveContent", "write"]
+    _hx_statics = ["saveContent"]
 
     @staticmethod
     def saveContent(path,content):
         f = python_lib_Builtins.open(path,"w",-1,"utf-8",None,"")
         f.write(content)
         f.close()
-
-    @staticmethod
-    def write(path,binary = True):
-        if (binary is None):
-            binary = True
-        mode = ("wb" if binary else "w")
-        f = python_lib_Builtins.open(path,mode,-1,None,None,(None if binary else ""))
-        if binary:
-            return python_io_IoTools.createFileOutputFromBytes(f)
-        else:
-            return python_io_IoTools.createFileOutputFromText(f)
-
-
-class sys_io_FileOutput(haxe_io_Output):
-    _hx_class_name = "sys.io.FileOutput"
-    __slots__ = ("impl",)
-    _hx_fields = ["impl"]
-    _hx_methods = ["set_bigEndian", "close"]
-    _hx_statics = []
-    _hx_super = haxe_io_Output
-
-
-    def __init__(self,impl):
-        self.impl = impl
-
-    def set_bigEndian(self,b):
-        return self.impl.set_bigEndian(b)
-
-    def close(self):
-        self.impl.close()
-
 
 Math.NEGATIVE_INFINITY = float("-inf")
 Math.POSITIVE_INFINITY = float("inf")

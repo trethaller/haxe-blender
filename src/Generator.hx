@@ -416,27 +416,27 @@ class Generator {
 		].indexOf(name) >= 0;
 	}
 
-	static function lowerCaseFirstLetter(str:String):String {
-			var re_letter = ~/[A-Za-z]/;
-			if (!re_letter.match(str)) throw "no letter in " + str;
-			return re_letter.matchedLeft() + re_letter.matched(0).toLowerCase() + re_letter.matchedRight();
-	}
-	static function upperCaseFirstLetter(str:String):String {
+	static function makeLower(str:String):String {
 		var re_letter = ~/[A-Za-z]/;
-		if (!re_letter.match(str)) throw "no letter in " + str;
+		re_letter.match(str);
+		return re_letter.matchedLeft() + re_letter.matched(0).toLowerCase() + re_letter.matchedRight();
+	}
+	static function makeUpper(str:String):String {
+		var re_letter = ~/[A-Za-z]/;
+		re_letter.match(str);
 		return re_letter.matchedLeft() + re_letter.matched(0).toUpperCase() + re_letter.matchedRight();
 	}
 	
 	static function splitTypePath(fulltype: String): TypePath {
 		var pack = makePack(fulltype);
-		var name = upperCaseFirstLetter(pack.pop());
+		var name = makeUpper(pack.pop());
 		return {pack: pack, name: name};
 
 	}
 	static function makePack(modname: String) {
 		return [
 			for (p in modname.split(".")) {
-				p = lowerCaseFirstLetter(p);
+				p = makeLower(p);
 				if (isHxKeyword(p))
 					p = "_" + p;
 				p;
@@ -453,7 +453,7 @@ class Generator {
 		for(func in module.functions) {
 			fields.push(func);
 		}
-		var modName = upperCaseFirstLetter(pack.pop());
+		var modName = makeUpper(pack.pop());
 		return {
 			pack : pack,
 			name : modName,
@@ -493,7 +493,6 @@ class Generator {
 		}
 	}
 
-
 	function new() {
 		var docDir = "C:/Users/Tom/Downloads/blender-2.79.tar/blender-2.79/doc/python_api/sphinx-in/";
 
@@ -502,8 +501,8 @@ class Generator {
 			if(fname.startsWith("bpy.types")) return true;
 			return false;
 		}
-		var files = Os.listdir(docDir).filter(filterFile);
-		//var files = ["bpy.types.BlendData.rst"];
+		//var files = Os.listdir(docDir).filter(filterFile);
+		var files = ["bpy.types.BlendData.rst"];
 
 		for(fname in files) {
 			processFile(docDir + fname);
