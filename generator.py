@@ -10,8 +10,10 @@ import inspect as python_lib_Inspect
 import os as python_lib_Os
 import builtins as python_lib_Builtins
 import functools as python_lib_Functools
+import io as python_lib_Io
 import random as python_lib_Random
 import re as python_lib_Re
+import shutil as python_lib_Shutil
 from io import StringIO as python_lib_io_StringIO
 
 
@@ -114,7 +116,7 @@ class EReg:
     _hx_class_name = "EReg"
     __slots__ = ("pattern", "matchObj", "_hx_global")
     _hx_fields = ["pattern", "matchObj", "global"]
-    _hx_methods = ["map"]
+    _hx_methods = ["replace", "map"]
 
     def __init__(self,r,opt):
         self.matchObj = None
@@ -137,6 +139,29 @@ class EReg:
             if (c == 103):
                 self._hx_global = True
         self.pattern = python_lib_Re.compile(r,options)
+
+    def replace(self,s,by):
+        _this = by.split("$$")
+        by1 = "_hx_#repl#__".join([python_Boot.toString1(x1,'') for x1 in _this])
+        def _hx_local_0(x):
+            res = by1
+            g = x.groups()
+            _g1 = 0
+            _g = len(g)
+            while (_g1 < _g):
+                i = _g1
+                _g1 = (_g1 + 1)
+                gs = g[i]
+                if (gs is None):
+                    continue
+                delimiter = ("$" + HxOverrides.stringOrNull(str((i + 1))))
+                _this1 = (list(res) if ((delimiter == "")) else res.split(delimiter))
+                res = gs.join([python_Boot.toString1(x1,'') for x1 in _this1])
+            _this2 = res.split("_hx_#repl#__")
+            res = "$".join([python_Boot.toString1(x1,'') for x1 in _this2])
+            return res
+        replace = _hx_local_0
+        return python_lib_Re.sub(self.pattern,replace,s,(0 if (self._hx_global) else 1))
 
     def map(self,s,f):
         buf_b = python_lib_io_StringIO()
@@ -173,16 +198,17 @@ EReg._hx_class = EReg
 
 class Generator:
     _hx_class_name = "Generator"
-    __slots__ = ("specialMathValueClasses", "indentReg", "moduleReg", "attrReg", "funcReg", "classReg", "argReg", "typeReg", "rtypeReg", "attrTypeReg", "classTypeReg", "fixedArrayTypeReg", "quotesReg", "allModules")
-    _hx_fields = ["specialMathValueClasses", "indentReg", "moduleReg", "attrReg", "funcReg", "classReg", "argReg", "typeReg", "rtypeReg", "attrTypeReg", "classTypeReg", "fixedArrayTypeReg", "quotesReg", "allModules"]
-    _hx_methods = ["getIndent", "makeNodes", "makeValue", "makeType", "makeFunc", "makeAttr", "makeClass", "processFile", "createType", "writeTypes"]
-    _hx_statics = ["collectionsMap", "isHxKeyword", "lowerCaseFirstLetter", "upperCaseFirstLetter", "main"]
+    __slots__ = ("specialMathValueClasses", "indentReg", "moduleReg", "attrReg", "funcReg", "classReg", "argReg", "typeReg", "rtypeReg", "attrTypeReg", "collectTypeReg", "classTypeReg", "fixedArrayTypeReg", "quotesReg", "allModules")
+    _hx_fields = ["specialMathValueClasses", "indentReg", "moduleReg", "attrReg", "funcReg", "classReg", "argReg", "typeReg", "rtypeReg", "attrTypeReg", "collectTypeReg", "classTypeReg", "fixedArrayTypeReg", "quotesReg", "allModules"]
+    _hx_methods = ["getIndent", "makeNodes", "makeValue", "makeType", "makeFunc", "makeAttr", "makeClass", "processFile", "makeModule", "writeTypes"]
+    _hx_statics = ["collectionsMap", "isHxKeyword", "lowerCaseFirstLetter", "upperCaseFirstLetter", "splitTypePath", "makePack", "writeType", "main"]
 
     def __init__(self):
         self.allModules = haxe_ds_StringMap()
         self.quotesReg = EReg("^[\"'](.*)[\"']$","")
         self.fixedArrayTypeReg = EReg("(string|boolean|float|int) array of ([0-9]+) items","")
         self.classTypeReg = EReg("class:`(.+)`","")
+        self.collectTypeReg = EReg("class:`bpy_prop_collection` of :class:`([\\w]+)`","")
         self.attrTypeReg = EReg(":type: (.+)","")
         self.rtypeReg = EReg(":rtype: (.+)","")
         self.typeReg = EReg(":type (\\w+): (.+)","")
@@ -194,15 +220,22 @@ class Generator:
         self.indentReg = EReg("^[ ]+","")
         self.specialMathValueClasses = ["Color", "Euler", "Matrix", "Quaternion", "Vector"]
         docDir = "C:/Users/Tom/Downloads/blender-2.79.tar/blender-2.79/doc/python_api/sphinx-in/"
-        files = ["bmesh.types.rst", "bpy.types.Object.rst", "bpy.types.BlendDataParticles.rst", "bpy.types.IMAGE_UV_sculpt.rst", "bpy.ops.armature.rst", "mathutils.rst", "blf.rst", "bpy.ops.nla.rst", "bmesh.types.rst"]
+        def _hx_local_0(fname):
+            if (not fname.endswith(".rst")):
+                return False
+            if fname.startswith("bpy.types"):
+                return True
+            return False
+        filterFile = _hx_local_0
+        files = list(filter(filterFile,python_lib_Os.listdir(docDir)))
         _g = 0
         while (_g < len(files)):
-            fname = (files[_g] if _g >= 0 and _g < len(files) else None)
+            fname1 = (files[_g] if _g >= 0 and _g < len(files) else None)
             _g = (_g + 1)
-            self.processFile((("null" if docDir is None else docDir) + ("null" if fname is None else fname)))
-        outDir = "out"
+            self.processFile((("null" if docDir is None else docDir) + ("null" if fname1 is None else fname1)))
+        outDir = "api"
         if sys_FileSystem.exists(outDir):
-            sys_FileSystem.deleteDirectory(outDir)
+            python_lib_Shutil.rmtree(outDir)
         self.writeTypes(outDir)
         output = haxe_format_JsonPrinter.print(self.allModules,None,"  ")
         sys_io_File.saveContent("output.json",output)
@@ -244,7 +277,7 @@ class Generator:
         _hx_local_0 = len(val1)
         if (_hx_local_0 == 5):
             if (val1 == "False"):
-                return _hx_AnonObject({'expr': haxe_macro_ExprDef.EConst(haxe_macro_Constant.CIdent("false")), 'pos': _hx_AnonObject({'file': "src/Generator.hx", 'min': 3396, 'max': 3401})})
+                return _hx_AnonObject({'expr': haxe_macro_ExprDef.EConst(haxe_macro_Constant.CIdent("false")), 'pos': _hx_AnonObject({'file': "src/Generator.hx", 'min': 3563, 'max': 3568})})
             else:
                 v = val
                 if (Std.parseInt(v) is not None):
@@ -263,11 +296,11 @@ class Generator:
                             return None
         elif (_hx_local_0 == 4):
             if (val1 == "None"):
-                return _hx_AnonObject({'expr': haxe_macro_ExprDef.EConst(haxe_macro_Constant.CIdent("null")), 'pos': _hx_AnonObject({'file': "src/Generator.hx", 'min': 3426, 'max': 3430})})
+                return _hx_AnonObject({'expr': haxe_macro_ExprDef.EConst(haxe_macro_Constant.CIdent("null")), 'pos': _hx_AnonObject({'file': "src/Generator.hx", 'min': 3593, 'max': 3597})})
             elif (val1 == "True"):
-                return _hx_AnonObject({'expr': haxe_macro_ExprDef.EConst(haxe_macro_Constant.CIdent("true")), 'pos': _hx_AnonObject({'file': "src/Generator.hx", 'min': 3366, 'max': 3370})})
+                return _hx_AnonObject({'expr': haxe_macro_ExprDef.EConst(haxe_macro_Constant.CIdent("true")), 'pos': _hx_AnonObject({'file': "src/Generator.hx", 'min': 3533, 'max': 3537})})
             elif (val1 == "null"):
-                return _hx_AnonObject({'expr': haxe_macro_ExprDef.EConst(haxe_macro_Constant.CIdent("null")), 'pos': _hx_AnonObject({'file': "src/Generator.hx", 'min': 3455, 'max': 3459})})
+                return _hx_AnonObject({'expr': haxe_macro_ExprDef.EConst(haxe_macro_Constant.CIdent("null")), 'pos': _hx_AnonObject({'file': "src/Generator.hx", 'min': 3622, 'max': 3626})})
             else:
                 v = val
                 if (Std.parseInt(v) is not None):
@@ -337,11 +370,17 @@ class Generator:
         elif intype.startswith("boolean"):
             return haxe_macro_ComplexType.TPath(_hx_AnonObject({'pack': [], 'name': "Bool", 'params': []}))
         else:
-            _this1 = self.classTypeReg
+            _this1 = self.collectTypeReg
             _this1.matchObj = python_lib_Re.search(_this1.pattern,intype)
             if (_this1.matchObj is not None):
-                className = self.classTypeReg.matchObj.group(1)
+                className = (("Collection<" + HxOverrides.stringOrNull(self.collectTypeReg.matchObj.group(1))) + ">")
                 return haxe_macro_ComplexType.TPath(_hx_AnonObject({'pack': [], 'name': className}))
+            else:
+                _this2 = self.classTypeReg
+                _this2.matchObj = python_lib_Re.search(_this2.pattern,intype)
+                if (_this2.matchObj is not None):
+                    className1 = self.classTypeReg.matchObj.group(1)
+                    return haxe_macro_ComplexType.TPath(_hx_AnonObject({'pack': [], 'name': className1}))
         return haxe_macro_ComplexType.TPath(_hx_AnonObject({'pack': [], 'name': "Dynamic", 'params': []}))
 
     def makeFunc(self,node):
@@ -351,6 +390,7 @@ class Generator:
         if (_this.matchObj is None):
             return None
         funcname = self.funcReg.matchObj.group(2)
+        print(str(("   " + ("null" if funcname is None else funcname))))
         doc = ""
         args = []
         rtype = haxe_macro_ComplexType.TPath(_hx_AnonObject({'pack': [], 'name': "Void", 'params': []}))
@@ -360,6 +400,7 @@ class Generator:
         def _hx_local_0(e):
             return "null"
         clean = argValsReg.map(argstr,_hx_local_0)
+        clean = StringTools.replace(StringTools.replace(clean,"[",""),"]","")
         _g = []
         _g1 = 0
         _g2 = clean.split(", ")
@@ -394,7 +435,18 @@ class Generator:
                     def _hx_local_3(a1):
                         return (a1.name == _gthis.typeReg.matchObj.group(1))
                     arg = Lambda.find(args,_hx_local_3)
-                    arg.type = self.makeType(arg.name,self.typeReg.matchObj.group(2))
+                    if (arg is not None):
+                        arg.type = self.makeType(arg.name,self.typeReg.matchObj.group(2))
+                    else:
+                        tmp = (("! cannot find " + HxOverrides.stringOrNull(self.typeReg.matchObj.group(1))) + " in ")
+                        _g3 = []
+                        _g4 = 0
+                        while (_g4 < len(args)):
+                            a2 = (args[_g4] if _g4 >= 0 and _g4 < len(args) else None)
+                            _g4 = (_g4 + 1)
+                            x2 = a2.name
+                            _g3.append(x2)
+                        print(str((("null" if tmp is None else tmp) + Std.string(_g3))))
             _this4 = self.rtypeReg
             _this4.matchObj = python_lib_Re.search(_this4.pattern,l.line)
             if (_this4.matchObj is not None):
@@ -415,7 +467,7 @@ class Generator:
             return None
         attrname = self.attrReg.matchObj.group(2)
         doc = ""
-        _hx_type = None
+        _hx_type = haxe_macro_ComplexType.TPath(_hx_AnonObject({'pack': [], 'name': "Dynamic", 'params': []}))
         readonly = False
         _g = 0
         _g1 = node.children
@@ -439,19 +491,22 @@ class Generator:
         access = [haxe_macro_Access.APublic]
         return _hx_AnonObject({'name': attrname, 'access': access, 'doc': doc, 'pos': None, 'kind': haxe_macro_FieldType.FVar(_hx_type)})
 
-    def makeClass(self,node):
+    def makeClass(self,modname,node):
         _this = self.classReg
         _this.matchObj = python_lib_Re.search(_this.pattern,node.line)
         if (_this.matchObj is None):
             return None
         classname = self.classReg.matchObj.group(1)
         baseclass = self.classReg.matchObj.group(3)
+        print(str((" " + ("null" if classname is None else classname))))
         if (python_internal_ArrayImpl.indexOf(self.specialMathValueClasses,classname,None) > 0):
             baseclass = None
             classname = (("null" if classname is None else classname) + "Base")
         if (classname in Generator.collectionsMap.h):
             baseclass = (("Collection<" + HxOverrides.stringOrNull(Generator.collectionsMap.h.get(classname,None))) + ">")
-        ret = _hx_AnonObject({'name': classname, 'base': baseclass, 'doc': "", 'methods': [], 'attrs': []})
+        methods = []
+        attrs = []
+        doc = ""
         _g = 0
         _g1 = node.children
         while (_g < len(_g1)):
@@ -459,21 +514,24 @@ class Generator:
             _g = (_g + 1)
             _this1 = l.line
             if ((("" if ((0 >= len(_this1))) else _this1[0])) != "."):
-                ret.doc = (HxOverrides.stringOrNull(ret.doc) + HxOverrides.stringOrNull(((" " + HxOverrides.stringOrNull(l.line)))))
+                doc = (("null" if doc is None else doc) + HxOverrides.stringOrNull(((" " + HxOverrides.stringOrNull(l.line)))))
             else:
                 method = self.makeFunc(l)
                 if (method is not None):
-                    _this2 = ret.methods
-                    _this2.append(method)
+                    methods.append(method)
                 attr = self.makeAttr(l)
                 if (attr is not None):
-                    _this3 = ret.attrs
-                    _this3.append(attr)
-        ret.doc = StringTools.trim(ret.doc)
-        return ret
+                    attrs.append(attr)
+        doc = StringTools.trim(doc)
+        superClass = None
+        if (baseclass is not None):
+            superClass = Generator.splitTypePath(baseclass)
+        pack = Generator.makePack(modname)
+        return _hx_AnonObject({'pack': pack, 'name': classname, 'pos': None, 'meta': [_hx_AnonObject({'name': ":pythonImport", 'params': [_hx_AnonObject({'expr': haxe_macro_ExprDef.EConst(haxe_macro_Constant.CString(modname)), 'pos': None})], 'pos': None})], 'params': [], 'isExtern': True, 'kind': haxe_macro_TypeDefKind.TDClass(superClass), 'fields': (attrs + methods)})
 
     def processFile(self,path):
-        file = python_lib_Builtins.open(path,"r")
+        print(str(path))
+        file = python_lib_Io.open(path,"r",1,"utf-8")
         lines = file.readlines()
         moduleName = ""
         root = _hx_AnonObject({'line': "", 'children': []})
@@ -490,6 +548,7 @@ class Generator:
             _this.matchObj = python_lib_Re.search(_this.pattern,n.line)
             if (_this.matchObj is not None):
                 moduleName = self.moduleReg.matchObj.group(1)
+                print(str(moduleName))
             func = self.makeFunc(n)
             if (func is not None):
                 _this1 = Reflect.field(func,"access")
@@ -500,7 +559,7 @@ class Generator:
                 _this2 = Reflect.field(_hx_global,"access")
                 _this2.append(haxe_macro_Access.AStatic)
                 globals.append(_hx_global)
-            cls = self.makeClass(n)
+            cls = self.makeClass(moduleName,n)
             if (cls is not None):
                 classes.append(cls)
         if (not (moduleName in self.allModules.h)):
@@ -526,40 +585,36 @@ class Generator:
                 _this5 = m.classes
                 _this5.append(c)
 
-    def createType(self,modname,module):
+    def makeModule(self,modname,module):
         if ((len(module.functions) == 0) and ((len(module.globals) == 0))):
             return None
-        _g = []
-        _g1 = 0
-        _g2 = modname.split(".")
-        while (_g1 < len(_g2)):
-            p = (_g2[_g1] if _g1 >= 0 and _g1 < len(_g2) else None)
-            _g1 = (_g1 + 1)
-            p = Generator.lowerCaseFirstLetter(p)
-            if Generator.isHxKeyword(p):
-                p = ("_" + ("null" if p is None else p))
-            _g.append(p)
-        pack = _g
+        pack = Generator.makePack(modname)
         fields = []
-        _g11 = 0
-        _g21 = module.functions
-        while (_g11 < len(_g21)):
-            func = (_g21[_g11] if _g11 >= 0 and _g11 < len(_g21) else None)
-            _g11 = (_g11 + 1)
+        _g = 0
+        _g1 = module.functions
+        while (_g < len(_g1)):
+            func = (_g1[_g] if _g >= 0 and _g < len(_g1) else None)
+            _g = (_g + 1)
             fields.append(func)
         modName = Generator.upperCaseFirstLetter((None if ((len(pack) == 0)) else pack.pop()))
-        return _hx_AnonObject({'pack': pack, 'name': modName, 'pos': None, 'meta': [_hx_AnonObject({'name': ":pythonImport", 'params': [_hx_AnonObject({'expr': haxe_macro_ExprDef.EConst(haxe_macro_Constant.CString(modname)), 'pos': None})], 'pos': None})], 'params': [], 'isExtern': True, 'kind': haxe_macro_TypeDefKind.TDClass(), 'fields': fields})
+        tmp = (module.globals + module.functions)
+        return _hx_AnonObject({'pack': pack, 'name': modName, 'pos': None, 'meta': [_hx_AnonObject({'name': ":pythonImport", 'params': [_hx_AnonObject({'expr': haxe_macro_ExprDef.EConst(haxe_macro_Constant.CString(modname)), 'pos': None})], 'pos': None})], 'params': [], 'isExtern': True, 'kind': haxe_macro_TypeDefKind.TDClass(), 'fields': tmp})
 
     def writeTypes(self,path):
-        printer = haxe_macro_Printer()
         out = sys_io_File.write("temp.hx",False)
         modname = self.allModules.keys()
         while modname.hasNext():
             modname1 = modname.next()
             module = self.allModules.h.get(modname1,None)
-            td = self.createType(modname1,module)
+            td = self.makeModule(modname1,module)
             if (td is not None):
-                out.writeString(printer.printTypeDefinition(td))
+                Generator.writeType(path,td)
+            _g = 0
+            _g1 = module.classes
+            while (_g < len(_g1)):
+                c = (_g1[_g] if _g >= 0 and _g < len(_g1) else None)
+                _g = (_g + 1)
+                Generator.writeType(path,c)
         out.close()
 
     @staticmethod
@@ -581,6 +636,34 @@ class Generator:
         if (re_letter.matchObj is None):
             raise _HxException(("no letter in " + ("null" if _hx_str is None else _hx_str)))
         return ((HxOverrides.stringOrNull(HxString.substr(re_letter.matchObj.string,0,re_letter.matchObj.start())) + HxOverrides.stringOrNull(re_letter.matchObj.group(0).upper())) + HxOverrides.stringOrNull(HxString.substr(re_letter.matchObj.string,re_letter.matchObj.end(),None)))
+
+    @staticmethod
+    def splitTypePath(fulltype):
+        pack = Generator.makePack(fulltype)
+        name = Generator.upperCaseFirstLetter((None if ((len(pack) == 0)) else pack.pop()))
+        return _hx_AnonObject({'pack': pack, 'name': name})
+
+    @staticmethod
+    def makePack(modname):
+        _g = []
+        _g1 = 0
+        _g2 = modname.split(".")
+        while (_g1 < len(_g2)):
+            p = (_g2[_g1] if _g1 >= 0 and _g1 < len(_g2) else None)
+            _g1 = (_g1 + 1)
+            p = Generator.lowerCaseFirstLetter(p)
+            if Generator.isHxKeyword(p):
+                p = ("_" + ("null" if p is None else p))
+            _g.append(p)
+        return _g
+
+    @staticmethod
+    def writeType(path,td):
+        printer = haxe_macro_Printer()
+        packDir = haxe_io_Path.join(([path] + td.pack))
+        sys_FileSystem.createDirectory(packDir)
+        fname = haxe_io_Path.join([packDir, (HxOverrides.stringOrNull(td.name) + ".hx")])
+        sys_io_File.saveContent(fname,printer.printTypeDefinition(td))
 
     @staticmethod
     def main():
@@ -770,15 +853,15 @@ StringTools._hx_class = StringTools
 class sys_FileSystem:
     _hx_class_name = "sys.FileSystem"
     __slots__ = ()
-    _hx_statics = ["exists", "deleteDirectory"]
+    _hx_statics = ["exists", "createDirectory"]
 
     @staticmethod
     def exists(path):
         return python_lib_os_Path.exists(path)
 
     @staticmethod
-    def deleteDirectory(path):
-        python_lib_Os.rmdir(path)
+    def createDirectory(path):
+        python_lib_Os.makedirs(path,511,True)
 sys_FileSystem._hx_class = sys_FileSystem
 
 
@@ -1112,24 +1195,6 @@ class haxe_format_JsonPrinter:
 haxe_format_JsonPrinter._hx_class = haxe_format_JsonPrinter
 
 
-class haxe_io_Bytes:
-    _hx_class_name = "haxe.io.Bytes"
-    __slots__ = ("length", "b")
-    _hx_fields = ["length", "b"]
-    _hx_statics = ["ofString"]
-
-    def __init__(self,length,b):
-        self.length = length
-        self.b = b
-
-    @staticmethod
-    def ofString(s):
-        b = bytearray(s,"UTF-8")
-        return haxe_io_Bytes(len(b),b)
-
-haxe_io_Bytes._hx_class = haxe_io_Bytes
-
-
 class haxe_io_BytesBuffer:
     _hx_class_name = "haxe.io.BytesBuffer"
     __slots__ = ("b",)
@@ -1139,18 +1204,6 @@ class haxe_io_BytesBuffer:
         self.b = list()
 
 haxe_io_BytesBuffer._hx_class = haxe_io_BytesBuffer
-
-class haxe_io_Error(Enum):
-    __slots__ = ()
-    _hx_class_name = "haxe.io.Error"
-
-    @staticmethod
-    def Custom(e):
-        return haxe_io_Error("Custom", 3, [e])
-haxe_io_Error.Blocked = haxe_io_Error("Blocked", 0, list())
-haxe_io_Error.Overflow = haxe_io_Error("Overflow", 1, list())
-haxe_io_Error.OutsideBounds = haxe_io_Error("OutsideBounds", 2, list())
-haxe_io_Error._hx_class = haxe_io_Error
 
 
 class haxe_io_Input:
@@ -1170,37 +1223,109 @@ class haxe_io_Output:
     _hx_class_name = "haxe.io.Output"
     __slots__ = ("bigEndian",)
     _hx_fields = ["bigEndian"]
-    _hx_methods = ["writeByte", "writeBytes", "set_bigEndian", "writeFullBytes", "writeString"]
-
-    def writeByte(self,c):
-        raise _HxException("Not implemented")
-
-    def writeBytes(self,s,pos,_hx_len):
-        if (((pos < 0) or ((_hx_len < 0))) or (((pos + _hx_len) > s.length))):
-            raise _HxException(haxe_io_Error.OutsideBounds)
-        b = s.b
-        k = _hx_len
-        while (k > 0):
-            self.writeByte(b[pos])
-            pos = (pos + 1)
-            k = (k - 1)
-        return _hx_len
+    _hx_methods = ["set_bigEndian"]
 
     def set_bigEndian(self,b):
         self.bigEndian = b
         return b
 
-    def writeFullBytes(self,s,pos,_hx_len):
-        while (_hx_len > 0):
-            k = self.writeBytes(s,pos,_hx_len)
-            pos = (pos + k)
-            _hx_len = (_hx_len - k)
-
-    def writeString(self,s):
-        b = haxe_io_Bytes.ofString(s)
-        self.writeFullBytes(b,0,b.length)
-
 haxe_io_Output._hx_class = haxe_io_Output
+
+
+class haxe_io_Path:
+    _hx_class_name = "haxe.io.Path"
+    __slots__ = ()
+    _hx_statics = ["join", "normalize", "addTrailingSlash"]
+
+    @staticmethod
+    def join(paths):
+        def _hx_local_0(s):
+            if (s is not None):
+                return (s != "")
+            else:
+                return False
+        paths1 = list(filter(_hx_local_0,paths))
+        if (len(paths1) == 0):
+            return ""
+        path = (paths1[0] if 0 < len(paths1) else None)
+        _g1 = 1
+        _g = len(paths1)
+        while (_g1 < _g):
+            i = _g1
+            _g1 = (_g1 + 1)
+            path = haxe_io_Path.addTrailingSlash(path)
+            path = (("null" if path is None else path) + HxOverrides.stringOrNull((paths1[i] if i >= 0 and i < len(paths1) else None)))
+        return haxe_io_Path.normalize(path)
+
+    @staticmethod
+    def normalize(path):
+        slash = "/"
+        _this = path.split("\\")
+        path = slash.join([python_Boot.toString1(x1,'') for x1 in _this])
+        if (path == slash):
+            return slash
+        target = []
+        _g = 0
+        _g1 = (list(path) if ((slash == "")) else path.split(slash))
+        while (_g < len(_g1)):
+            token = (_g1[_g] if _g >= 0 and _g < len(_g1) else None)
+            _g = (_g + 1)
+            if (((token == "..") and ((len(target) > 0))) and ((python_internal_ArrayImpl._get(target, (len(target) - 1)) != ".."))):
+                if (len(target) != 0):
+                    target.pop()
+            elif (token != "."):
+                target.append(token)
+        tmp = slash.join([python_Boot.toString1(x1,'') for x1 in target])
+        regex = EReg("([^:])/+","g")
+        result = regex.replace(tmp,("$1" + ("null" if slash is None else slash)))
+        acc_b = python_lib_io_StringIO()
+        colon = False
+        slashes = False
+        _g11 = 0
+        _g2 = len(tmp)
+        while (_g11 < _g2):
+            i = _g11
+            _g11 = (_g11 + 1)
+            _g21 = (-1 if ((i >= len(tmp))) else ord(tmp[i]))
+            _g22 = _g21
+            if (_g22 == 47):
+                if (not colon):
+                    slashes = True
+                else:
+                    i1 = _g21
+                    colon = False
+                    if slashes:
+                        acc_b.write("/")
+                        slashes = False
+                    acc_b.write("".join(map(chr,[i1])))
+            elif (_g22 == 58):
+                acc_b.write(":")
+                colon = True
+            else:
+                i2 = _g21
+                colon = False
+                if slashes:
+                    acc_b.write("/")
+                    slashes = False
+                acc_b.write("".join(map(chr,[i2])))
+        return acc_b.getvalue()
+
+    @staticmethod
+    def addTrailingSlash(path):
+        if (len(path) == 0):
+            return "/"
+        c1 = path.rfind("/", 0, len(path))
+        c2 = path.rfind("\\", 0, len(path))
+        if (c1 < c2):
+            if (c2 != ((len(path) - 1))):
+                return (("null" if path is None else path) + "\\")
+            else:
+                return path
+        elif (c1 != ((len(path) - 1))):
+            return (("null" if path is None else path) + "/")
+        else:
+            return path
+haxe_io_Path._hx_class = haxe_io_Path
 
 class haxe_macro_Constant(Enum):
     __slots__ = ()
@@ -2930,24 +3055,20 @@ class python_io_NativeBytesOutput(python_io_NativeOutput):
     _hx_class_name = "python.io.NativeBytesOutput"
     __slots__ = ()
     _hx_fields = []
-    _hx_methods = ["writeByte"]
+    _hx_methods = []
     _hx_statics = []
     _hx_super = python_io_NativeOutput
 
 
     def __init__(self,stream):
         super().__init__(stream)
-
-    def writeByte(self,c):
-        self.stream.write(bytearray([c]))
-
 python_io_NativeBytesOutput._hx_class = python_io_NativeBytesOutput
 
 
 class python_io_IOutput:
     _hx_class_name = "python.io.IOutput"
     __slots__ = ()
-    _hx_methods = ["set_bigEndian", "writeByte", "writeBytes", "close", "writeFullBytes", "writeString"]
+    _hx_methods = ["set_bigEndian", "close"]
 python_io_IOutput._hx_class = python_io_IOutput
 
 
@@ -3003,7 +3124,7 @@ class python_io_NativeTextOutput(python_io_NativeOutput):
     _hx_class_name = "python.io.NativeTextOutput"
     __slots__ = ()
     _hx_fields = []
-    _hx_methods = ["writeByte"]
+    _hx_methods = []
     _hx_statics = []
     _hx_super = python_io_NativeOutput
 
@@ -3012,10 +3133,6 @@ class python_io_NativeTextOutput(python_io_NativeOutput):
         super().__init__(stream)
         if (not stream.writable()):
             raise _HxException("Read only stream")
-
-    def writeByte(self,c):
-        self.stream.write("".join(map(chr,[c])))
-
 python_io_NativeTextOutput._hx_class = python_io_NativeTextOutput
 
 
@@ -3076,7 +3193,7 @@ class sys_io_FileOutput(haxe_io_Output):
     _hx_class_name = "sys.io.FileOutput"
     __slots__ = ("impl",)
     _hx_fields = ["impl"]
-    _hx_methods = ["set_bigEndian", "writeByte", "writeBytes", "close", "writeFullBytes", "writeString"]
+    _hx_methods = ["set_bigEndian", "close"]
     _hx_statics = []
     _hx_super = haxe_io_Output
 
@@ -3087,20 +3204,8 @@ class sys_io_FileOutput(haxe_io_Output):
     def set_bigEndian(self,b):
         return self.impl.set_bigEndian(b)
 
-    def writeByte(self,c):
-        self.impl.writeByte(c)
-
-    def writeBytes(self,s,pos,_hx_len):
-        return self.impl.writeBytes(s,pos,_hx_len)
-
     def close(self):
         self.impl.close()
-
-    def writeFullBytes(self,s,pos,_hx_len):
-        self.impl.writeFullBytes(s,pos,_hx_len)
-
-    def writeString(self,s):
-        self.impl.writeString(s)
 
 sys_io_FileOutput._hx_class = sys_io_FileOutput
 
