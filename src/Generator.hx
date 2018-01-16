@@ -6,6 +6,7 @@ import sys.FileSystem as FS;
 import haxe.io.Path;
 import sys.io.File;
 using StringTools;
+// import ApiTest;
 
 typedef Node = {
 	line: String,
@@ -19,6 +20,15 @@ typedef ModuleDef = {
 }
 
 class Generator {
+
+	inline static var collectionClass = "Collection";
+
+	static var aliases = [
+		"bpy_struct" => "Struct",
+		"Bpy_struct" => "Struct",
+		"bpy_prop_collection" => collectionClass,
+		"Bpy_prop_collection" => collectionClass,
+	];
 
 	static var collectionsMap: Map<String, String> = [
 		'BlendDataActions'=> 'Action',
@@ -173,12 +183,13 @@ class Generator {
 		else if(intype.startsWith("boolean"))
 			return macro: Bool;
 		else if(collectTypeReg.match(intype)) {
-			var className = "Collection<" + collectTypeReg.matched(1) + ">";
+			var className = collectionClass + "<" + collectTypeReg.matched(1) + ">";
 			return TPath({pack: [], name: className});
 		}			
 		else if(classTypeReg.match(intype)) {
-			var className = classTypeReg.matched(1);
-			return TPath({pack: [], name: className});
+			var tp = splitTypePath(classTypeReg.matched(1));
+			tp.name = makeClassName(tp.name);
+			return TPath(tp);
 		}
 		return macro: Dynamic;
 	}
@@ -186,7 +197,7 @@ class Generator {
 	function makeFunc(node: Node): Field {
 		if(!funcReg.match(node.line)) return null;
 		var funcname = funcReg.matched(2);
-		trace('   ' + funcname);
+		// trace('   ' + funcname);
 		var doc = "";
 		var args:Array<FunctionArg> = [];
 		var rtype = macro: Void;
@@ -237,6 +248,10 @@ class Generator {
 			} 			
 		}
 
+		for(a in args) {
+			a.name = fixId(a.name);
+		}
+
 		var access = [APublic];
 		if(isstatic) {
 			access.push(AStatic);
@@ -284,7 +299,7 @@ class Generator {
 		doc = StringTools.trim(doc);
 		var access = [APublic];
 		return {
-			name: attrname,
+			name: fixId(attrname),
 			access: access,
 			doc: doc,
 			pos: null,
@@ -292,19 +307,25 @@ class Generator {
 		};
 	}
 
+	static function makeClassName(str: String) {
+		if(aliases.exists(str)) {
+			return aliases[str];
+		}
+		return str;
+	}
+
 	function makeClass(modname, node: Node): TypeDefinition {
 		if(!classReg.match(node.line)) return null;
-		var classname = classReg.matched(1);
-		var baseclass = classReg.matched(3);
+		var classname = makeClassName(classReg.matched(1));
+		var baseclass = makeClassName(classReg.matched(3));
 		trace(' ' + classname);
 
-		if(specialMathValueClasses.indexOf(classname) > 0) {
+		if(specialMathValueClasses.indexOf(classname) >= 0) {
 			baseclass = null;
-			classname += "Base";
 		}
 
 		if(collectionsMap.exists(classname)) {
-			baseclass = 'Collection<${collectionsMap[classname]}>';
+			baseclass = '${collectionClass}<${collectionsMap[classname]}>';
 		}
 
 		var methods: Array<Field> = [];
@@ -403,7 +424,7 @@ class Generator {
 		}
 	}
 
-	static public function isHxKeyword(name:String):Bool {
+	static function isHxKeyword(name:String):Bool {
 		// https://github.com/HaxeFoundation/haxe/blob/development/lexer.mll
 		return [
 			"function","class","static","var","if","else","while","do","for",
@@ -414,6 +435,10 @@ class Generator {
 			"inline","using","null","true","false","abstract","macro",
 			"__init__" //haxe 3.2.1 has issue with this..
 		].indexOf(name) >= 0;
+	}
+
+	static function fixId(name: String) {
+		return if(isHxKeyword(name)) "_" + name else name;
 	}
 
 	static function makeLower(str:String):String {
@@ -502,7 +527,15 @@ class Generator {
 			return false;
 		}
 		//var files = Os.listdir(docDir).filter(filterFile);
-		var files = ["bpy.types.BlendData.rst"];
+		var files = [
+			//"bpy.types.bpy_prop_collection.rst",
+			"bpy.types.bpy_struct.rst",
+			"bpy.types.FCurve.rst",
+			// "bpy.ops.object.rst",
+			// "bpy.types.Object.rst",
+			// "bpy.types.BlendData.rst",
+			"mathutils.rst",
+		];
 
 		for(fname in files) {
 			processFile(docDir + fname);
@@ -513,9 +546,12 @@ class Generator {
 			Shutil.rmtree(outDir);
 		}
 		writeTypes(outDir);
+
+		// Shutil.copy("src/patches/Color.hx", outDir + "/mathutils");
 	}
 
 	public static function main() {
+		//ApiTest.test();
 		new Generator();
 	}
 }

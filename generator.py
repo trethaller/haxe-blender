@@ -130,7 +130,7 @@ class Generator:
     __slots__ = ("specialMathValueClasses", "indentReg", "moduleReg", "attrReg", "funcReg", "classReg", "argReg", "typeReg", "rtypeReg", "attrTypeReg", "collectTypeReg", "classTypeReg", "fixedArrayTypeReg", "quotesReg", "allModules")
     _hx_fields = ["specialMathValueClasses", "indentReg", "moduleReg", "attrReg", "funcReg", "classReg", "argReg", "typeReg", "rtypeReg", "attrTypeReg", "collectTypeReg", "classTypeReg", "fixedArrayTypeReg", "quotesReg", "allModules"]
     _hx_methods = ["getIndent", "makeNodes", "makeValue", "makeType", "makeFunc", "makeAttr", "makeClass", "processFile", "makeModule", "writeTypes"]
-    _hx_statics = ["collectionsMap", "isHxKeyword", "makeLower", "makeUpper", "splitTypePath", "makePack", "writeType", "main"]
+    _hx_statics = ["collectionClass", "aliases", "collectionsMap", "makeClassName", "isHxKeyword", "fixId", "makeLower", "makeUpper", "splitTypePath", "makePack", "writeType", "main"]
 
     def __init__(self):
         self.allModules = haxe_ds_StringMap()
@@ -156,7 +156,7 @@ class Generator:
                 return True
             return False
         filterFile = _hx_local_0
-        files = ["bpy.types.BlendData.rst"]
+        files = ["bpy.types.bpy_struct.rst", "bpy.types.FCurve.rst", "mathutils.rst"]
         _g = 0
         while (_g < len(files)):
             fname1 = (files[_g] if _g >= 0 and _g < len(files) else None)
@@ -204,7 +204,7 @@ class Generator:
         _hx_local_0 = len(val1)
         if (_hx_local_0 == 5):
             if (val1 == "False"):
-                return _hx_AnonObject({'expr': haxe_macro_ExprDef.EConst(haxe_macro_Constant.CIdent("false")), 'pos': _hx_AnonObject({'file': "src/Generator.hx", 'min': 3448, 'max': 3453})})
+                return _hx_AnonObject({'expr': haxe_macro_ExprDef.EConst(haxe_macro_Constant.CIdent("false")), 'pos': _hx_AnonObject({'file': "src/Generator.hx", 'min': 3702, 'max': 3707})})
             else:
                 v = val
                 if (Std.parseInt(v) is not None):
@@ -223,11 +223,11 @@ class Generator:
                             return None
         elif (_hx_local_0 == 4):
             if (val1 == "None"):
-                return _hx_AnonObject({'expr': haxe_macro_ExprDef.EConst(haxe_macro_Constant.CIdent("null")), 'pos': _hx_AnonObject({'file': "src/Generator.hx", 'min': 3478, 'max': 3482})})
+                return _hx_AnonObject({'expr': haxe_macro_ExprDef.EConst(haxe_macro_Constant.CIdent("null")), 'pos': _hx_AnonObject({'file': "src/Generator.hx", 'min': 3732, 'max': 3736})})
             elif (val1 == "True"):
-                return _hx_AnonObject({'expr': haxe_macro_ExprDef.EConst(haxe_macro_Constant.CIdent("true")), 'pos': _hx_AnonObject({'file': "src/Generator.hx", 'min': 3418, 'max': 3422})})
+                return _hx_AnonObject({'expr': haxe_macro_ExprDef.EConst(haxe_macro_Constant.CIdent("true")), 'pos': _hx_AnonObject({'file': "src/Generator.hx", 'min': 3672, 'max': 3676})})
             elif (val1 == "null"):
-                return _hx_AnonObject({'expr': haxe_macro_ExprDef.EConst(haxe_macro_Constant.CIdent("null")), 'pos': _hx_AnonObject({'file': "src/Generator.hx", 'min': 3507, 'max': 3511})})
+                return _hx_AnonObject({'expr': haxe_macro_ExprDef.EConst(haxe_macro_Constant.CIdent("null")), 'pos': _hx_AnonObject({'file': "src/Generator.hx", 'min': 3761, 'max': 3765})})
             else:
                 v = val
                 if (Std.parseInt(v) is not None):
@@ -300,14 +300,15 @@ class Generator:
             _this1 = self.collectTypeReg
             _this1.matchObj = python_lib_Re.search(_this1.pattern,intype)
             if (_this1.matchObj is not None):
-                className = (("Collection<" + HxOverrides.stringOrNull(self.collectTypeReg.matchObj.group(1))) + ">")
+                className = ((("Collection" + "<") + HxOverrides.stringOrNull(self.collectTypeReg.matchObj.group(1))) + ">")
                 return haxe_macro_ComplexType.TPath(_hx_AnonObject({'pack': [], 'name': className}))
             else:
                 _this2 = self.classTypeReg
                 _this2.matchObj = python_lib_Re.search(_this2.pattern,intype)
                 if (_this2.matchObj is not None):
-                    className1 = self.classTypeReg.matchObj.group(1)
-                    return haxe_macro_ComplexType.TPath(_hx_AnonObject({'pack': [], 'name': className1}))
+                    tp = Generator.splitTypePath(self.classTypeReg.matchObj.group(1))
+                    tp.name = Generator.makeClassName(tp.name)
+                    return haxe_macro_ComplexType.TPath(tp)
         return haxe_macro_ComplexType.TPath(_hx_AnonObject({'pack': [], 'name': "Dynamic", 'params': []}))
 
     def makeFunc(self,node):
@@ -317,7 +318,6 @@ class Generator:
         if (_this.matchObj is None):
             return None
         funcname = self.funcReg.matchObj.group(2)
-        print(str(("   " + ("null" if funcname is None else funcname))))
         doc = ""
         args = []
         rtype = haxe_macro_ComplexType.TPath(_hx_AnonObject({'pack': [], 'name': "Void", 'params': []}))
@@ -382,6 +382,11 @@ class Generator:
                 _this5 = l.line
                 if ((("" if ((0 >= len(_this5))) else _this5[0])) != ":"):
                     doc = (("null" if doc is None else doc) + HxOverrides.stringOrNull(((" " + HxOverrides.stringOrNull(l.line)))))
+        _g13 = 0
+        while (_g13 < len(args)):
+            a3 = (args[_g13] if _g13 >= 0 and _g13 < len(args) else None)
+            _g13 = (_g13 + 1)
+            a3.name = Generator.fixId(a3.name)
         access = [haxe_macro_Access.APublic]
         if isstatic:
             access.append(haxe_macro_Access.AStatic)
@@ -416,21 +421,20 @@ class Generator:
             readonly = True
         doc = StringTools.trim(doc)
         access = [haxe_macro_Access.APublic]
-        return _hx_AnonObject({'name': attrname, 'access': access, 'doc': doc, 'pos': None, 'kind': haxe_macro_FieldType.FVar(_hx_type)})
+        return _hx_AnonObject({'name': Generator.fixId(attrname), 'access': access, 'doc': doc, 'pos': None, 'kind': haxe_macro_FieldType.FVar(_hx_type)})
 
     def makeClass(self,modname,node):
         _this = self.classReg
         _this.matchObj = python_lib_Re.search(_this.pattern,node.line)
         if (_this.matchObj is None):
             return None
-        classname = self.classReg.matchObj.group(1)
-        baseclass = self.classReg.matchObj.group(3)
+        classname = Generator.makeClassName(self.classReg.matchObj.group(1))
+        baseclass = Generator.makeClassName(self.classReg.matchObj.group(3))
         print(str((" " + ("null" if classname is None else classname))))
-        if (python_internal_ArrayImpl.indexOf(self.specialMathValueClasses,classname,None) > 0):
+        if (python_internal_ArrayImpl.indexOf(self.specialMathValueClasses,classname,None) >= 0):
             baseclass = None
-            classname = (("null" if classname is None else classname) + "Base")
         if (classname in Generator.collectionsMap.h):
-            baseclass = (("Collection<" + HxOverrides.stringOrNull(Generator.collectionsMap.h.get(classname,None))) + ">")
+            baseclass = ((("Collection" + "<") + HxOverrides.stringOrNull(Generator.collectionsMap.h.get(classname,None))) + ">")
         methods = []
         attrs = []
         doc = ""
@@ -543,8 +547,21 @@ class Generator:
                 Generator.writeType(path,c)
 
     @staticmethod
+    def makeClassName(_hx_str):
+        if (_hx_str in Generator.aliases.h):
+            return Generator.aliases.h.get(_hx_str,None)
+        return _hx_str
+
+    @staticmethod
     def isHxKeyword(name):
         return (python_internal_ArrayImpl.indexOf(["function", "class", "static", "var", "if", "else", "while", "do", "for", "break", "return", "continue", "extends", "implements", "import", "switch", "case", "default", "public", "private", "try", "untyped", "catch", "new", "this", "throw", "extern", "enum", "in", "interface", "cast", "override", "dynamic", "typedef", "package", "inline", "using", "null", "true", "false", "abstract", "macro", "__init__"],name,None) >= 0)
+
+    @staticmethod
+    def fixId(name):
+        if Generator.isHxKeyword(name):
+            return ("_" + ("null" if name is None else name))
+        else:
+            return name
 
     @staticmethod
     def makeLower(_hx_str):
@@ -2751,6 +2768,17 @@ Math.POSITIVE_INFINITY = float("inf")
 Math.NaN = float("nan")
 Math.PI = python_lib_Math.pi
 
+Generator.collectionClass = "Collection"
+def _hx_init_Generator_aliases():
+    def _hx_local_0():
+        _g = haxe_ds_StringMap()
+        _g.h["bpy_struct"] = "Struct"
+        _g.h["Bpy_struct"] = "Struct"
+        _g.h["bpy_prop_collection"] = "Collection"
+        _g.h["Bpy_prop_collection"] = "Collection"
+        return _g
+    return _hx_local_0()
+Generator.aliases = _hx_init_Generator_aliases()
 def _hx_init_Generator_collectionsMap():
     def _hx_local_0():
         _g = haxe_ds_StringMap()
