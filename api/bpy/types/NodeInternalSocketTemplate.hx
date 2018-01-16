@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class NodeInternalSocketTemplate extends Bpy_struct {
+@:pythonImport("bpy.types") extern class NodeInternalSocketTemplate extends Struct {
 	/**
 		Identifier of the socket
 	**/

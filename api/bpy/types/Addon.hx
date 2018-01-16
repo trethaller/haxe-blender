@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class Addon extends Bpy_struct {
+@:pythonImport("bpy.types") extern class Addon extends Struct {
 	/**
 		Module name
 	**/

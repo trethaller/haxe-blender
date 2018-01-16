@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class Header extends Bpy_struct {
+@:pythonImport("bpy.types") extern class Header extends Struct {
 	/**
 		If this is set, the header gets a custom ID, otherwise it takes the name of the class used to define the panel; for example, if the class name is "OBJECT_HT_hello", and bl_idname is not set by the script, then bl_idname = "OBJECT_HT_hello"
 	**/

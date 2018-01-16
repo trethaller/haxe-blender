@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class MeshEdge extends Bpy_struct {
+@:pythonImport("bpy.types") extern class MeshEdge extends Struct {
 	/**
 		Weight used by the Bevel modifier
 	**/

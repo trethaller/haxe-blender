@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ColorRampElements extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ColorRampElements extends Struct {
 	/**
 		 Add element to ColorRamp
 	**/

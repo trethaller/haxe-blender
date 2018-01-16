@@ -7,7 +7,7 @@ package bpy.types;
 	/**
 		Default value for this number
 	**/
-	public var default : Float;
+	public var _default : Float;
 	/**
 		Default value for this array
 	**/

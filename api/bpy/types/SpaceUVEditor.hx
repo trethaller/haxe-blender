@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class SpaceUVEditor extends Bpy_struct {
+@:pythonImport("bpy.types") extern class SpaceUVEditor extends Struct {
 	/**
 		Type of stretch to draw
 	**/

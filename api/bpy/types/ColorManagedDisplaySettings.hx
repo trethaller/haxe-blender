@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ColorManagedDisplaySettings extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ColorManagedDisplaySettings extends Struct {
 	/**
 		Display device name
 	**/

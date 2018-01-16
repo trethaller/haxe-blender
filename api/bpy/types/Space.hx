@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class Space extends Bpy_struct {
+@:pythonImport("bpy.types") extern class Space extends Struct {
 	public var show_locked_time : Bool;
 	/**
 		Space data type

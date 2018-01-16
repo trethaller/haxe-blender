@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class GPencilFrame extends Bpy_struct {
+@:pythonImport("bpy.types") extern class GPencilFrame extends Struct {
 	/**
 		The frame on which this sketch appears
 	**/

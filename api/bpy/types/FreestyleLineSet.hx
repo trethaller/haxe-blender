@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class FreestyleLineSet extends Bpy_struct {
+@:pythonImport("bpy.types") extern class FreestyleLineSet extends Struct {
 	/**
 		Specify a logical combination of selection conditions on feature edge types
 	**/

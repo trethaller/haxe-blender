@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class UserPreferencesFilePaths extends Bpy_struct {
+@:pythonImport("bpy.types") extern class UserPreferencesFilePaths extends Struct {
 	/**
 		Path to a custom animation/frame sequence player
 	**/

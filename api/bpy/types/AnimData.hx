@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class AnimData extends Bpy_struct {
+@:pythonImport("bpy.types") extern class AnimData extends Struct {
 	/**
 		Active Action for this data-block
 	**/

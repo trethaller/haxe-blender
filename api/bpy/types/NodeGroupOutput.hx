@@ -3,7 +3,7 @@ package bpy.types;
 	/**
 		Interface socket data
 	**/
-	public var interface : PropertyGroup;
+	public var _interface : PropertyGroup;
 	/**
 		True if this node is used as the active group output
 	**/

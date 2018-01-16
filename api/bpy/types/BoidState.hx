@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class BoidState extends Bpy_struct {
+@:pythonImport("bpy.types") extern class BoidState extends Struct {
 	public var active_boid_rule : BoidRule;
 	public var active_boid_rule_index : Int;
 	public var falloff : Float;

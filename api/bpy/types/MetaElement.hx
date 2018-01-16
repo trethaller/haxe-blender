@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class MetaElement extends Bpy_struct {
+@:pythonImport("bpy.types") extern class MetaElement extends Struct {
 	public var co : mathutils.Vector;
 	/**
 		Hide element

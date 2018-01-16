@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class NodeLinks extends Bpy_struct {
+@:pythonImport("bpy.types") extern class NodeLinks extends Struct {
 	/**
 		 Add a node link to this node tree
 	**/

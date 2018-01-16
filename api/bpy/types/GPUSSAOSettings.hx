@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class GPUSSAOSettings extends Bpy_struct {
+@:pythonImport("bpy.types") extern class GPUSSAOSettings extends Struct {
 	/**
 		Attenuation constant
 	**/

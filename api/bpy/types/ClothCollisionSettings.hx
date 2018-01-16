@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ClothCollisionSettings extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ClothCollisionSettings extends Struct {
 	/**
 		How many collision iterations should be done. (higher is better quality but slower)
 	**/

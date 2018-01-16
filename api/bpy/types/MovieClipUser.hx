@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class MovieClipUser extends Bpy_struct {
+@:pythonImport("bpy.types") extern class MovieClipUser extends Struct {
 	/**
 		Current frame number in movie or image sequence
 	**/

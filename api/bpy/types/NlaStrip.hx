@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class NlaStrip extends Bpy_struct {
+@:pythonImport("bpy.types") extern class NlaStrip extends Struct {
 	/**
 		Action referenced by this strip
 	**/

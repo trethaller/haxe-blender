@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class RenderSlots extends Bpy_struct {
+@:pythonImport("bpy.types") extern class RenderSlots extends Struct {
 	/**
 		Active render slot of the image
 	**/

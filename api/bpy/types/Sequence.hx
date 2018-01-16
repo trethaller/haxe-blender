@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class Sequence extends Bpy_struct {
+@:pythonImport("bpy.types") extern class Sequence extends Struct {
 	/**
 		Percentage of how much the strip's colors affect other strips
 	**/

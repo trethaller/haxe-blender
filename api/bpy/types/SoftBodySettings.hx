@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class SoftBodySettings extends Bpy_struct {
+@:pythonImport("bpy.types") extern class SoftBodySettings extends Struct {
 	/**
 		Make edges 'sail'
 	**/

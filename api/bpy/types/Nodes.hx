@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class Nodes extends Bpy_struct {
+@:pythonImport("bpy.types") extern class Nodes extends Struct {
 	/**
 		Active node in this tree
 	**/

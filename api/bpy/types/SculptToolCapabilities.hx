@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class SculptToolCapabilities extends Bpy_struct {
+@:pythonImport("bpy.types") extern class SculptToolCapabilities extends Struct {
 	public var has_accumulate : Bool;
 	public var has_auto_smooth : Bool;
 	public var has_gravity : Bool;

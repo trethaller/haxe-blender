@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class Controller extends Bpy_struct {
+@:pythonImport("bpy.types") extern class Controller extends Struct {
 	/**
 		Set the active state of the controller
 	**/

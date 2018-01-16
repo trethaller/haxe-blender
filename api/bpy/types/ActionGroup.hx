@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ActionGroup extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ActionGroup extends Struct {
 	/**
 		F-Curves in this group
 	**/

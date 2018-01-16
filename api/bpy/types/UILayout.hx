@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class UILayout extends Bpy_struct {
+@:pythonImport("bpy.types") extern class UILayout extends Struct {
 	public var active : Bool;
 	public var alert : Bool;
 	public var alignment : String;
@@ -95,11 +95,11 @@ package bpy.types;
 	/**
 		 template_ID
 	**/
-	public function template_ID(data:AnyType, property:String, ?new:String = "", ?open:String = "", ?unlink:String = ""):Void;
+	public function template_ID(data:AnyType, property:String, ?_new:String = "", ?open:String = "", ?unlink:String = ""):Void;
 	/**
 		 template_ID_preview
 	**/
-	public function template_ID_preview(data:AnyType, property:String, ?new:String = "", ?open:String = "", ?unlink:String = "", ?rows:Int = 0, ?cols:Int = 0):Void;
+	public function template_ID_preview(data:AnyType, property:String, ?_new:String = "", ?open:String = "", ?unlink:String = "", ?rows:Int = 0, ?cols:Int = 0):Void;
 	/**
 		 template_any_ID
 	**/

@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class SPHFluidSettings extends Bpy_struct {
+@:pythonImport("bpy.types") extern class SPHFluidSettings extends Struct {
 	/**
 		Artificial buoyancy force in negative gravity direction based on pressure differences inside the fluid
 	**/

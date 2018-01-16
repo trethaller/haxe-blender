@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class Menu extends Bpy_struct {
+@:pythonImport("bpy.types") extern class Menu extends Struct {
 	public var bl_description : String;
 	/**
 		If this is set, the menu gets a custom ID, otherwise it takes the name of the class used to define the menu (for example, if the class name is "OBJECT_MT_hello", and bl_idname is not set by the script, then bl_idname = "OBJECT_MT_hello")

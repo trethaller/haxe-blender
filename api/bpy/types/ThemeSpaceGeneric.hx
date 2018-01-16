@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ThemeSpaceGeneric extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ThemeSpaceGeneric extends Struct {
 	public var back : mathutils.Vector;
 	public var button : mathutils.Quaternion;
 	public var button_text : mathutils.Vector;

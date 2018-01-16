@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class VertexStringProperties extends Bpy_struct {
+@:pythonImport("bpy.types") extern class VertexStringProperties extends Struct {
 	/**
 		 Add a string property layer to Mesh
 	**/

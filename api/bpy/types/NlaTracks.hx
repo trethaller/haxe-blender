@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class NlaTracks extends Bpy_struct {
+@:pythonImport("bpy.types") extern class NlaTracks extends Struct {
 	/**
 		Active Object constraint
 	**/

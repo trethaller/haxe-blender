@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class SmokeDomainSettings extends Bpy_struct {
+@:pythonImport("bpy.types") extern class SmokeDomainSettings extends Struct {
 	/**
 		Margin added around fluid to minimize boundary interference
 	**/

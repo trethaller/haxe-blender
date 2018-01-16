@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class BoneGroup extends Bpy_struct {
+@:pythonImport("bpy.types") extern class BoneGroup extends Struct {
 	/**
 		Custom color set to use
 	**/

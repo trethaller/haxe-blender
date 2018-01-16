@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class PolygonIntProperties extends Bpy_struct {
+@:pythonImport("bpy.types") extern class PolygonIntProperties extends Struct {
 	/**
 		 Add a integer property layer to Mesh
 	**/

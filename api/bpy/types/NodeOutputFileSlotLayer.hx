@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class NodeOutputFileSlotLayer extends Bpy_struct {
+@:pythonImport("bpy.types") extern class NodeOutputFileSlotLayer extends Struct {
 	/**
 		OpenEXR layer name used for this slot
 	**/

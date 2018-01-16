@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ThemeTextEditor extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ThemeTextEditor extends Struct {
 	public var cursor : mathutils.Vector;
 	public var line_numbers_background : mathutils.Vector;
 	public var selected_text : mathutils.Vector;

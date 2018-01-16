@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class FFmpegSettings extends Bpy_struct {
+@:pythonImport("bpy.types") extern class FFmpegSettings extends Struct {
 	/**
 		Audio bitrate (kb/s)
 	**/

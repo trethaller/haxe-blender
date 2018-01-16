@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class MaskSplinePoints extends Bpy_struct {
+@:pythonImport("bpy.types") extern class MaskSplinePoints extends Struct {
 	/**
 		 Add a number of point to this spline
 	**/

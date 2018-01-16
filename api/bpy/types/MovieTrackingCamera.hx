@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class MovieTrackingCamera extends Bpy_struct {
+@:pythonImport("bpy.types") extern class MovieTrackingCamera extends Struct {
 	/**
 		Distortion model used for camera lenses
 	**/

@@ -1,4 +1,4 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class OperatorProperties extends Bpy_struct {
+@:pythonImport("bpy.types") extern class OperatorProperties extends Struct {
 
 }

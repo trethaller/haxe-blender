@@ -1,4 +1,4 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class AddonPreferences extends Bpy_struct {
+@:pythonImport("bpy.types") extern class AddonPreferences extends Struct {
 	public var bl_idname : String;
 }

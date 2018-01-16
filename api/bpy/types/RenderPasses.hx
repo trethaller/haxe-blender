@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class RenderPasses extends Bpy_struct {
+@:pythonImport("bpy.types") extern class RenderPasses extends Struct {
 	/**
 		 Get the render pass for a given type and view
 	**/

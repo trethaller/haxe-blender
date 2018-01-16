@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class UserPreferencesView extends Bpy_struct {
+@:pythonImport("bpy.types") extern class UserPreferencesView extends Struct {
 	/**
 		Size of manipulator handles as percentage of the radius
 	**/

@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ImageFormatSettings extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ImageFormatSettings extends Struct {
 	/**
 		Log conversion reference blackpoint
 	**/

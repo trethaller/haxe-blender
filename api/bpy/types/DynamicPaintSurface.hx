@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class DynamicPaintSurface extends Bpy_struct {
+@:pythonImport("bpy.types") extern class DynamicPaintSurface extends Struct {
 	/**
 		Only use brush objects from this group
 	**/

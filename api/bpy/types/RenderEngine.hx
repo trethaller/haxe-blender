@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class RenderEngine extends Bpy_struct {
+@:pythonImport("bpy.types") extern class RenderEngine extends Struct {
 	public var bl_idname : String;
 	public var bl_label : String;
 	public var bl_use_exclude_layers : Bool;

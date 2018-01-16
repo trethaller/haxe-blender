@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class Constraint extends Bpy_struct {
+@:pythonImport("bpy.types") extern class Constraint extends Struct {
 	/**
 		Constraint is the one being edited
 	**/

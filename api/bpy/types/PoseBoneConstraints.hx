@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class PoseBoneConstraints extends Bpy_struct {
+@:pythonImport("bpy.types") extern class PoseBoneConstraints extends Struct {
 	/**
 		Active PoseChannel constraint
 	**/

@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class AnimViz extends Bpy_struct {
+@:pythonImport("bpy.types") extern class AnimViz extends Struct {
 	/**
 		Motion Path settings for visualization
 	**/

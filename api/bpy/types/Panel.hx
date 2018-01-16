@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class Panel extends Bpy_struct {
+@:pythonImport("bpy.types") extern class Panel extends Struct {
 	public var bl_category : String;
 	/**
 		The context in which the panel belongs to. (TODO: explain the possible combinations bl_context/bl_region_type/bl_space_type)

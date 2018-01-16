@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ThemeBoneColorSet extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ThemeBoneColorSet extends Struct {
 	/**
 		Color used for active bones
 	**/

@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ThemeDopeSheet extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ThemeDopeSheet extends Struct {
 	public var active_channels_group : mathutils.Vector;
 	public var channel_group : mathutils.Vector;
 	public var channels : mathutils.Vector;

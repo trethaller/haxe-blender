@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class Scopes extends Bpy_struct {
+@:pythonImport("bpy.types") extern class Scopes extends Struct {
 	/**
 		Proportion of original image source pixel lines to sample
 	**/

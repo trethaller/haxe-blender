@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ColorRamp extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ColorRamp extends Struct {
 	/**
 		Set color mode to use for interpolation
 	**/

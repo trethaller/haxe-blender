@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ChannelDriverVariables extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ChannelDriverVariables extends Struct {
 	/**
 		 Add a new variable for the driver
 	**/

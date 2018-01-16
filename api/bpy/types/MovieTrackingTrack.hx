@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class MovieTrackingTrack extends Bpy_struct {
+@:pythonImport("bpy.types") extern class MovieTrackingTrack extends Struct {
 	/**
 		Average error of re-projection
 	**/

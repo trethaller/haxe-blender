@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class MaterialHalo extends Bpy_struct {
+@:pythonImport("bpy.types") extern class MaterialHalo extends Struct {
 	/**
 		Strength of the add effect
 	**/

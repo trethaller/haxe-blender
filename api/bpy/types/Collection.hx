@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class bpy_prop_collection {
+@:pythonImport("bpy.types") extern class Collection {
 	/**
 		 Returns the index of a key in a collection or -1 when not found (matches pythons string find function of the same name).
 	**/
@@ -15,7 +15,7 @@ package bpy.types;
 	/**
 		 Returns the value of the item assigned to key or default when not found (matches pythons dictionary function of the same name).
 	**/
-	public function get(key:String, ?default:Dynamic = null):Void;
+	public function get(key:String, ?_default:Dynamic = null):Void;
 	/**
 		 Return the identifiers of collection members (matching pythons dict.items() functionality).
 	**/

@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ImageUser extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ImageUser extends Struct {
 	/**
 		Number of fields per rendered frame (2 fields is 1 image)
 	**/

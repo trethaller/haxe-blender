@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class BackgroundImage extends Bpy_struct {
+@:pythonImport("bpy.types") extern class BackgroundImage extends Struct {
 	/**
 		Movie clip displayed and edited in this space
 	**/

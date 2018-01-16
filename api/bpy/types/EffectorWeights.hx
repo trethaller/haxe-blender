@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class EffectorWeights extends Bpy_struct {
+@:pythonImport("bpy.types") extern class EffectorWeights extends Struct {
 	/**
 		All effector's weight
 	**/

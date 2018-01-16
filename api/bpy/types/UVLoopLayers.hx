@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class UVLoopLayers extends Bpy_struct {
+@:pythonImport("bpy.types") extern class UVLoopLayers extends Struct {
 	/**
 		Active UV loop layer
 	**/

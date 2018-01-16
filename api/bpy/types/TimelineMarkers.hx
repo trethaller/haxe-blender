@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class TimelineMarkers extends Bpy_struct {
+@:pythonImport("bpy.types") extern class TimelineMarkers extends Struct {
 	/**
 		 Add a keyframe to the curve
 	**/

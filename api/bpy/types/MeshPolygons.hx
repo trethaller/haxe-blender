@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class MeshPolygons extends Bpy_struct {
+@:pythonImport("bpy.types") extern class MeshPolygons extends Struct {
 	/**
 		The active polygon for this mesh
 	**/

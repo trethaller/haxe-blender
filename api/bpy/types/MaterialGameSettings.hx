@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class MaterialGameSettings extends Bpy_struct {
+@:pythonImport("bpy.types") extern class MaterialGameSettings extends Struct {
 	/**
 		Blend Mode for Transparent Faces
 	**/

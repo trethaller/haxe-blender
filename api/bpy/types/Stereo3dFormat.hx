@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class Stereo3dFormat extends Bpy_struct {
+@:pythonImport("bpy.types") extern class Stereo3dFormat extends Struct {
 	public var anaglyph_type : String;
 	public var display_mode : String;
 	public var interlace_type : String;

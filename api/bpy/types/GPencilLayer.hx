@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class GPencilLayer extends Bpy_struct {
+@:pythonImport("bpy.types") extern class GPencilLayer extends Struct {
 	/**
 		Frame currently being displayed for this layer
 	**/

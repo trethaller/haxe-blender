@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class GPUFXSettings extends Bpy_struct {
+@:pythonImport("bpy.types") extern class GPUFXSettings extends Struct {
 	public var dof : GPUDOFSettings;
 	public var ssao : GPUSSAOSettings;
 	/**

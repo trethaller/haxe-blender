@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ThemeLogicEditor extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ThemeLogicEditor extends Struct {
 	/**
 		Settings for space
 	**/

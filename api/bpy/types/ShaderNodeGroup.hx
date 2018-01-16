@@ -3,6 +3,6 @@ package bpy.types;
 	/**
 		Interface socket data
 	**/
-	public var interface : PropertyGroup;
+	public var _interface : PropertyGroup;
 	public var node_tree : NodeTree;
 }

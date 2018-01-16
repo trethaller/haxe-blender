@@ -1,4 +1,4 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class WorldTextureSlots extends Bpy_struct {
+@:pythonImport("bpy.types") extern class WorldTextureSlots extends Struct {
 
 }

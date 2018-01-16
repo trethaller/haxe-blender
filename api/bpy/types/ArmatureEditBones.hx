@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ArmatureEditBones extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ArmatureEditBones extends Struct {
 	/**
 		Armatures active edit bone
 	**/

@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class MaterialPhysics extends Bpy_struct {
+@:pythonImport("bpy.types") extern class MaterialPhysics extends Struct {
 	/**
 		Elasticity of collisions
 	**/

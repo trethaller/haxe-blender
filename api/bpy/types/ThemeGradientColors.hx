@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ThemeGradientColors extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ThemeGradientColors extends Struct {
 	public var gradient : mathutils.Vector;
 	public var high_gradient : mathutils.Vector;
 	/**

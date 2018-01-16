@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class RenderResult extends Bpy_struct {
+@:pythonImport("bpy.types") extern class RenderResult extends Struct {
 	public var layers : Collection<RenderLayer>;
 	public var resolution_x : Int;
 	public var resolution_y : Int;

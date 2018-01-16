@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ColorManagedViewSettings extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ColorManagedViewSettings extends Struct {
 	/**
 		Color curve mapping applied before display transform
 	**/

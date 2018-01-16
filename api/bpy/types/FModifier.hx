@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class FModifier extends Bpy_struct {
+@:pythonImport("bpy.types") extern class FModifier extends Struct {
 	/**
 		F-Curve Modifier is the one being edited
 	**/

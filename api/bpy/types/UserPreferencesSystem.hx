@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class UserPreferencesSystem extends Bpy_struct {
+@:pythonImport("bpy.types") extern class UserPreferencesSystem extends Struct {
 	/**
 		Quality of the anisotropic filtering (values greater than 1.0 enable anisotropic filtering)
 	**/

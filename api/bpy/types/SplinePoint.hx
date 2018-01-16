@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class SplinePoint extends Bpy_struct {
+@:pythonImport("bpy.types") extern class SplinePoint extends Struct {
 	/**
 		Point coordinates
 	**/

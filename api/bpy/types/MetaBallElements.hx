@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class MetaBallElements extends Bpy_struct {
+@:pythonImport("bpy.types") extern class MetaBallElements extends Struct {
 	/**
 		Last selected element
 	**/

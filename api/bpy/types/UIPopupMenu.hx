@@ -1,4 +1,4 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class UIPopupMenu extends Bpy_struct {
+@:pythonImport("bpy.types") extern class UIPopupMenu extends Struct {
 	public var layout : UILayout;
 }

@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class GPencilStrokePoint extends Bpy_struct {
+@:pythonImport("bpy.types") extern class GPencilStrokePoint extends Struct {
 	public var co : mathutils.Vector;
 	/**
 		Pressure of tablet at point when drawing it

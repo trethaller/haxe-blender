@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class MovieTrackingReconstructedCameras extends Bpy_struct {
+@:pythonImport("bpy.types") extern class MovieTrackingReconstructedCameras extends Struct {
 	/**
 		 Find a reconstructed camera for a give frame number
 	**/

@@ -524,18 +524,20 @@ class Generator {
 		function filterFile(fname: String) {
 			if(!fname.endsWith(".rst")) return false;
 			if(fname.startsWith("bpy.types")) return true;
+			if(fname.startsWith("mathutils")) return true;
 			return false;
 		}
-		//var files = Os.listdir(docDir).filter(filterFile);
-		var files = [
-			//"bpy.types.bpy_prop_collection.rst",
-			"bpy.types.bpy_struct.rst",
-			"bpy.types.FCurve.rst",
-			// "bpy.ops.object.rst",
-			// "bpy.types.Object.rst",
-			// "bpy.types.BlendData.rst",
-			"mathutils.rst",
-		];
+		var files = Os.listdir(docDir).filter(filterFile);
+		
+		// var files = [
+		// 	//"bpy.types.bpy_prop_collection.rst",
+		// 	"bpy.types.bpy_struct.rst",
+		// 	"bpy.types.FCurve.rst",
+		// 	// "bpy.ops.object.rst",
+		// 	// "bpy.types.Object.rst",
+		// 	// "bpy.types.BlendData.rst",
+		// 	"mathutils.rst",
+		// ];
 
 		for(fname in files) {
 			processFile(docDir + fname);

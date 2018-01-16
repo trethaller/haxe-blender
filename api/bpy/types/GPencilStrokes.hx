@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class GPencilStrokes extends Bpy_struct {
+@:pythonImport("bpy.types") extern class GPencilStrokes extends Struct {
 	/**
 		 Add a new grease pencil stroke
 	**/

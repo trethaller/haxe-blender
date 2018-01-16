@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class BezierSplinePoint extends Bpy_struct {
+@:pythonImport("bpy.types") extern class BezierSplinePoint extends Struct {
 	/**
 		Coordinates of the control point
 	**/

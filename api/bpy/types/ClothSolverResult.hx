@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ClothSolverResult extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ClothSolverResult extends Struct {
 	/**
 		Average error during substeps
 	**/

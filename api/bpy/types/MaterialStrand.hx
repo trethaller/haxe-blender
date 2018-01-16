@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class MaterialStrand extends Bpy_struct {
+@:pythonImport("bpy.types") extern class MaterialStrand extends Struct {
 	/**
 		Worldspace distance over which to blend in the surface normal
 	**/

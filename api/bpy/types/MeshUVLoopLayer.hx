@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class MeshUVLoopLayer extends Bpy_struct {
+@:pythonImport("bpy.types") extern class MeshUVLoopLayer extends Struct {
 	public var data : Collection<MeshUVLoop>;
 	/**
 		Name of UV map

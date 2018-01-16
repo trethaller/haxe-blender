@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class GPencilPaletteColor extends Bpy_struct {
+@:pythonImport("bpy.types") extern class GPencilPaletteColor extends Struct {
 	/**
 		Color Opacity
 	**/

@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class FreestyleModuleSettings extends Bpy_struct {
+@:pythonImport("bpy.types") extern class FreestyleModuleSettings extends Struct {
 	/**
 		Python script to define a style module
 	**/

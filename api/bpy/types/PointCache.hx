@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class PointCache extends Bpy_struct {
+@:pythonImport("bpy.types") extern class PointCache extends Struct {
 	/**
 		Compression method to be used
 	**/

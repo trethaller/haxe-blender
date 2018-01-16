@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class RenderLayers extends Bpy_struct {
+@:pythonImport("bpy.types") extern class RenderLayers extends Struct {
 	/**
 		Active Render Layer
 	**/

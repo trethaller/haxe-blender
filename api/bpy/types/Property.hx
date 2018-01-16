@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class Property extends Bpy_struct {
+@:pythonImport("bpy.types") extern class Property extends Struct {
 	/**
 		Description of the property for tooltips
 	**/

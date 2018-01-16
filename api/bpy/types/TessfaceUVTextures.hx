@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class TessfaceUVTextures extends Bpy_struct {
+@:pythonImport("bpy.types") extern class TessfaceUVTextures extends Struct {
 	/**
 		Active UV Map
 	**/

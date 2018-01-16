@@ -1,4 +1,4 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class PointCaches extends Bpy_struct {
+@:pythonImport("bpy.types") extern class PointCaches extends Struct {
 	public var active_index : Int;
 }

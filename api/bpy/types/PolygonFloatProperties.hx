@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class PolygonFloatProperties extends Bpy_struct {
+@:pythonImport("bpy.types") extern class PolygonFloatProperties extends Struct {
 	/**
 		 Add a float property layer to Mesh
 	**/

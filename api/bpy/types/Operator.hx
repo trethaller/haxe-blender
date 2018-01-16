@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class Operator extends Bpy_struct {
+@:pythonImport("bpy.types") extern class Operator extends Struct {
 	public var bl_description : String;
 	public var bl_idname : String;
 	public var bl_label : String;

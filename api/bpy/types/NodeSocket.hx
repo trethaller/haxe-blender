@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class NodeSocket extends Bpy_struct {
+@:pythonImport("bpy.types") extern class NodeSocket extends Struct {
 	public var bl_idname : String;
 	/**
 		Enable the socket

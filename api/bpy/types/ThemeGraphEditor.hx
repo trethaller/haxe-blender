@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ThemeGraphEditor extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ThemeGraphEditor extends Struct {
 	public var active_channels_group : mathutils.Vector;
 	public var channel_group : mathutils.Vector;
 	public var channels_region : mathutils.Vector;

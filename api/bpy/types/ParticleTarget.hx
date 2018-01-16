@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ParticleTarget extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ParticleTarget extends Struct {
 	public var alliance : String;
 	public var duration : Float;
 	/**

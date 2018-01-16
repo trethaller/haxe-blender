@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class UnifiedPaintSettings extends Bpy_struct {
+@:pythonImport("bpy.types") extern class UnifiedPaintSettings extends Struct {
 	public var color : mathutils.Vector;
 	public var secondary_color : mathutils.Vector;
 	/**

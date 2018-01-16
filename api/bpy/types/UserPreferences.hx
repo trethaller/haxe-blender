@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class UserPreferences extends Bpy_struct {
+@:pythonImport("bpy.types") extern class UserPreferences extends Struct {
 	/**
 		Active section of the user preferences shown in the user interface
 	**/

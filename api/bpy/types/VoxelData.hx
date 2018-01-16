@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class VoxelData extends Bpy_struct {
+@:pythonImport("bpy.types") extern class VoxelData extends Struct {
 	/**
 		Object used as the smoke simulation domain
 	**/

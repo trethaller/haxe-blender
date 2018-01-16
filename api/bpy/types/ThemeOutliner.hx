@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ThemeOutliner extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ThemeOutliner extends Struct {
 	public var match : mathutils.Vector;
 	public var selected_highlight : mathutils.Vector;
 	/**

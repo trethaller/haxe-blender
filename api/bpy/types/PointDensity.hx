@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class PointDensity extends Bpy_struct {
+@:pythonImport("bpy.types") extern class PointDensity extends Struct {
 	public var color_ramp : ColorRamp;
 	/**
 		Method of attenuating density by distance from the point

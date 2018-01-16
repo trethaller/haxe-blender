@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class GPencilInterpolateSettings extends Bpy_struct {
+@:pythonImport("bpy.types") extern class GPencilInterpolateSettings extends Struct {
 	/**
 		Amount to boost elastic bounces for 'elastic' easing
 	**/

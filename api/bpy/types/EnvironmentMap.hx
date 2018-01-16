@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class EnvironmentMap extends Bpy_struct {
+@:pythonImport("bpy.types") extern class EnvironmentMap extends Struct {
 	/**
 		Objects further than this are not visible to map
 	**/

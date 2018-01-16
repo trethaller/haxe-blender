@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class Paint extends Bpy_struct {
+@:pythonImport("bpy.types") extern class Paint extends Struct {
 	/**
 		Active Brush
 	**/

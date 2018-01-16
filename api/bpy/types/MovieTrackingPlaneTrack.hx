@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class MovieTrackingPlaneTrack extends Bpy_struct {
+@:pythonImport("bpy.types") extern class MovieTrackingPlaneTrack extends Struct {
 	/**
 		Image displayed in the track during editing in clip editor
 	**/

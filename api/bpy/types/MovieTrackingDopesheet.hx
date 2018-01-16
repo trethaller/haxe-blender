@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class MovieTrackingDopesheet extends Bpy_struct {
+@:pythonImport("bpy.types") extern class MovieTrackingDopesheet extends Struct {
 	/**
 		Include channels from objects/bone that aren't visible
 	**/

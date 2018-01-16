@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ObjectBase extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ObjectBase extends Struct {
 	/**
 		Layers the object base is on
 	**/

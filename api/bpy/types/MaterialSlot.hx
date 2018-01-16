@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class MaterialSlot extends Bpy_struct {
+@:pythonImport("bpy.types") extern class MaterialSlot extends Struct {
 	/**
 		Link material to object or the object's data
 	**/

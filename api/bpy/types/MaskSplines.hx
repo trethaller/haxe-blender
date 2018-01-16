@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class MaskSplines extends Bpy_struct {
+@:pythonImport("bpy.types") extern class MaskSplines extends Struct {
 	/**
 		Active spline of masking layer
 	**/

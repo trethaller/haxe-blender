@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class MeshVertex extends Bpy_struct {
+@:pythonImport("bpy.types") extern class MeshVertex extends Struct {
 	/**
 		Weight used by the Bevel modifier 'Only Vertices' option
 	**/

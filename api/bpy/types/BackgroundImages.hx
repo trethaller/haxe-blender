@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class BackgroundImages extends Bpy_struct {
+@:pythonImport("bpy.types") extern class BackgroundImages extends Struct {
 	/**
 		 Add new background image
 	**/

@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class FModifierEnvelopeControlPoint extends Bpy_struct {
+@:pythonImport("bpy.types") extern class FModifierEnvelopeControlPoint extends Struct {
 	/**
 		Frame this control-point occurs on
 	**/

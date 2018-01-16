@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class AnimVizOnionSkinning extends Bpy_struct {
+@:pythonImport("bpy.types") extern class AnimVizOnionSkinning extends Struct {
 	/**
 		Number of frames to show after the current frame (only for 'Around Current Frame' Onion-skinning method)
 	**/

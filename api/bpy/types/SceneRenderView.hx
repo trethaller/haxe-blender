@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class SceneRenderView extends Bpy_struct {
+@:pythonImport("bpy.types") extern class SceneRenderView extends Struct {
 	/**
 		Suffix to identify the cameras to use, and added to the render images for this view
 	**/

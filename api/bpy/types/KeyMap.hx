@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class KeyMap extends Bpy_struct {
+@:pythonImport("bpy.types") extern class KeyMap extends Struct {
 	/**
 		Indicates that a keymap is used for translate modal events for an operator
 	**/

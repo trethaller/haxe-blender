@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class TextureSlot extends Bpy_struct {
+@:pythonImport("bpy.types") extern class TextureSlot extends Struct {
 	/**
 		Mode used to apply the texture
 	**/

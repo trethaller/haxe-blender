@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class MaskParent extends Bpy_struct {
+@:pythonImport("bpy.types") extern class MaskParent extends Struct {
 	/**
 		ID-block to which masking element would be parented to or to it's property
 	**/

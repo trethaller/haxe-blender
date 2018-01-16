@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class LineStyleThicknessModifiers extends Bpy_struct {
+@:pythonImport("bpy.types") extern class LineStyleThicknessModifiers extends Struct {
 	/**
 		 Add a thickness modifier to line style
 	**/

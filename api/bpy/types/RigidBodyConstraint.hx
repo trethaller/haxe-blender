@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class RigidBodyConstraint extends Bpy_struct {
+@:pythonImport("bpy.types") extern class RigidBodyConstraint extends Struct {
 	/**
 		Impulse threshold that must be reached for the constraint to break
 	**/

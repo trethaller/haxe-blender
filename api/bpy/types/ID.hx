@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ID extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ID extends Struct {
 	/**
 		Is this ID block linked indirectly
 	**/

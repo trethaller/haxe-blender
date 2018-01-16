@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class PathCompare extends Bpy_struct {
+@:pythonImport("bpy.types") extern class PathCompare extends Struct {
 	public var path : String;
 	/**
 		Enable wildcard globbing

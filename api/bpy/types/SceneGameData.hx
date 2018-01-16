@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class SceneGameData extends Bpy_struct {
+@:pythonImport("bpy.types") extern class SceneGameData extends Struct {
 	/**
 		Radius of the activity bubble, in Manhattan length (objects outside the box are activity-culled)
 	**/

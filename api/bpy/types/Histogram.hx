@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class Histogram extends Bpy_struct {
+@:pythonImport("bpy.types") extern class Histogram extends Struct {
 	/**
 		Channels to display when drawing the histogram
 	**/

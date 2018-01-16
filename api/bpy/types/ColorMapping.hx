@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ColorMapping extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ColorMapping extends Struct {
 	/**
 		Blend color to mix with texture output color
 	**/

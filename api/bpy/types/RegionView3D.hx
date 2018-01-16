@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class RegionView3D extends Bpy_struct {
+@:pythonImport("bpy.types") extern class RegionView3D extends Struct {
 	public var is_perspective : Bool;
 	/**
 		Lock view rotation in side views

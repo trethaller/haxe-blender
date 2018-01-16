@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ThemeNodeEditor extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ThemeNodeEditor extends Struct {
 	public var color_node : mathutils.Vector;
 	public var converter_node : mathutils.Vector;
 	public var distor_node : mathutils.Vector;

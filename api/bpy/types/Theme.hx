@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class Theme extends Bpy_struct {
+@:pythonImport("bpy.types") extern class Theme extends Struct {
 	public var bone_color_sets : Collection<ThemeBoneColorSet>;
 	public var clip_editor : ThemeClipEditor;
 	public var console : ThemeConsole;

@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ThemeWidgetColors extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ThemeWidgetColors extends Struct {
 	public var inner : mathutils.Quaternion;
 	public var inner_sel : mathutils.Quaternion;
 	public var item : mathutils.Quaternion;

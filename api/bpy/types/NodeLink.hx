@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class NodeLink extends Bpy_struct {
+@:pythonImport("bpy.types") extern class NodeLink extends Struct {
 	public var from_node : Node;
 	public var from_socket : NodeSocket;
 	/**

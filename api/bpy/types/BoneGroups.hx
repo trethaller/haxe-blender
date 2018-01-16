@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class BoneGroups extends Bpy_struct {
+@:pythonImport("bpy.types") extern class BoneGroups extends Struct {
 	/**
 		Active bone group for this pose
 	**/

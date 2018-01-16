@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class BakeSettings extends Bpy_struct {
+@:pythonImport("bpy.types") extern class BakeSettings extends Struct {
 	/**
 		Distance to use for the inward ray cast when using selected to active
 	**/

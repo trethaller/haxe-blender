@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class Context extends Bpy_struct {
+@:pythonImport("bpy.types") extern class Context extends Struct {
 	public var area : Area;
 	public var blend_data : BlendData;
 	public var mode : String;

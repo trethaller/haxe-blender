@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class MeshStatVis extends Bpy_struct {
+@:pythonImport("bpy.types") extern class MeshStatVis extends Struct {
 	/**
 		Maximum angle to display
 	**/

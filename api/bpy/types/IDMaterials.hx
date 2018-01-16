@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class IDMaterials extends Bpy_struct {
+@:pythonImport("bpy.types") extern class IDMaterials extends Struct {
 	/**
 		 Add a new material to the data-block
 	**/

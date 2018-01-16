@@ -1,4 +1,4 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class MeshPolygonFloatProperty extends Bpy_struct {
+@:pythonImport("bpy.types") extern class MeshPolygonFloatProperty extends Struct {
 	public var value : Float;
 }

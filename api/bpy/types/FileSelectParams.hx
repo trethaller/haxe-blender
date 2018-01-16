@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class FileSelectParams extends Bpy_struct {
+@:pythonImport("bpy.types") extern class FileSelectParams extends Struct {
 	/**
 		Directory displayed in the file browser
 	**/

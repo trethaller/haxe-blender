@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class PropertyGroupItem extends Bpy_struct {
+@:pythonImport("bpy.types") extern class PropertyGroupItem extends Struct {
 	public var collection : Collection<PropertyGroup>;
 	public var double : Float;
 	public var double_array : Array<Float>;

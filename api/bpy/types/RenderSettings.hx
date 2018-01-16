@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class RenderSettings extends Bpy_struct {
+@:pythonImport("bpy.types") extern class RenderSettings extends Struct {
 	/**
 		Representation of alpha information in the RGBA pixels
 	**/

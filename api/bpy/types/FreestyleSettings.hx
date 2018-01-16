@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class FreestyleSettings extends Bpy_struct {
+@:pythonImport("bpy.types") extern class FreestyleSettings extends Struct {
 	/**
 		Angular threshold for detecting crease edges
 	**/

@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class LampSkySettings extends Bpy_struct {
+@:pythonImport("bpy.types") extern class LampSkySettings extends Struct {
 	/**
 		Multiplier to convert blender units to physical distance
 	**/

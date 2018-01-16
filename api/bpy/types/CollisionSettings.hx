@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class CollisionSettings extends Bpy_struct {
+@:pythonImport("bpy.types") extern class CollisionSettings extends Struct {
 	/**
 		How much of effector force gets lost during collision with this object (in percent)
 	**/

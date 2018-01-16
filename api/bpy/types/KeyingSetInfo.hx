@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class KeyingSetInfo extends Bpy_struct {
+@:pythonImport("bpy.types") extern class KeyingSetInfo extends Struct {
 	/**
 		A short description of the keying set
 	**/

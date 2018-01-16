@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ThemeConsole extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ThemeConsole extends Struct {
 	public var cursor : mathutils.Vector;
 	public var line_error : mathutils.Vector;
 	public var line_info : mathutils.Vector;

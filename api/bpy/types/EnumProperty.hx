@@ -3,7 +3,7 @@ package bpy.types;
 	/**
 		Default value for this enum
 	**/
-	public var default : String;
+	public var _default : String;
 	/**
 		Default value for this enum
 	**/

@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class EnumPropertyItem extends Bpy_struct {
+@:pythonImport("bpy.types") extern class EnumPropertyItem extends Struct {
 	/**
 		Description of the item's purpose
 	**/

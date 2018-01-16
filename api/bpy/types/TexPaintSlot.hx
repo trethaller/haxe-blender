@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class TexPaintSlot extends Bpy_struct {
+@:pythonImport("bpy.types") extern class TexPaintSlot extends Struct {
 	/**
 		Index of MTex slot in the material
 	**/

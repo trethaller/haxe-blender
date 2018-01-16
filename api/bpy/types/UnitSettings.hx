@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class UnitSettings extends Bpy_struct {
+@:pythonImport("bpy.types") extern class UnitSettings extends Struct {
 	/**
 		Scale to use when converting between blender units and dimensions
 	**/

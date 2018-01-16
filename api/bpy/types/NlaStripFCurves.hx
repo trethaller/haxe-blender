@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class NlaStripFCurves extends Bpy_struct {
+@:pythonImport("bpy.types") extern class NlaStripFCurves extends Struct {
 	/**
 		 Find an F-Curve. Note that this function performs a linear scan of all F-Curves in the NLA strip.
 	**/

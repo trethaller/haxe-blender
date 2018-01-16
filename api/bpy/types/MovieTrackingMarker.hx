@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class MovieTrackingMarker extends Bpy_struct {
+@:pythonImport("bpy.types") extern class MovieTrackingMarker extends Struct {
 	/**
 		Marker position at frame in normalized coordinates
 	**/

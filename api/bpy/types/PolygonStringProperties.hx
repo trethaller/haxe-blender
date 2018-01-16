@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class PolygonStringProperties extends Bpy_struct {
+@:pythonImport("bpy.types") extern class PolygonStringProperties extends Struct {
 	/**
 		 Add a string property layer to Mesh
 	**/

@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class RigidBodyWorld extends Bpy_struct {
+@:pythonImport("bpy.types") extern class RigidBodyWorld extends Struct {
 	/**
 		Group containing rigid body constraint objects
 	**/

@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class OperatorOptions extends Bpy_struct {
+@:pythonImport("bpy.types") extern class OperatorOptions extends Struct {
 	/**
 		True when the cursor is grabbed
 	**/

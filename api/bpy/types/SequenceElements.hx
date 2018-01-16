@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class SequenceElements extends Bpy_struct {
+@:pythonImport("bpy.types") extern class SequenceElements extends Struct {
 	/**
 		 Push an image from ImageSequence.directory
 	**/

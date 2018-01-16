@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class SceneObjects extends Bpy_struct {
+@:pythonImport("bpy.types") extern class SceneObjects extends Struct {
 	/**
 		Active object for this scene
 	**/

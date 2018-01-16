@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class UserPreferencesInput extends Bpy_struct {
+@:pythonImport("bpy.types") extern class UserPreferencesInput extends Struct {
 	/**
 		The name of the active key configuration
 	**/

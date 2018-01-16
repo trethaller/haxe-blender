@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ParticleBrush extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ParticleBrush extends Struct {
 	/**
 		Particle count
 	**/

@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class Timer extends Bpy_struct {
+@:pythonImport("bpy.types") extern class Timer extends Struct {
 	/**
 		Time since last step in seconds
 	**/

@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class KeyingSetPath extends Bpy_struct {
+@:pythonImport("bpy.types") extern class KeyingSetPath extends Struct {
 	/**
 		Index to the specific setting if applicable
 	**/

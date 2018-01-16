@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class GameSoftBodySettings extends Bpy_struct {
+@:pythonImport("bpy.types") extern class GameSoftBodySettings extends Struct {
 	/**
 		Number of cluster iterations
 	**/

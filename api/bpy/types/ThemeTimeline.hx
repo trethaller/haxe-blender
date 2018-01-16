@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ThemeTimeline extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ThemeTimeline extends Struct {
 	public var frame_current : mathutils.Vector;
 	public var grid : mathutils.Vector;
 	/**

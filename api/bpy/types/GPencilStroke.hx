@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class GPencilStroke extends Bpy_struct {
+@:pythonImport("bpy.types") extern class GPencilStroke extends Struct {
 	/**
 		Color from palette used in Stroke
 	**/

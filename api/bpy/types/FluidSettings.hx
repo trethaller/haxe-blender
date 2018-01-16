@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class FluidSettings extends Bpy_struct {
+@:pythonImport("bpy.types") extern class FluidSettings extends Struct {
 	/**
 		Type of participation in the fluid simulation
 	**/

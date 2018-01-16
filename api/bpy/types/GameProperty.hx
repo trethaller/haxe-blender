@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class GameProperty extends Bpy_struct {
+@:pythonImport("bpy.types") extern class GameProperty extends Struct {
 	/**
 		Available as GameObject attributes in the game engine's python API
 	**/

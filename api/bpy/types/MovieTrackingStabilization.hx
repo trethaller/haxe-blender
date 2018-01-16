@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class MovieTrackingStabilization extends Bpy_struct {
+@:pythonImport("bpy.types") extern class MovieTrackingStabilization extends Struct {
 	/**
 		Index of active track in rotation stabilization tracks list
 	**/

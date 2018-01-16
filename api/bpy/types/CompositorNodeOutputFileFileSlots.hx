@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class CompositorNodeOutputFileFileSlots extends Bpy_struct {
+@:pythonImport("bpy.types") extern class CompositorNodeOutputFileFileSlots extends Struct {
 	/**
 		 Add a file slot to this node
 	**/

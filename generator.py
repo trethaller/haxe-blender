@@ -154,9 +154,11 @@ class Generator:
                 return False
             if fname.startswith("bpy.types"):
                 return True
+            if fname.startswith("mathutils"):
+                return True
             return False
         filterFile = _hx_local_0
-        files = ["bpy.types.bpy_struct.rst", "bpy.types.FCurve.rst", "mathutils.rst"]
+        files = list(filter(filterFile,python_lib_Os.listdir(docDir)))
         _g = 0
         while (_g < len(files)):
             fname1 = (files[_g] if _g >= 0 and _g < len(files) else None)

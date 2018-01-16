@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class Pose extends Bpy_struct {
+@:pythonImport("bpy.types") extern class Pose extends Struct {
 	/**
 		Animation data for this data-block
 	**/

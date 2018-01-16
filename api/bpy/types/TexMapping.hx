@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class TexMapping extends Bpy_struct {
+@:pythonImport("bpy.types") extern class TexMapping extends Struct {
 	public var mapping : String;
 	public var mapping_x : String;
 	public var mapping_y : String;

@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class WalkNavigation extends Bpy_struct {
+@:pythonImport("bpy.types") extern class WalkNavigation extends Struct {
 	/**
 		Maximum height of a jump
 	**/

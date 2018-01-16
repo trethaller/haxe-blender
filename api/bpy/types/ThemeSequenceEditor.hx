@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ThemeSequenceEditor extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ThemeSequenceEditor extends Struct {
 	public var audio_strip : mathutils.Vector;
 	public var draw_action : mathutils.Vector;
 	public var effect_strip : mathutils.Vector;

@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class AnimVizMotionPaths extends Bpy_struct {
+@:pythonImport("bpy.types") extern class AnimVizMotionPaths extends Struct {
 	/**
 		When calculating Bone Paths, use Head or Tips
 	**/

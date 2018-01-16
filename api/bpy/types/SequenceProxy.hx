@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class SequenceProxy extends Bpy_struct {
+@:pythonImport("bpy.types") extern class SequenceProxy extends Struct {
 	/**
 		Build 100% proxy resolution
 	**/

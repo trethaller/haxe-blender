@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class Window extends Bpy_struct {
+@:pythonImport("bpy.types") extern class Window extends Struct {
 	/**
 		Window height
 	**/

@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class LoopColors extends Bpy_struct {
+@:pythonImport("bpy.types") extern class LoopColors extends Struct {
 	/**
 		Active vertex color layer
 	**/

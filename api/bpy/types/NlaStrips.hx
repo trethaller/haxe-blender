@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class NlaStrips extends Bpy_struct {
+@:pythonImport("bpy.types") extern class NlaStrips extends Struct {
 	/**
 		 Add a new Action-Clip strip to the track
 	**/

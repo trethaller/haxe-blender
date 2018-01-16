@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class SequenceColorBalanceData extends Bpy_struct {
+@:pythonImport("bpy.types") extern class SequenceColorBalanceData extends Struct {
 	/**
 		Color balance gain (highlights)
 	**/

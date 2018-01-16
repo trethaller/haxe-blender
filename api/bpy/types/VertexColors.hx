@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class VertexColors extends Bpy_struct {
+@:pythonImport("bpy.types") extern class VertexColors extends Struct {
 	/**
 		Active vertex color layer
 	**/

@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class CurveMapPoints extends Bpy_struct {
+@:pythonImport("bpy.types") extern class CurveMapPoints extends Struct {
 	/**
 		 Add point to CurveMap
 	**/

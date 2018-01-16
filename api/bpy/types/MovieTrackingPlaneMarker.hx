@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class MovieTrackingPlaneMarker extends Bpy_struct {
+@:pythonImport("bpy.types") extern class MovieTrackingPlaneMarker extends Struct {
 	/**
 		Array of coordinates which represents UI rectangle corners in frame normalized coordinates
 	**/

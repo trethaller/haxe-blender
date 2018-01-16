@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class DisplaySafeAreas extends Bpy_struct {
+@:pythonImport("bpy.types") extern class DisplaySafeAreas extends Struct {
 	/**
 		Safe area for general elements
 	**/

@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class NodeInputs extends Bpy_struct {
+@:pythonImport("bpy.types") extern class NodeInputs extends Struct {
 	/**
 		 Add a socket to this node
 	**/

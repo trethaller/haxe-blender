@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class Area extends Bpy_struct {
+@:pythonImport("bpy.types") extern class Area extends Struct {
 	/**
 		Area height
 	**/

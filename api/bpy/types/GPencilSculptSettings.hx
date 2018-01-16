@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class GPencilSculptSettings extends Bpy_struct {
+@:pythonImport("bpy.types") extern class GPencilSculptSettings extends Struct {
 	/**
 		The brush affects the position of the point
 	**/

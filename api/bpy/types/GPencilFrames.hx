@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class GPencilFrames extends Bpy_struct {
+@:pythonImport("bpy.types") extern class GPencilFrames extends Struct {
 	/**
 		 Add a new grease pencil frame
 	**/

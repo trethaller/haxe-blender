@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class Region extends Bpy_struct {
+@:pythonImport("bpy.types") extern class Region extends Struct {
 	/**
 		Region height
 	**/

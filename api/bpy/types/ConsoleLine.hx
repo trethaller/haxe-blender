@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ConsoleLine extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ConsoleLine extends Struct {
 	/**
 		Text in the line
 	**/

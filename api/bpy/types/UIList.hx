@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class UIList extends Bpy_struct {
+@:pythonImport("bpy.types") extern class UIList extends Struct {
 	/**
 		The value of the reserved bitflag 'FILTER_ITEM' (in filter_flags values)
 	**/

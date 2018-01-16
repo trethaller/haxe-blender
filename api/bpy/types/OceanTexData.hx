@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class OceanTexData extends Bpy_struct {
+@:pythonImport("bpy.types") extern class OceanTexData extends Struct {
 	/**
 		Object containing the ocean modifier
 	**/

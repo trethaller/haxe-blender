@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class BlendData extends Bpy_struct {
+@:pythonImport("bpy.types") extern class BlendData extends Struct {
 	/**
 		Action data-blocks
 	**/

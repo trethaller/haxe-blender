@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class RenderViews extends Bpy_struct {
+@:pythonImport("bpy.types") extern class RenderViews extends Struct {
 	/**
 		Active Render View
 	**/

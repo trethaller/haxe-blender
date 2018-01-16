@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class SequenceElement extends Bpy_struct {
+@:pythonImport("bpy.types") extern class SequenceElement extends Struct {
 	/**
 		Name of the source file
 	**/

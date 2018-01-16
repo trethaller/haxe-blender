@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class LineStyleAlphaModifiers extends Bpy_struct {
+@:pythonImport("bpy.types") extern class LineStyleAlphaModifiers extends Struct {
 	/**
 		 Add a alpha modifier to line style
 	**/

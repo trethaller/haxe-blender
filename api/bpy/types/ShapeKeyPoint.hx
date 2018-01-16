@@ -1,4 +1,4 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ShapeKeyPoint extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ShapeKeyPoint extends Struct {
 	public var co : mathutils.Vector;
 }

@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class SmokeFlowSettings extends Bpy_struct {
+@:pythonImport("bpy.types") extern class SmokeFlowSettings extends Struct {
 	public var density : Float;
 	/**
 		Name of vertex group which determines surface emission rate

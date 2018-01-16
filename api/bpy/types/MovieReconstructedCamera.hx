@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class MovieReconstructedCamera extends Bpy_struct {
+@:pythonImport("bpy.types") extern class MovieReconstructedCamera extends Struct {
 	/**
 		Average error of reconstruction
 	**/

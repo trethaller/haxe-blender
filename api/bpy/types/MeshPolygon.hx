@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class MeshPolygon extends Bpy_struct {
+@:pythonImport("bpy.types") extern class MeshPolygon extends Struct {
 	/**
 		Read only area of this polygon
 	**/

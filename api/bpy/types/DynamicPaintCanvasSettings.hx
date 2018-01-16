@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class DynamicPaintCanvasSettings extends Bpy_struct {
+@:pythonImport("bpy.types") extern class DynamicPaintCanvasSettings extends Struct {
 	/**
 		Paint surface list
 	**/

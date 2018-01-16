@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ColorManagedInputColorspaceSettings extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ColorManagedInputColorspaceSettings extends Struct {
 	/**
 		Color space of the image or movie on disk
 	**/

@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class Sequences extends Bpy_struct {
+@:pythonImport("bpy.types") extern class Sequences extends Struct {
 	/**
 		 Add a new movie clip sequence
 	**/

@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ActionPoseMarkers extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ActionPoseMarkers extends Struct {
 	/**
 		Active pose marker for this action
 	**/

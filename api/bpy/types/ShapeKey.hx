@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ShapeKey extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ShapeKey extends Struct {
 	public var data : Collection<UnknownType>;
 	/**
 		Frame for absolute keys

@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ThemeInfo extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ThemeInfo extends Struct {
 	public var info_debug : mathutils.Vector;
 	public var info_debug_text : mathutils.Vector;
 	public var info_error : mathutils.Vector;

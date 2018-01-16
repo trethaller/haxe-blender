@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class MeshTexturePolyLayer extends Bpy_struct {
+@:pythonImport("bpy.types") extern class MeshTexturePolyLayer extends Struct {
 	/**
 		Set the map as active for display and editing
 	**/

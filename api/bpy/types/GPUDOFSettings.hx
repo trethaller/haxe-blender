@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class GPUDOFSettings extends Bpy_struct {
+@:pythonImport("bpy.types") extern class GPUDOFSettings extends Struct {
 	/**
 		Blades for dof effect
 	**/

@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class GPencilTriangle extends Bpy_struct {
+@:pythonImport("bpy.types") extern class GPencilTriangle extends Struct {
 	/**
 		First triangle vertex index
 	**/

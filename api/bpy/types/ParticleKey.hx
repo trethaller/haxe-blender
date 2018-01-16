@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ParticleKey extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ParticleKey extends Struct {
 	/**
 		Key angular velocity
 	**/

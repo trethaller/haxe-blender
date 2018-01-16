@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class WorldMistSettings extends Bpy_struct {
+@:pythonImport("bpy.types") extern class WorldMistSettings extends Struct {
 	/**
 		Distance over which the mist effect fades in
 	**/

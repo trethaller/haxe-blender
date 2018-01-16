@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class MaterialSubsurfaceScattering extends Bpy_struct {
+@:pythonImport("bpy.types") extern class MaterialSubsurfaceScattering extends Struct {
 	/**
 		Back scattering weight
 	**/

@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class SpaceNodeEditorPath extends Bpy_struct {
+@:pythonImport("bpy.types") extern class SpaceNodeEditorPath extends Struct {
 	public var to_string : String;
 	/**
 		 Reset the node tree path

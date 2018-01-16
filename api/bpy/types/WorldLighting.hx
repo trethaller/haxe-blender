@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class WorldLighting extends Bpy_struct {
+@:pythonImport("bpy.types") extern class WorldLighting extends Struct {
 	/**
 		Use the speed vector pass to reduce AO samples in fast moving pixels - higher values result in more aggressive sample reduction (requires Vec pass enabled, for Raytrace Adaptive QMC)
 	**/

@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class DopeSheet extends Bpy_struct {
+@:pythonImport("bpy.types") extern class DopeSheet extends Struct {
 	/**
 		F-Curve live filtering string
 	**/

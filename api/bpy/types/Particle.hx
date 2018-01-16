@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class Particle extends Bpy_struct {
+@:pythonImport("bpy.types") extern class Particle extends Struct {
 	public var alive_state : String;
 	public var angular_velocity : mathutils.Vector;
 	public var birth_time : Float;

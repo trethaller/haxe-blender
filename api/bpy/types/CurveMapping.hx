@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class CurveMapping extends Bpy_struct {
+@:pythonImport("bpy.types") extern class CurveMapping extends Struct {
 	/**
 		For RGB curves, the color that black is mapped to
 	**/

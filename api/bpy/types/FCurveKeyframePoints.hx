@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class FCurveKeyframePoints extends Bpy_struct {
+@:pythonImport("bpy.types") extern class FCurveKeyframePoints extends Struct {
 	/**
 		 Add a keyframe point to a F-Curve
 	**/

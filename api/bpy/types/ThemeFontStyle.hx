@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ThemeFontStyle extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ThemeFontStyle extends Struct {
 	/**
 		Which style to use for font kerning
 	**/

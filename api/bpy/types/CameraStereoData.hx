@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class CameraStereoData extends Bpy_struct {
+@:pythonImport("bpy.types") extern class CameraStereoData extends Struct {
 	/**
 		The converge point for the stereo cameras (often the distance between a projector and the projection screen)
 	**/

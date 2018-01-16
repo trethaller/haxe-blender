@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ThemeImageEditor extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ThemeImageEditor extends Struct {
 	public var edge_select : mathutils.Vector;
 	public var editmesh_active : mathutils.Quaternion;
 	public var face : mathutils.Quaternion;

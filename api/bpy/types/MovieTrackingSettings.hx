@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class MovieTrackingSettings extends Bpy_struct {
+@:pythonImport("bpy.types") extern class MovieTrackingSettings extends Struct {
 	/**
 		Cleanup action to execute
 	**/

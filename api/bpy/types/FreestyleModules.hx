@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class FreestyleModules extends Bpy_struct {
+@:pythonImport("bpy.types") extern class FreestyleModules extends Struct {
 	/**
 		 Add a style module to scene render layer Freestyle settings
 	**/

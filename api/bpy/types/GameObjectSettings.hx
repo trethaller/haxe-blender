@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class GameObjectSettings extends Bpy_struct {
+@:pythonImport("bpy.types") extern class GameObjectSettings extends Struct {
 	/**
 		Game engine actuators to act on events
 	**/

@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class IKParam extends Bpy_struct {
+@:pythonImport("bpy.types") extern class IKParam extends Struct {
 	/**
 		IK solver for which these parameters are defined
 	**/

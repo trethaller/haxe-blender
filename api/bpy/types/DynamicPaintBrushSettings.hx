@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class DynamicPaintBrushSettings extends Bpy_struct {
+@:pythonImport("bpy.types") extern class DynamicPaintBrushSettings extends Struct {
 	/**
 		Proximity falloff is applied inside the volume
 	**/

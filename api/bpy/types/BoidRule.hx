@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class BoidRule extends Bpy_struct {
+@:pythonImport("bpy.types") extern class BoidRule extends Struct {
 	/**
 		Boid rule name
 	**/

@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class GroupObjects extends Bpy_struct {
+@:pythonImport("bpy.types") extern class GroupObjects extends Struct {
 	/**
 		 Add this object to a group
 	**/

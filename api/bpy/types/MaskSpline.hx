@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class MaskSpline extends Bpy_struct {
+@:pythonImport("bpy.types") extern class MaskSpline extends Struct {
 	/**
 		The method used for calculating the feather offset
 	**/

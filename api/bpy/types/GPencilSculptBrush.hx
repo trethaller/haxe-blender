@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class GPencilSculptBrush extends Bpy_struct {
+@:pythonImport("bpy.types") extern class GPencilSculptBrush extends Struct {
 	/**
 		Affect pressure values as well when smoothing strokes
 	**/

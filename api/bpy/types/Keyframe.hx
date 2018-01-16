@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class Keyframe extends Bpy_struct {
+@:pythonImport("bpy.types") extern class Keyframe extends Struct {
 	/**
 		Amount to boost elastic bounces for 'elastic' easing
 	**/

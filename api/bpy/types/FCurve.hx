@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class FCurve extends Bpy_struct {
+@:pythonImport("bpy.types") extern class FCurve extends Struct {
 	/**
 		Index to the specific property affected by F-Curve if applicable
 	**/

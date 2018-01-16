@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class CurveSplines extends Bpy_struct {
+@:pythonImport("bpy.types") extern class CurveSplines extends Struct {
 	/**
 		Active curve spline
 	**/

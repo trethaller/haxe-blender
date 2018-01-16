@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class GPencilPaletteColors extends Bpy_struct {
+@:pythonImport("bpy.types") extern class GPencilPaletteColors extends Struct {
 	/**
 		Current active color
 	**/

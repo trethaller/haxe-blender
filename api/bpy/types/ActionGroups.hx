@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ActionGroups extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ActionGroups extends Struct {
 	/**
 		 Create a new action group and add it to the action
 	**/

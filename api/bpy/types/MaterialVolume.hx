@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class MaterialVolume extends Bpy_struct {
+@:pythonImport("bpy.types") extern class MaterialVolume extends Struct {
 	/**
 		Back scattering (-1.0) to Forward scattering (1.0) and the range in between
 	**/

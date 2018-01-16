@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class AnimDataDrivers extends Bpy_struct {
+@:pythonImport("bpy.types") extern class AnimDataDrivers extends Struct {
 	/**
 		 Add a new driver given an existing one
 	**/

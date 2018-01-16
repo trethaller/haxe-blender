@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class Spline extends Bpy_struct {
+@:pythonImport("bpy.types") extern class Spline extends Struct {
 	/**
 		Collection of points for Bezier curves only
 	**/

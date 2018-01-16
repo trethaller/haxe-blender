@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class MeshTessFace extends Bpy_struct {
+@:pythonImport("bpy.types") extern class MeshTessFace extends Struct {
 	/**
 		Read only area of this face
 	**/

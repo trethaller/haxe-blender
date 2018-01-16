@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class CurvePaintSettings extends Bpy_struct {
+@:pythonImport("bpy.types") extern class CurvePaintSettings extends Struct {
 	/**
 		Angles above this are considered corners
 	**/

@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class KeyConfig extends Bpy_struct {
+@:pythonImport("bpy.types") extern class KeyConfig extends Struct {
 	/**
 		Indicates that a keyconfig was defined by the user
 	**/

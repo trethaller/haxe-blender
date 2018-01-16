@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ImagePackedFile extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ImagePackedFile extends Struct {
 	public var filepath : String;
 	public var packed_file : PackedFile;
 	/**

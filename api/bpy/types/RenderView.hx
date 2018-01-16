@@ -1,4 +1,4 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class RenderView extends Bpy_struct {
+@:pythonImport("bpy.types") extern class RenderView extends Struct {
 	public var name : String;
 }

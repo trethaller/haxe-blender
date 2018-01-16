@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class DriverTarget extends Bpy_struct {
+@:pythonImport("bpy.types") extern class DriverTarget extends Struct {
 	/**
 		Name of PoseBone to use as target
 	**/

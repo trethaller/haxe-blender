@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class RenderPass extends Bpy_struct {
+@:pythonImport("bpy.types") extern class RenderPass extends Struct {
 	public var channel_id : String;
 	public var channels : Int;
 	public var fullname : String;

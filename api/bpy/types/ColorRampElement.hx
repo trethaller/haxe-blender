@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ColorRampElement extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ColorRampElement extends Struct {
 	/**
 		Set alpha of selected color stop
 	**/

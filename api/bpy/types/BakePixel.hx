@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class BakePixel extends Bpy_struct {
+@:pythonImport("bpy.types") extern class BakePixel extends Struct {
 	public var du_dx : Float;
 	public var du_dy : Float;
 	public var dv_dx : Float;

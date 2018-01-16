@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ToolSettings extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ToolSettings extends Struct {
 	/**
 		Mode of automatic keyframe insertion for Objects and Bones
 	**/

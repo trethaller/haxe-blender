@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class SceneRenderLayer extends Bpy_struct {
+@:pythonImport("bpy.types") extern class SceneRenderLayer extends Struct {
 	/**
 		Cycles SceneRenderLayer Settings
 	**/

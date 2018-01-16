@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class MeshLoopColorLayer extends Bpy_struct {
+@:pythonImport("bpy.types") extern class MeshLoopColorLayer extends Struct {
 	/**
 		Sets the layer as active for display and editing
 	**/

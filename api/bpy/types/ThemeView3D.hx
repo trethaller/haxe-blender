@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ThemeView3D extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ThemeView3D extends Struct {
 	public var act_spline : mathutils.Vector;
 	public var bone_pose : mathutils.Vector;
 	public var bone_pose_active : mathutils.Vector;

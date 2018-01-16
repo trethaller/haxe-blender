@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class UserPreferencesEdit extends Bpy_struct {
+@:pythonImport("bpy.types") extern class UserPreferencesEdit extends Struct {
 	/**
 		Mode of automatic keyframe insertion for Objects and Bones (default setting used for new Scenes)
 	**/

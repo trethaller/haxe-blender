@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class PaletteColors extends Bpy_struct {
+@:pythonImport("bpy.types") extern class PaletteColors extends Struct {
 	public var active : PaletteColor;
 	/**
 		 Add a new color to the palette

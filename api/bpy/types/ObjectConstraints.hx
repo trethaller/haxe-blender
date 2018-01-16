@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ObjectConstraints extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ObjectConstraints extends Struct {
 	/**
 		Active Object constraint
 	**/

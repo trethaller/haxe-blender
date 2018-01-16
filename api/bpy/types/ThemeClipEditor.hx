@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ThemeClipEditor extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ThemeClipEditor extends Struct {
 	/**
 		Color of active marker
 	**/

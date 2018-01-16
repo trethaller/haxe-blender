@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ThemeUserInterface extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ThemeUserInterface extends Struct {
 	public var axis_x : mathutils.Vector;
 	public var axis_y : mathutils.Vector;
 	public var axis_z : mathutils.Vector;

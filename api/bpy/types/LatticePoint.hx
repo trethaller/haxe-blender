@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class LatticePoint extends Bpy_struct {
+@:pythonImport("bpy.types") extern class LatticePoint extends Struct {
 	/**
 		Original undeformed location used to calculate the strength of the deform effect (edit/animate the Deformed Location instead)
 	**/

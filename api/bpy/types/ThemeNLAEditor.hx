@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ThemeNLAEditor extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ThemeNLAEditor extends Struct {
 	/**
 		Animation data-block has active action
 	**/

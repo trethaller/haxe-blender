@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class Event extends Bpy_struct {
+@:pythonImport("bpy.types") extern class Event extends Struct {
 	/**
 		True when the Alt/Option key is held
 	**/

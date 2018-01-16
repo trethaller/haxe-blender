@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class MovieTrackingObjectTracks extends Bpy_struct {
+@:pythonImport("bpy.types") extern class MovieTrackingObjectTracks extends Struct {
 	/**
 		Active track in this tracking data object
 	**/

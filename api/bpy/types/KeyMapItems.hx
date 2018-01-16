@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class KeyMapItems extends Bpy_struct {
+@:pythonImport("bpy.types") extern class KeyMapItems extends Struct {
 	/**
 		 new
 	**/

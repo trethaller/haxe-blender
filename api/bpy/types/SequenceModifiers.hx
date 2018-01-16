@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class SequenceModifiers extends Bpy_struct {
+@:pythonImport("bpy.types") extern class SequenceModifiers extends Struct {
 	/**
 		 Add a new modifier
 	**/

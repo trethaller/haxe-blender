@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class EditBone extends Bpy_struct {
+@:pythonImport("bpy.types") extern class EditBone extends Struct {
 	/**
 		X-axis handle offset for start of the B-Bone's curve, adjusts curvature
 	**/

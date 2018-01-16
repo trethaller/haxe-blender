@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ImagePreview extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ImagePreview extends Struct {
 	/**
 		Unique integer identifying this preview as an icon (zero means invalid)
 	**/

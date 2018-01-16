@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class VertexGroups extends Bpy_struct {
+@:pythonImport("bpy.types") extern class VertexGroups extends Struct {
 	/**
 		Vertex groups of the object
 	**/

@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class CurveMapPoint extends Bpy_struct {
+@:pythonImport("bpy.types") extern class CurveMapPoint extends Struct {
 	/**
 		Curve interpolation at this point: Bezier or vector
 	**/

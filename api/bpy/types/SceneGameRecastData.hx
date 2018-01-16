@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class SceneGameRecastData extends Bpy_struct {
+@:pythonImport("bpy.types") extern class SceneGameRecastData extends Struct {
 	/**
 		Minimum height where the agent can still walk
 	**/

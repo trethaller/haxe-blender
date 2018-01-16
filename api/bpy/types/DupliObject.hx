@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class DupliObject extends Bpy_struct {
+@:pythonImport("bpy.types") extern class DupliObject extends Struct {
 	/**
 		Don't show dupli object in viewport or render
 	**/

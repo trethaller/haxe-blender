@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class View2D extends Bpy_struct {
+@:pythonImport("bpy.types") extern class View2D extends Struct {
 	/**
 		 Transform region coordinates to 2D view
 	**/

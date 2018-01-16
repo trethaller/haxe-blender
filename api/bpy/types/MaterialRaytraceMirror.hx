@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class MaterialRaytraceMirror extends Bpy_struct {
+@:pythonImport("bpy.types") extern class MaterialRaytraceMirror extends Struct {
 	/**
 		Maximum allowed number of light inter-reflections
 	**/

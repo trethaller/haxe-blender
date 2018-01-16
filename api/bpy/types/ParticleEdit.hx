@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ParticleEdit extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ParticleEdit extends Struct {
 	public var brush : ParticleBrush;
 	/**
 		How many keys to make new particles with

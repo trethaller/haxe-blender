@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class MotionPath extends Bpy_struct {
+@:pythonImport("bpy.types") extern class MotionPath extends Struct {
 	/**
 		Custom color for motion path
 	**/

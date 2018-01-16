@@ -3,7 +3,7 @@ package bpy.types;
 	/**
 		string default value
 	**/
-	public var default : String;
+	public var _default : String;
 	/**
 		Maximum length of the string, 0 means unlimited
 	**/

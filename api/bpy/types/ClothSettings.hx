@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ClothSettings extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ClothSettings extends Struct {
 	/**
 		Air has normally some thickness which slows falling things down
 	**/

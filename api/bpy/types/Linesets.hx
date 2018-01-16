@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class Linesets extends Bpy_struct {
+@:pythonImport("bpy.types") extern class Linesets extends Struct {
 	/**
 		Active line set being displayed
 	**/

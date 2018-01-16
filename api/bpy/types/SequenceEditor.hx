@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class SequenceEditor extends Bpy_struct {
+@:pythonImport("bpy.types") extern class SequenceEditor extends Struct {
 	/**
 		Sequencer's active strip
 	**/

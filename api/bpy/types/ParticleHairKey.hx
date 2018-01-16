@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ParticleHairKey extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ParticleHairKey extends Struct {
 	/**
 		Location of the hair key in object space
 	**/

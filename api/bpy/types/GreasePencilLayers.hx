@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class GreasePencilLayers extends Bpy_struct {
+@:pythonImport("bpy.types") extern class GreasePencilLayers extends Struct {
 	/**
 		Active grease pencil layer
 	**/

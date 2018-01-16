@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class Depsgraph extends Bpy_struct {
+@:pythonImport("bpy.types") extern class Depsgraph extends Struct {
 	/**
 		 debug_graphviz
 	**/

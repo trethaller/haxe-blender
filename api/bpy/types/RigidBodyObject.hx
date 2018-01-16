@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class RigidBodyObject extends Bpy_struct {
+@:pythonImport("bpy.types") extern class RigidBodyObject extends Struct {
 	/**
 		Amount of angular velocity that is lost over time
 	**/

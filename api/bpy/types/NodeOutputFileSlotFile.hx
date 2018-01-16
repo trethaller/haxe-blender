@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class NodeOutputFileSlotFile extends Bpy_struct {
+@:pythonImport("bpy.types") extern class NodeOutputFileSlotFile extends Struct {
 	public var format : ImageFormatSettings;
 	/**
 		Subpath used for this slot

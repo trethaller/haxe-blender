@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class NodeSocketInterface extends Bpy_struct {
+@:pythonImport("bpy.types") extern class NodeSocketInterface extends Struct {
 	public var bl_socket_idname : String;
 	/**
 		Unique identifier for mapping sockets

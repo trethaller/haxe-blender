@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class UVProjector extends Bpy_struct {
+@:pythonImport("bpy.types") extern class UVProjector extends Struct {
 	/**
 		Object to use as projector transform
 	**/

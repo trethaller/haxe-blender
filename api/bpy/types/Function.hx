@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class Function extends Bpy_struct {
+@:pythonImport("bpy.types") extern class Function extends Struct {
 	/**
 		Description of the Function's purpose
 	**/

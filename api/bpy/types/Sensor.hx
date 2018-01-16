@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class Sensor extends Bpy_struct {
+@:pythonImport("bpy.types") extern class Sensor extends Struct {
 	/**
 		Set active state of the sensor
 	**/

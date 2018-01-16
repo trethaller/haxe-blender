@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class Node extends Bpy_struct {
+@:pythonImport("bpy.types") extern class Node extends Struct {
 	public var bl_description : String;
 	public var bl_height_default : Float;
 	public var bl_height_max : Float;

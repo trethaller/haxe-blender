@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class MaskLayer extends Bpy_struct {
+@:pythonImport("bpy.types") extern class MaskLayer extends Struct {
 	/**
 		Render Opacity
 	**/

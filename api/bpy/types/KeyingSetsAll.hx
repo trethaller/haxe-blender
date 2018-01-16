@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class KeyingSetsAll extends Bpy_struct {
+@:pythonImport("bpy.types") extern class KeyingSetsAll extends Struct {
 	/**
 		Active Keying Set used to insert/delete keyframes
 	**/

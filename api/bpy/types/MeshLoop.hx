@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class MeshLoop extends Bpy_struct {
+@:pythonImport("bpy.types") extern class MeshLoop extends Struct {
 	/**
 		Bitangent vector of this vertex for this polygon (must be computed beforehand using calc_tangents, *use it only if really needed*, slower access than bitangent_sign)
 	**/

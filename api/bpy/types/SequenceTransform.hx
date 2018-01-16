@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class SequenceTransform extends Bpy_struct {
+@:pythonImport("bpy.types") extern class SequenceTransform extends Struct {
 	/**
 		Amount to move the input on the X axis within its boundaries
 	**/

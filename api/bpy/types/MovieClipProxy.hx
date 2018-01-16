@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class MovieClipProxy extends Bpy_struct {
+@:pythonImport("bpy.types") extern class MovieClipProxy extends Struct {
 	/**
 		Build proxy resolution 100% of the original footage dimension
 	**/

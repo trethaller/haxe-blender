@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class KeyMapItem extends Bpy_struct {
+@:pythonImport("bpy.types") extern class KeyMapItem extends Struct {
 	/**
 		Activate or deactivate item
 	**/

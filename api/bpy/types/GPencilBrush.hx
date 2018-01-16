@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class GPencilBrush extends Bpy_struct {
+@:pythonImport("bpy.types") extern class GPencilBrush extends Struct {
 	/**
 		Direction of the stroke at which brush gives maximal thickness (0° for horizontal)
 	**/

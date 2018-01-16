@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class MovieTrackingMarkers extends Bpy_struct {
+@:pythonImport("bpy.types") extern class MovieTrackingMarkers extends Struct {
 	/**
 		 Get marker for specified frame
 	**/

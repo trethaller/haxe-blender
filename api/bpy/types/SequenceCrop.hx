@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class SequenceCrop extends Bpy_struct {
+@:pythonImport("bpy.types") extern class SequenceCrop extends Struct {
 	/**
 		Number of pixels to crop from the right side
 	**/

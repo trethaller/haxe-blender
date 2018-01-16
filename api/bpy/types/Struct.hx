@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class Struct extends Bpy_struct {
+@:pythonImport("bpy.types") extern class Struct extends Struct {
 	/**
 		Struct definition this is derived from
 	**/

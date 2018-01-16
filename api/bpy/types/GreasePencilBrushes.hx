@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class GreasePencilBrushes extends Bpy_struct {
+@:pythonImport("bpy.types") extern class GreasePencilBrushes extends Struct {
 	/**
 		Current active brush
 	**/

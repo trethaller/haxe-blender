@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class KeyConfigurations extends Bpy_struct {
+@:pythonImport("bpy.types") extern class KeyConfigurations extends Struct {
 	/**
 		Active key configuration (preset)
 	**/
@@ -11,7 +11,7 @@ package bpy.types;
 	/**
 		Default builtin key configuration
 	**/
-	public var default : KeyConfig;
+	public var _default : KeyConfig;
 	/**
 		Final key configuration that combines keymaps from the active and add-on configurations, and can be edited by the user
 	**/

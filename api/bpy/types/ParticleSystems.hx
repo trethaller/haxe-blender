@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class ParticleSystems extends Bpy_struct {
+@:pythonImport("bpy.types") extern class ParticleSystems extends Struct {
 	/**
 		Active particle system being displayed
 	**/

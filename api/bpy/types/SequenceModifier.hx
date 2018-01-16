@@ -1,5 +1,5 @@
 package bpy.types;
-@:pythonImport("bpy.types") extern class SequenceModifier extends Bpy_struct {
+@:pythonImport("bpy.types") extern class SequenceModifier extends Struct {
 	/**
 		Mask ID used as mask input for the modifier
 	**/
