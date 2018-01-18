@@ -16,7 +16,7 @@ typedef Node = {
 typedef ModuleDef = {
 	globals: Array<Field>,
 	functions: Array<Field>,
-	classes: Array<Dynamic>
+	classes: Array<TypeDefinition>
 }
 
 class Generator {
@@ -26,8 +26,8 @@ class Generator {
 	static var aliases = [
 		"bpy_struct" => "Struct",
 		"Bpy_struct" => "Struct",
-		"bpy_prop_collection" => collectionClass,
-		"Bpy_prop_collection" => collectionClass,
+		"bpy_prop_collection" => collectionClass + "Base",
+		"Bpy_prop_collection" => collectionClass + "Base",
 	];
 
 	static var collectionsMap: Map<String, String> = [
@@ -65,12 +65,14 @@ class Generator {
 		'BlendDataWorlds'=> 'World'
 	];
 
-	var specialMathValueClasses = [
+	var forceNoExtend = [
 		"Color",
 		"Euler",
 		"Matrix",
 		"Quaternion",
-		"Vector"
+		"Vector",
+		"Struct",
+		"Collection"
 	];
 
 	var indentReg = ~/^[ ]+/;
@@ -88,6 +90,8 @@ class Generator {
 	var quotesReg = ~/^["'](.*)["']$/;
 
 	var allModules = new Map<String, ModuleDef>();
+	var parsedFiles = new Array<{module: String, root: Node}>();
+	var allTypeNames = new Map<String, Bool>();
 
 	function getIndent(line) {
 		if(indentReg.match(line)) {
@@ -183,10 +187,17 @@ class Generator {
 		else if(intype.startsWith("boolean"))
 			return macro: Bool;
 		else if(collectTypeReg.match(intype)) {
-			var className = collectionClass + "<" + collectTypeReg.matched(1) + ">";
+			var inner = collectTypeReg.matched(1);
+			if(!allTypeNames.exists(inner)) {
+				inner = "Dynamic";
+			}
+			var className = collectionClass + "<" + inner + ">";
 			return TPath({pack: [], name: className});
 		}			
 		else if(classTypeReg.match(intype)) {
+			if(!allTypeNames.exists(classTypeReg.matched(1))) {
+				return macro: Dynamic;
+			}
 			var tp = splitTypePath(classTypeReg.matched(1));
 			tp.name = makeClassName(tp.name);
 			return TPath(tp);
@@ -318,9 +329,9 @@ class Generator {
 		if(!classReg.match(node.line)) return null;
 		var classname = makeClassName(classReg.matched(1));
 		var baseclass = makeClassName(classReg.matched(3));
-		trace(' ' + classname);
+		// trace(' ' + classname);
 
-		if(specialMathValueClasses.indexOf(classname) >= 0) {
+		if(forceNoExtend.indexOf(classname) >= 0) {
 			baseclass = null;
 		}
 
@@ -371,8 +382,7 @@ class Generator {
 		};
 	}
 
-	function processFile(path: String) {
-		trace(path);
+	function parseFile(path: String) {
 		var file = Io.open(path, "r", 1, "utf-8");
 		var lines = file.readlines();
 		var moduleName = "";
@@ -383,15 +393,33 @@ class Generator {
 		};
 		makeNodes(root, lines, 0, 0);
 
+		for(n in root.children) {
+			if(moduleReg.match(n.line)) {
+				moduleName = moduleReg.matched(1);
+			}
+		}
+
+		parsedFiles.push({module: moduleName, root: root});
+	}
+
+	function extractClasses() {
+		for(p in parsedFiles) {
+			for(n in p.root.children) {
+				if(!classReg.match(n.line)) continue;
+				var classname = makeClassName(classReg.matched(1));
+				allTypeNames[classname] = true;
+				var full = makePack(p.module).join(".") + "." + classname;
+				allTypeNames[full] = true;
+			}
+		}
+	}
+
+	function processFile(moduleName: String, root: Node) {
 		var functions: Array<Field> = [];
 		var globals: Array<Field> = [];
 		var classes: Array<TypeDefinition> = [];
 
 		for(n in root.children) {
-			if(moduleReg.match(n.line)) {
-				moduleName = moduleReg.matched(1);
-				trace(moduleName);		
-			}
 			var func = makeFunc(n);
 			if(func != null) {
 				func.access.push(AStatic);
@@ -518,35 +546,103 @@ class Generator {
 		}
 	}
 
+	// function fixUnknown(t: ComplexType): ComplexType {
+	// 	switch(t) {
+	// 		case TPath(p):
+	// 			if(!allTypes.exists(p)) {
+	// 				trace("Unknocn ", p);
+	// 				return macro: Dynamic;
+	// 			}
+	// 		default:
+	// 			return t;
+	// 	}
+	// 	return t;
+	// }
+
+	// function fixField(field: Field) {
+	// 	switch(field.kind) {
+	// 		case FFun(f):
+	// 			for(arg in f.args) {
+	// 				arg.type = fixUnknown(arg.type);
+	// 			}
+	// 		case FVar(v):
+	// 			field.kind = FVar(fixUnknown(v));
+	// 		case FProp(_,_):
+	// 	}
+	// }
+
+	// function fixUnknownTypes() {
+	// 	for(modname in allModules.keys()) {
+	// 		var module = allModules[modname];
+	// 		for(func in module.functions) {
+	// 			fixField(func);
+	// 		}
+	// 		for(v in module.globals) {
+	// 			fixField(v);
+	// 		}
+	// 		for(c in module.classes) {
+	// 			for(f in c.fields) {
+	// 				fixField(f);
+	// 			}
+	// 		}
+	// 	}
+	// }
+
 	function new() {
 		var docDir = "C:/Users/Tom/Downloads/blender-2.79.tar/blender-2.79/doc/python_api/sphinx-in/";
 
 		function filterFile(fname: String) {
 			if(!fname.endsWith(".rst")) return false;
 			if(fname.startsWith("bpy.types")) return true;
+			if(fname.startsWith("bpy.ops")) return true;
 			if(fname.startsWith("mathutils")) return true;
 			return false;
 		}
 		var files = Os.listdir(docDir).filter(filterFile);
-		
 		// var files = [
-		// 	//"bpy.types.bpy_prop_collection.rst",
+		// 	"bpy.types.bpy_prop_collection.rst",
 		// 	"bpy.types.bpy_struct.rst",
 		// 	"bpy.types.FCurve.rst",
-		// 	// "bpy.ops.object.rst",
-		// 	// "bpy.types.Object.rst",
-		// 	// "bpy.types.BlendData.rst",
+		// 	"bpy.ops.object.rst",
+		// 	"bpy.types.Object.rst",
+		// 	"bpy.types.BlendData.rst",
 		// 	"mathutils.rst",
 		// ];
 
+		trace("Parsing...");
 		for(fname in files) {
-			processFile(docDir + fname);
+			parseFile(docDir + fname);
 		}
 
+		trace("Generating...");
+		extractClasses();
+		for(p in parsedFiles) {
+			processFile(p.module, p.root);
+		}
+
+		allModules["bpy.types"].classes.push({
+			pack : ["bpy", "types"],
+			name : "Collection",
+			pos : null,
+			meta : [],
+			params : [{
+				name: "T"
+			}],
+			kind : TDClass({pack:["bpy", "types"], name: "CollectionBase"}),
+			fields : []
+		});
+
+		// trace("Fixing types...");
+		// trace([for(k in allTypes.keys()) k]);
+		// fixUnknownTypes();
+
+		trace("Cleaning up...");
 		var outDir = "api";
 		if(FS.exists(outDir)) {
 			Shutil.rmtree(outDir);
 		}
+
+		trace("Writing...");		
 		writeTypes(outDir);
 
 		// Shutil.copy("src/patches/Color.hx", outDir + "/mathutils");

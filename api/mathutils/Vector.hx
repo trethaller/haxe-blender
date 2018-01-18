@@ -1459,7 +1459,7 @@ package mathutils;
 	/**
 		 Rotate the vector by a rotation value.
 	**/
-	public function rotate(other:Euler`, :class:`Quaternion` or :class:`Matrix):Void;
+	public function rotate(other:Dynamic):Void;
 	/**
 		 Returns a quaternion representing the rotational difference between this vector and another. .. note:: 2D vectors raise an :exc:`AttributeError`.
 	**/

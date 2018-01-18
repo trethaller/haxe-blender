@@ -43,7 +43,7 @@ package mathutils;
 	/**
 		 Rotates the euler by another mathutils value.
 	**/
-	public function rotate(other:Euler`, :class:`Quaternion` or :class:`Matrix):Void;
+	public function rotate(other:Dynamic):Void;
 	/**
 		 Rotates the euler a certain amount and returning a unique euler rotation (no 720 degree pitches).
 	**/

@@ -91,7 +91,7 @@ package mathutils;
 	/**
 		 Rotates the quaternion by another mathutils value.
 	**/
-	public function rotate(other:Euler`, :class:`Quaternion` or :class:`Matrix):Void;
+	public function rotate(other:Dynamic):Void;
 	/**
 		 Returns a quaternion representing the rotational difference.
 	**/

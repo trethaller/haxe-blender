@@ -55,7 +55,7 @@ package mathutils;
 	/**
 		 Return the translation, rotation and scale components of this matrix.
 	**/
-	public function decompose():Vector`, :class:`Quaternion`, :class:`Vector;
+	public function decompose():Dynamic;
 	/**
 		 Return the determinant of a matrix. .. seealso:: `Determinant <https://en.wikipedia.org/wiki/Determinant>` on Wikipedia.
 	**/
@@ -103,7 +103,7 @@ package mathutils;
 	/**
 		 Rotates the matrix by another mathutils value. .. note:: If any of the columns are not unit length this may not have desired results.
 	**/
-	public function rotate(other:Euler`, :class:`Quaternion` or :class:`Matrix):Void;
+	public function rotate(other:Dynamic):Void;
 	/**
 		 Return a 3x3 copy of this matrix.
 	**/
