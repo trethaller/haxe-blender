@@ -91,7 +91,7 @@ class Generator {
 
 	var allModules = new Map<String, ModuleDef>();
 	var parsedFiles = new Array<{module: String, root: Node}>();
-	var allTypeNames = new Map<String, Bool>();
+	var allTypeNames = new Map<String, String>();
 
 	function getIndent(line) {
 		if(indentReg.match(line)) {
@@ -187,18 +187,19 @@ class Generator {
 		else if(intype.startsWith("boolean"))
 			return macro: Bool;
 		else if(collectTypeReg.match(intype)) {
-			var inner = collectTypeReg.matched(1);
-			if(!allTypeNames.exists(inner)) {
+			var inner = allTypeNames.get(classTypeReg.matched(1));			
+			if(inner == null) {
 				inner = "Dynamic";
 			}
 			var className = collectionClass + "<" + inner + ">";
-			return TPath({pack: [], name: className});
+			return TPath({pack: ["bpy", "types"], name: className});
 		}			
 		else if(classTypeReg.match(intype)) {
-			if(!allTypeNames.exists(classTypeReg.matched(1))) {
+			var full = allTypeNames.get(classTypeReg.matched(1));
+			if(full == null) {
 				return macro: Dynamic;
 			}
-			var tp = splitTypePath(classTypeReg.matched(1));
+			var tp = splitTypePath(full);
 			tp.name = makeClassName(tp.name);
 			return TPath(tp);
 		}
@@ -338,6 +339,9 @@ class Generator {
 		if(collectionsMap.exists(classname)) {
 			baseclass = '${collectionClass}<${collectionsMap[classname]}>';
 		}
+		else {
+			baseclass = allTypeNames.get(baseclass);
+		}
 
 		var methods: Array<Field> = [];
 		var attrs: Array<Field> = [];
@@ -407,9 +411,9 @@ class Generator {
 			for(n in p.root.children) {
 				if(!classReg.match(n.line)) continue;
 				var classname = makeClassName(classReg.matched(1));
-				allTypeNames[classname] = true;
 				var full = makePack(p.module).join(".") + "." + classname;
-				allTypeNames[full] = true;
+				allTypeNames[classname] = full;
+				allTypeNames[full] = full;
 			}
 		}
 	}
@@ -546,48 +550,6 @@ class Generator {
 		}
 	}
 
-	// function fixUnknown(t: ComplexType): ComplexType {
-	// 	switch(t) {
-	// 		case TPath(p):
-	// 			if(!allTypes.exists(p)) {
-	// 				trace("Unknocn ", p);
-	// 				return macro: Dynamic;
-	// 			}
-	// 		default:
-	// 			return t;
-	// 	}
-	// 	return t;
-	// }
-
-	// function fixField(field: Field) {
-	// 	switch(field.kind) {
-	// 		case FFun(f):
-	// 			for(arg in f.args) {
-	// 				arg.type = fixUnknown(arg.type);
-	// 			}
-	// 		case FVar(v):
-	// 			field.kind = FVar(fixUnknown(v));
-	// 		case FProp(_,_):
-	// 	}
-	// }
-
-	// function fixUnknownTypes() {
-	// 	for(modname in allModules.keys()) {
-	// 		var module = allModules[modname];
-	// 		for(func in module.functions) {
-	// 			fixField(func);
-	// 		}
-	// 		for(v in module.globals) {
-	// 			fixField(v);
-	// 		}
-	// 		for(c in module.classes) {
-	// 			for(f in c.fields) {
-	// 				fixField(f);
-	// 			}
-	// 		}
-	// 	}
-	// }
-
 	function new() {
 		var docDir = "C:/Users/Tom/Downloads/blender-2.79.tar/blender-2.79/doc/python_api/sphinx-in/";
 
@@ -598,16 +560,19 @@ class Generator {
 			if(fname.startsWith("mathutils")) return true;
 			return false;
 		}
-		var files = Os.listdir(docDir).filter(filterFile);
-		// var files = [
-		// 	"bpy.types.bpy_prop_collection.rst",
-		// 	"bpy.types.bpy_struct.rst",
-		// 	"bpy.types.FCurve.rst",
-		// 	"bpy.ops.object.rst",
-		// 	"bpy.types.Object.rst",
-		// 	"bpy.types.BlendData.rst",
-		// 	"mathutils.rst",
-		// ];
+		//var files = Os.listdir(docDir).filter(filterFile);
+		var files = [
+			"bpy.types.bpy_prop_collection.rst",
+			"bpy.types.bpy_struct.rst",
+			"bpy.types.FCurve.rst",
+			"bpy.types.Scene.rst",
+			"bpy.types.Context.rst",
+			"bpy.ops.object.rst",
+			"bpy.ops.sculpt.rst",
+			"bpy.types.Object.rst",
+			"bpy.types.BlendData.rst",
+			"mathutils.rst",
+		];
 
 		trace("Parsing...");
 		for(fname in files) {
@@ -620,7 +585,16 @@ class Generator {
 			processFile(p.module, p.root);
 		}
 
-		allModules["bpy.types"].classes.push({
+		trace("Cleaning up...");
+		var outDir = "api";
+		if(FS.exists(outDir)) {
+			Shutil.rmtree(outDir);
+		}
+
+		trace("Writing...");		
+		writeTypes(outDir);
+
+		writeType(outDir, {
 			pack : ["bpy", "types"],
 			name : "Collection",
 			pos : null,
@@ -632,18 +606,23 @@ class Generator {
 			fields : []
 		});
 
-		// trace("Fixing types...");
-		// trace([for(k in allTypes.keys()) k]);
-		// fixUnknownTypes();
-
-		trace("Cleaning up...");
-		var outDir = "api";
-		if(FS.exists(outDir)) {
-			Shutil.rmtree(outDir);
-		}
-
-		trace("Writing...");		
-		writeTypes(outDir);
+		writeType(outDir, {
+			pack : ["bpy"],
+			name : "Context",
+			pos : null,
+			meta : [],
+			params : [],
+			kind : TDClass(),
+			fields : [
+				{
+					name: "context",
+					access: [APublic, AStatic],
+					doc: "Context access",
+					pos: null,
+					kind: FVar(TPath(splitTypePath("bpy.types.Context")))
+				}
+			]
+		});
 
 		// Shutil.copy("src/patches/Color.hx", outDir + "/mathutils");
 	}
