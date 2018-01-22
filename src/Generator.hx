@@ -65,6 +65,86 @@ class Generator {
 		'BlendDataWorlds'=> 'World'
 	];
 
+	static var contextProps: Array<Dynamic> = [
+		["active_base", "ObjectBase", false],
+		["active_bone", "EditBone", false],
+		["active_gpencil_frame", "GreasePencilLayer", true],
+		["active_gpencil_layer", "GPencilLayer", true],
+		["active_gpencil_brush", "GPencilSculptBrush", false],
+		["active_gpencil_palette", "GPencilPalette", true],
+		["active_gpencil_palettecolor", "GPencilPaletteColor", true],
+		["active_node", "Node", false],
+		["active_object", "Object", false],
+		["active_operator", "Operator", false],
+		["active_pose_bone", "PoseBone", false],
+		["armature", "Armature", false],
+		["bone", "Bone", false],
+		["brush", "Brush", false],
+		["camera", "Camera", false],
+		["cloth", "ClothModifier", false],
+		["collision", "CollisionModifier", false],
+		["curve", "Curve", false],
+		["dynamic_paint", "DynamicPaintModifier", false],
+		["edit_bone", "EditBone", false],
+		["edit_image", "Image", false],
+		["edit_mask", "Mask", false],
+		["edit_movieclip", "MovieClip", false],
+		["edit_object", "Object", false],
+		["edit_text", "Text", false],
+		["editable_bases", "ObjectBase", true],
+		["editable_bones", "EditBone", true],
+		["editable_gpencil_layers", "GPencilLayer", true],
+		["editable_gpencil_strokes", "GPencilStroke", true],
+		["editable_objects", "Object", true],
+		["fluid", "FluidSimulationModifier", false],
+		["gpencil_data", "GreasePencel", false],
+		["gpencil_data_owner", "ID", false],
+		["image_paint_object", "Object", false],
+		["lamp", "Lamp", false],
+		["lattice", "Lattice", false],
+		["line_style", "FreestyleLineStyle", false],
+		["material", "Material", false],
+		["material_slot", "MaterialSlot", false],
+		["mesh", "Mesh", false],
+		["meta_ball", "MetaBall", false],
+		["object", "Object", false],
+		["particle_edit_object", "Object", false],
+		["particle_settings", "ParticleSettings", false],
+		["particle_system", "ParticleSystem", false],
+		["particle_system_editable", "ParticleSystem", false],
+		["pose_bone", "PoseBone", false],
+		["scene", "Scene", false],
+		["sculpt_object", "Object", false],
+		["selectable_bases", "ObjectBase", true],
+		["selectable_objects", "Object", true],
+		["selected_bases", "ObjectBase", true],
+		["selected_bones", "EditBone", true],
+		["selected_editable_bases", "ObjectBase", true],
+		["selected_editable_bones", "EditBone", true],
+		["selected_editable_objects", "Object", true],
+		["selected_editable_sequences", "Sequence", true],
+		["selected_nodes", "Node", true],
+		["selected_objects", "Object", true],
+		["selected_pose_bones", "PoseBone", true],
+		["selected_sequences", "Sequence", true],
+		["sequences", "Sequence", true],
+		["smoke", "SmokeModifier", false],
+		["soft_body", "SoftBodyModifier", false],
+		["speaker", "Speaker", false],
+		["texture", "Texture", false],
+		["texture_slot", "MaterialTextureSlot", false],
+		["texture_user", "ID", false],
+		["texture_user_property", "Property", false],
+		["vertex_paint_object", "Object", false],
+		["visible_bases", "ObjectBase", true],
+		["visible_bones", "EditBone", true],
+		["visible_gpencil_layers", "GPencilLayer", true],
+		["visible_objects", "Object", true],
+		["visible_pose_bones", "PoseBone", true],
+		["weight_paint_object", "Object", false],
+		["world", "World", false],
+	];
+
 	var forceNoExtend = [
 		"Color",
 		"Euler",
@@ -550,6 +630,49 @@ class Generator {
 		}
 	}
 
+	function writeContext(outDir) {
+		var fields = [];
+
+		for(prop in contextProps) {
+			var type: ComplexType = null;
+			if(prop[2]) {
+				var inner = allTypeNames.get(classTypeReg.matched(1));
+				if(inner == null) {
+					inner = "Dynamic";
+				}
+				var className = collectionClass + "<" + inner + ">";
+				type = TPath({pack: ["bpy", "types"], name: className});
+			}
+			else {
+				var full = allTypeNames.get(classTypeReg.matched(1));
+				if(full == null) {
+					return macro: Dynamic;
+				}
+				var tp = splitTypePath(full);
+				tp.name = makeClassName(tp.name);
+				type = TPath(tp);
+			}
+
+			fields.push({
+				name: prop[0],
+				access: [APublic, AStatic],
+				doc: "Context access",
+				pos: null,
+				kind: FVar(TPath(splitTypePath("bpy.types.Context")))
+			});
+		}
+		
+		writeType(outDir, {
+			pack : ["bpy"],
+			name : "Context",
+			pos : null,
+			meta : [],
+			params : [],
+			kind : TDClass(),
+			fields : fields
+		});
+	}
+
 	function new() {
 		var docDir = "C:/Users/Tom/Downloads/blender-2.79.tar/blender-2.79/doc/python_api/sphinx-in/";
 
@@ -606,23 +729,7 @@ class Generator {
 			fields : []
 		});
 
-		writeType(outDir, {
-			pack : ["bpy"],
-			name : "Context",
-			pos : null,
-			meta : [],
-			params : [],
-			kind : TDClass(),
-			fields : [
-				{
-					name: "context",
-					access: [APublic, AStatic],
-					doc: "Context access",
-					pos: null,
-					kind: FVar(TPath(splitTypePath("bpy.types.Context")))
-				}
-			]
-		});
+
 
 		// Shutil.copy("src/patches/Color.hx", outDir + "/mathutils");
 	}
