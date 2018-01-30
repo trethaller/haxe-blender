@@ -636,7 +636,7 @@ class Generator {
 		for(prop in contextProps) {
 			var type: ComplexType = null;
 			if(prop[2]) {
-				var inner = allTypeNames.get(classTypeReg.matched(1));
+				var inner = allTypeNames.get(prop[1]);
 				if(inner == null) {
 					inner = "Dynamic";
 				}
@@ -644,13 +644,15 @@ class Generator {
 				type = TPath({pack: ["bpy", "types"], name: className});
 			}
 			else {
-				var full = allTypeNames.get(classTypeReg.matched(1));
+				var full = allTypeNames.get(prop[1]);
 				if(full == null) {
-					return macro: Dynamic;
+					type = macro: Dynamic;
 				}
-				var tp = splitTypePath(full);
-				tp.name = makeClassName(tp.name);
-				type = TPath(tp);
+				else {
+					var tp = splitTypePath(full);
+					tp.name = makeClassName(tp.name);
+					type = TPath(tp);
+				}
 			}
 
 			fields.push({
@@ -658,7 +660,7 @@ class Generator {
 				access: [APublic, AStatic],
 				doc: "Context access",
 				pos: null,
-				kind: FVar(TPath(splitTypePath("bpy.types.Context")))
+				kind: FVar(type)
 			});
 		}
 		
@@ -683,19 +685,19 @@ class Generator {
 			if(fname.startsWith("mathutils")) return true;
 			return false;
 		}
-		//var files = Os.listdir(docDir).filter(filterFile);
-		var files = [
-			"bpy.types.bpy_prop_collection.rst",
-			"bpy.types.bpy_struct.rst",
-			"bpy.types.FCurve.rst",
-			"bpy.types.Scene.rst",
-			"bpy.types.Context.rst",
-			"bpy.ops.object.rst",
-			"bpy.ops.sculpt.rst",
-			"bpy.types.Object.rst",
-			"bpy.types.BlendData.rst",
-			"mathutils.rst",
-		];
+		var files = Os.listdir(docDir).filter(filterFile);
+		// var files = [
+		// 	"bpy.types.bpy_prop_collection.rst",
+		// 	"bpy.types.bpy_struct.rst",
+		// 	"bpy.types.FCurve.rst",
+		// 	"bpy.types.Scene.rst",
+		// 	"bpy.types.Context.rst",
+		// 	"bpy.ops.object.rst",
+		// 	"bpy.ops.sculpt.rst",
+		// 	"bpy.types.Object.rst",
+		// 	"bpy.types.BlendData.rst",
+		// 	"mathutils.rst",
+		// ];
 
 		trace("Parsing...");
 		for(fname in files) {
@@ -716,6 +718,7 @@ class Generator {
 
 		trace("Writing...");		
 		writeTypes(outDir);
+		writeContext(outDir);
 
 		writeType(outDir, {
 			pack : ["bpy", "types"],
